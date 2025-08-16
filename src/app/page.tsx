@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useBiasTestStore } from '@/lib/store';
-import { getTranslation, detectLanguageFromIP } from '@/lib/i18n';
+import { getTranslation, detectLanguageFromBrowser } from '@/lib/i18n';
 import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import { Button } from '@/components/ui/Button';
 
@@ -16,9 +16,8 @@ export default function HomePage() {
 
   // 초기 언어 감지
   useEffect(() => {
-    detectLanguageFromIP().then(detectedLang => {
-      setLanguage(detectedLang);
-    });
+    const detectedLang = detectLanguageFromBrowser();
+    setLanguage(detectedLang);
   }, [setLanguage]);
 
   const handleStartTest = () => {

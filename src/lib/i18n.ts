@@ -270,21 +270,35 @@ export function getTranslation(language: SupportedLanguage) {
   return translations[language] || translations.ko;
 }
 
-// IP 기반 언어 감지 (클라이언트 사이드)
-export async function detectLanguageFromIP(): Promise<SupportedLanguage> {
+// 브라우저 기반 언어 감지 (클라이언트 사이드)
+export function detectLanguageFromBrowser(): SupportedLanguage {
   try {
-    // 브라우저의 언어 설정을 먼저 확인
+    // 브라우저의 언어 설정을 확인
     const browserLang = navigator.language.split('-')[0] as SupportedLanguage;
     if (Object.keys(languages).includes(browserLang)) {
       return browserLang;
     }
     
-    // IP 기반 위치 감지 (실제 구현에서는 더 정교한 서비스 사용)
-    const response = await fetch('/api/detect-language');
-    if (response.ok) {
-      const data = await response.json();
-      return data.language || 'en';
+    // 한국어 관련 설정 확인
+    if (navigator.language.includes('ko') || navigator.language.includes('KR')) {
+      return 'ko';
     }
+    
+    // 중국어 관련 설정 확인
+    if (navigator.language.includes('zh') || navigator.language.includes('CN')) {
+      return 'zh';
+    }
+    
+    // 일본어 관련 설정 확인  
+    if (navigator.language.includes('ja') || navigator.language.includes('JP')) {
+      return 'ja';
+    }
+    
+    // 스페인어 관련 설정 확인
+    if (navigator.language.includes('es') || navigator.language.includes('ES')) {
+      return 'es';
+    }
+    
   } catch (error) {
     console.error('Language detection failed:', error);
   }
