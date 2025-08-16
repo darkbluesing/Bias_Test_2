@@ -4,23 +4,27 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useBiasTestStore } from '@/lib/store';
 import { getTranslation, detectLanguageFromBrowser } from '@/lib/i18n';
+import { useHydration } from '@/lib/useHydration';
 import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import { Button } from '@/components/ui/Button';
 
 export default function HomePage() {
   const router = useRouter();
+  const isHydrated = useHydration();
   const [name, setName] = useState('');
   const [isStarting, setIsStarting] = useState(false);
   const { language, setLanguage, setUserProfile } = useBiasTestStore();
   const t = getTranslation(language);
 
-  // 초기 언어 감지
+  // 초기 언어 감지 (hydration 완료 후)
   useEffect(() => {
+    if (!isHydrated) return;
+    
     const detectedLang = detectLanguageFromBrowser();
     setLanguage(detectedLang);
-  }, [setLanguage]);
+  }, [isHydrated, setLanguage]);
 
-  const handleStartTest = () => {
+  const handleStartTest = async () => {
     console.log('handleStartTest 호출됨', { name: name.trim() });
     
     if (!name.trim()) {
@@ -31,13 +35,25 @@ export default function HomePage() {
     setIsStarting(true);
     console.log('사용자 프로필 설정 중...', { name: name.trim() });
     
-    setUserProfile({ name: name.trim() });
-    
-    // 상태 업데이트 후 페이지 이동
-    setTimeout(() => {
+    try {
+      // 상태 업데이트
+      setUserProfile({ name: name.trim() });
+      
+      // 상태가 저장될 시간을 더 충분히 확보
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
       console.log('페이지 이동 시작...');
-      router.push('/test');
-    }, 100);
+      
+      // router.push 대신 window.location을 사용 (static export에서 더 안정적)
+      if (typeof window !== 'undefined') {
+        window.location.href = '/test';
+      } else {
+        router.push('/test');
+      }
+    } catch (error) {
+      console.error('테스트 시작 중 오류:', error);
+      setIsStarting(false);
+    }
   };
 
   return (

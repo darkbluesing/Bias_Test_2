@@ -6,6 +6,7 @@ import { useBiasTestStore } from '@/lib/store';
 import { getTranslation } from '@/lib/i18n';
 import { generateAllQuestions } from '@/data/questions';
 import { biasCalculator } from '@/lib/biasCalculator';
+import { useHydration } from '@/lib/useHydration';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { QuestionCard } from '@/components/ui/QuestionCard';
 import { Button } from '@/components/ui/Button';
@@ -13,6 +14,7 @@ import { LanguageSelector } from '@/components/ui/LanguageSelector';
 
 export default function TestPage() {
   const router = useRouter();
+  const isHydrated = useHydration();
   const [questions] = useState(generateAllQuestions());
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -31,15 +33,34 @@ export default function TestPage() {
 
   const t = getTranslation(language);
 
-  // 이름이 없으면 홈으로 리다이렉트
+  // Hydration이 완료되고 이름이 없으면 홈으로 리다이렉트
   useEffect(() => {
+    if (!isHydrated) return; // hydration 완료까지 대기
+
     console.log('테스트 페이지 - 사용자 프로필 확인:', userProfile);
+    
     if (!userProfile.name) {
       console.log('사용자 이름이 없어서 홈으로 리다이렉트');
-      router.push('/');
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      } else {
+        router.push('/');
+      }
       return;
     }
-  }, [userProfile.name, router]);
+  }, [isHydrated, userProfile.name, router]);
+
+  // Hydration이 완료되지 않았으면 로딩 화면 표시
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   const currentQuestionData = questions[currentQuestion];
   const progress = Math.round(((currentQuestion + 1) / questions.length) * 100);
