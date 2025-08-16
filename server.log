@@ -1,0 +1,63 @@
+
+> bias-test-app@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.4.6 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://172.30.1.94:3000
+
+ ✓ Starting...
+ ✓ Ready in 561ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1084ms
+ GET / 200 in 1260ms
+ GET / 200 in 48ms
+ ✓ Compiled /test in 162ms
+ GET /test 200 in 202ms
+ GET / 200 in 32ms
+ ✓ Compiled /favicon.ico in 80ms
+ GET /favicon.ico?favicon.45db1c09.ico 200 in 330ms
+ GET / 200 in 51ms
+ GET /test 200 in 45ms
+ GET / 200 in 21ms
+ ✓ Compiled in 36ms
+ ✓ Compiled in 15ms
+ ✓ Compiled in 17ms
+ ✓ Compiled in 15ms
+ ✓ Compiled in 16ms
+ GET / 200 in 170ms
+ GET / 200 in 52ms
+ GET / 200 in 53ms
+ GET / 200 in 50ms
+ GET /test 200 in 82ms
+ GET /test 200 in 87ms
+ GET / 200 in 31ms
+ GET /test 200 in 32ms
+ ✓ Compiled /result in 485ms
+ GET /result 200 in 501ms
+ GET / 200 in 34ms
+ GET / 200 in 37ms
+ GET /test 200 in 31ms
+ ✓ Compiled in 257ms
+ ✓ Compiled in 40ms
+ ✓ Compiled in 22ms
+ ✓ Compiled in 25ms
+ ✓ Compiled in 17ms
+ ✓ Compiled in 28ms
+ ✓ Compiled in 25ms
+ ✓ Compiled in 23ms
+ ✓ Compiled in 16ms
+ ✓ Compiled in 22ms
+ ✓ Compiled in 26ms
+ ✓ Compiled in 21ms
+ ✓ Compiled in 18ms
+ ✓ Compiled in 45ms
+ GET /test 200 in 131ms
+ GET / 200 in 80ms
+ GET /test 200 in 37ms
+ ✓ Compiled in 17ms
+ ✓ Compiled in 17ms
+ GET /test 200 in 125ms
+ GET / 200 in 68ms
+ GET /test 200 in 25ms
+[?25h
