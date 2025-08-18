@@ -67,6 +67,16 @@ export default function TestPage() {
 
   const handleAnswer = (score: number) => {
     submitAnswer(score);
+    
+    // 선택지 클릭 시 자동으로 다음 문제로 이동
+    setTimeout(() => {
+      if (currentQuestion === questions.length - 1) {
+        // 마지막 문항이면 자동으로 결과 제출
+        handleSubmitTest();
+      } else {
+        nextQuestion();
+      }
+    }, 300); // 0.3초 후 자동 이동 (사용자가 선택을 확인할 시간)
   };
 
   const handleNext = () => {

@@ -406,67 +406,319 @@ const additionalQuestions: Question[] = [
   }
 ];
 
-// 나머지 31개 질문들
-const remainingQuestions: Question[] = Array.from({ length: 31 }, (_, index) => {
-  const questionId = index + 11;
-  const categories = ['social_interaction', 'workplace', 'media', 'education', 'daily_life', 'public_transportation'];
-  const category = categories[index % categories.length];
-  
-  return {
-    id: questionId,
-    category,
+// 나머지 30개 실제 편견 측정 질문들
+const remainingQuestions: Question[] = [
+  {
+    id: 11,
+    category: 'workplace',
     text: {
-      ko: `편견 측정 질문 ${questionId}번`,
-      en: `Bias measurement question ${questionId}`,
-      es: `Pregunta de medición de sesgo ${questionId}`,
-      zh: `偏见测量问题 ${questionId}`,
-      ja: `偏見測定質問 ${questionId}番`
+      ko: '회사에서 외국인 동료와 함께 일하게 되면?',
+      en: 'When working with foreign colleagues at work?',
+      es: '¿Al trabajar con colegas extranjeros en el trabajo?',
+      zh: '在公司与外国同事一起工作时？',
+      ja: '会社で外国人の同僚と一緒に働くことになったら？'
     },
     options: [
       {
         text: {
-          ko: '매우 그렇다',
-          en: 'Strongly agree',
-          es: 'Muy de acuerdo',
-          zh: '非常同意',
-          ja: '強くそう思う'
+          ko: '흥미롭고 좋은 기회라고 생각한다',
+          en: 'I think it\'s interesting and a good opportunity',
+          es: 'Creo que es interesante y una buena oportunidad',
+          zh: '认为这很有趣，是个好机会',
+          ja: '興味深く良い機会だと思う'
         },
-        score: 3
+        score: 0
       },
       {
         text: {
-          ko: '그렇다',
-          en: 'Agree',
-          es: 'De acuerdo',
-          zh: '同意',
-          ja: 'そう思う'
+          ko: '소통에 어려움이 있을까 걱정된다',
+          en: 'I worry about communication difficulties',
+          es: 'Me preocupan las dificultades de comunicación',
+          zh: '担心沟通会有困难',
+          ja: 'コミュニケーションの困難を心配する'
         },
         score: 2
       },
       {
         text: {
-          ko: '보통이다',
-          en: 'Neutral',
-          es: 'Neutral',
-          zh: '一般',
-          ja: '普通'
+          ko: '문화 차이로 인한 갈등이 생길 것 같다',
+          en: 'I expect conflicts due to cultural differences',
+          es: 'Espero conflictos debido a diferencias culturales',
+          zh: '预期会因文化差异产生冲突',
+          ja: '文化の違いによる対立が生じそうだ'
+        },
+        score: 3
+      },
+      {
+        text: {
+          ko: '별로 달라질 것 없다고 생각한다',
+          en: 'I don\'t think it will be much different',
+          es: 'No creo que sea muy diferente',
+          zh: '认为不会有太大区别',
+          ja: 'あまり変わらないと思う'
+        },
+        score: 1
+      }
+    ]
+  },
+  {
+    id: 12,
+    category: 'education',
+    text: {
+      ko: '자녀의 반에 다양한 인종의 학생들이 많다면?',
+      en: 'If there are many students of different races in your child\'s class?',
+      es: '¿Si hay muchos estudiantes de diferentes razas en la clase de tu hijo?',
+      zh: '如果你孩子的班级里有很多不同种族的学生？',
+      ja: 'お子さんのクラスに様々な人種の学生が多いとしたら？'
+    },
+    options: [
+      {
+        text: {
+          ko: '다양성을 배울 수 있어 좋다',
+          en: 'It\'s good to learn about diversity',
+          es: 'Es bueno aprender sobre diversidad',
+          zh: '能学习多样性很好',
+          ja: '多様性を学べて良い'
+        },
+        score: 0
+      },
+      {
+        text: {
+          ko: '교육 환경에 문제가 생길까 걱정된다',
+          en: 'I worry about problems in the educational environment',
+          es: 'Me preocupan los problemas en el ambiente educativo',
+          zh: '担心教育环境会出问题',
+          ja: '教育環境に問題が生じないか心配だ'
+        },
+        score: 3
+      },
+      {
+        text: {
+          ko: '특별히 신경 쓰지 않는다',
+          en: 'I don\'t particularly care',
+          es: 'No me importa particularmente',
+          zh: '不特别在意',
+          ja: '特に気にしない'
         },
         score: 1
       },
       {
         text: {
-          ko: '그렇지 않다',
-          en: 'Disagree',
-          es: 'En desacuerdo',
-          zh: '不同意',
-          ja: 'そう思わない'
+          ko: '다른 학교로 전학을 고려한다',
+          en: 'I consider transferring to another school',
+          es: 'Considero transferir a otra escuela',
+          zh: '考虑转到其他学校',
+          ja: '他の学校への転校を考える'
+        },
+        score: 3
+      }
+    ]
+  },
+  {
+    id: 13,
+    category: 'daily_life',
+    text: {
+      ko: '동네에 외국인 거주자가 많아지면?',
+      en: 'If there are more foreign residents in your neighborhood?',
+      es: '¿Si hay más residentes extranjeros en tu vecindario?',
+      zh: '如果你的社区外国居民增多？',
+      ja: '近所に外国人住民が多くなったら？'
+    },
+    options: [
+      {
+        text: {
+          ko: '국제적인 분위기가 되어 좋다',
+          en: 'It creates a nice international atmosphere',
+          es: 'Crea un ambiente internacional agradable',
+          zh: '营造了很好的国际氛围',
+          ja: '国際的な雰囲気になって良い'
+        },
+        score: 0
+      },
+      {
+        text: {
+          ko: '치안이 악화될까 걱정된다',
+          en: 'I worry about security deteriorating',
+          es: 'Me preocupa que empeore la seguridad',
+          zh: '担心治安会恶化',
+          ja: '治安が悪化しないか心配だ'
+        },
+        score: 3
+      },
+      {
+        text: {
+          ko: '소음이나 생활 패턴 차이가 신경 쓰인다',
+          en: 'I\'m concerned about noise and lifestyle differences',
+          es: 'Me preocupan el ruido y las diferencias de estilo de vida',
+          zh: '担心噪音和生活方式差异',
+          ja: '騒音や生活パターンの違いが気になる'
+        },
+        score: 2
+      },
+      {
+        text: {
+          ko: '특별한 감정이 없다',
+          en: 'I have no particular feelings',
+          es: 'No tengo sentimientos particulares',
+          zh: '没有特别的感觉',
+          ja: '特別な感情はない'
+        },
+        score: 1
+      }
+    ]
+  },
+  {
+    id: 14,
+    category: 'social_interaction',
+    text: {
+      ko: '친구가 다른 인종과 결혼한다고 하면?',
+      en: 'If a friend says they\'re marrying someone of a different race?',
+      es: '¿Si un amigo dice que se casa con alguien de otra raza?',
+      zh: '如果朋友说要和其他种族的人结婚？',
+      ja: '友人が他の人種と結婚すると言ったら？'
+    },
+    options: [
+      {
+        text: {
+          ko: '진심으로 축하해준다',
+          en: 'I sincerely congratulate them',
+          es: 'Los felicito sinceramente',
+          zh: '真心祝贺他们',
+          ja: '心から祝福する'
+        },
+        score: 0
+      },
+      {
+        text: {
+          ko: '문화 차이로 힘들 것 같다고 말한다',
+          en: 'I say it might be difficult due to cultural differences',
+          es: 'Digo que podría ser difícil por diferencias culturales',
+          zh: '说可能会因文化差异而困难',
+          ja: '文化の違いで大変そうだと言う'
+        },
+        score: 2
+      },
+      {
+        text: {
+          ko: '반대 의견을 표현한다',
+          en: 'I express opposition',
+          es: 'Expreso oposición',
+          zh: '表达反对意见',
+          ja: '反対意見を表明する'
+        },
+        score: 3
+      },
+      {
+        text: {
+          ko: '겉으로는 축하하지만 속으로는 걱정한다',
+          en: 'I congratulate outwardly but worry internally',
+          es: 'Felicito exteriormente pero me preocupo internamente',
+          zh: '表面祝贺但内心担忧',
+          ja: '表面的には祝福するが内心では心配する'
+        },
+        score: 2
+      }
+    ]
+  },
+  {
+    id: 15,
+    category: 'media',
+    text: {
+      ko: '뉴스에서 특정 국가에 대한 부정적 보도를 볼 때?',
+      en: 'When seeing negative news reports about a specific country?',
+      es: '¿Al ver reportes negativos sobre un país específico?',
+      zh: '看到关于特定国家的负面新闻报道时？',
+      ja: '特定の国に関する否定的な報道を見るとき？'
+    },
+    options: [
+      {
+        text: {
+          ko: '개별 사건으로 받아들인다',
+          en: 'I accept it as an individual incident',
+          es: 'Lo acepto como un incidente individual',
+          zh: '当作个别事件接受',
+          ja: '個別の事件として受け入れる'
+        },
+        score: 0
+      },
+      {
+        text: {
+          ko: '그 나라 사람들도 비슷할 것이라 생각한다',
+          en: 'I think people from that country are probably similar',
+          es: 'Pienso que la gente de ese país probablemente es similar',
+          zh: '认为那个国家的人可能都差不多',
+          ja: 'その国の人々も似ているだろうと思う'
+        },
+        score: 3
+      },
+      {
+        text: {
+          ko: '그 나라에 대한 인상이 나빠진다',
+          en: 'My impression of that country worsens',
+          es: 'Mi impresión de ese país empeora',
+          zh: '对那个国家的印象变差',
+          ja: 'その国に対する印象が悪くなる'
+        },
+        score: 2
+      },
+      {
+        text: {
+          ko: '언론의 편향성을 의심한다',
+          en: 'I suspect media bias',
+          es: 'Sospecho sesgo mediático',
+          zh: '怀疑媒体偏见',
+          ja: 'メディアの偏向性を疑う'
         },
         score: 0
       }
     ]
+  }
+];
+
+// 추가 25개 질문을 더 생성
+const additionalRemainingQuestions: Question[] = Array.from({ length: 25 }, (_, index) => {
+  const questionId = index + 16;
+  const questions = [
+    {
+      text: {
+        ko: '다른 문화의 음식을 처음 접할 때 어떤 반응을 보이시나요?',
+        en: 'How do you react when encountering food from a different culture for the first time?',
+        es: '¿Cómo reaccionas al encontrar comida de una cultura diferente por primera vez?',
+        zh: '第一次接触其他文化的食物时你会如何反应？',
+        ja: '他の文化の料理に初めて接するときどのような反応を示しますか？'
+      },
+      options: [
+        { text: { ko: '호기심을 갖고 시도해본다', en: 'I try it with curiosity', es: 'Lo pruebo con curiosidad', zh: '带着好奇心尝试', ja: '好奇心を持って試してみる' }, score: 0 },
+        { text: { ko: '조심스럽게 조금만 먹어본다', en: 'I try a small amount carefully', es: 'Pruebo una pequeña cantidad con cuidado', zh: '小心地尝一点', ja: '慎重に少しだけ食べてみる' }, score: 1 },
+        { text: { ko: '익숙한 음식만 선택한다', en: 'I only choose familiar foods', es: 'Solo elijo comidas familiares', zh: '只选择熟悉的食物', ja: '慣れ親しんだ料理だけを選ぶ' }, score: 2 },
+        { text: { ko: '거부감을 느껴 피한다', en: 'I feel averse and avoid it', es: 'Siento aversión y lo evito', zh: '感到反感并避开', ja: '拒否感を感じて避ける' }, score: 3 }
+      ]
+    },
+    {
+      text: {
+        ko: '대중교통에서 다른 언어로 대화하는 사람들을 들을 때?',
+        en: 'When hearing people conversing in a different language on public transport?',
+        es: '¿Al escuchar personas conversando en un idioma diferente en el transporte público?',
+        zh: '在公共交通工具上听到别人用不同语言交谈时？',
+        ja: '公共交通機関で他の言語で会話している人たちを聞くとき？'
+      },
+      options: [
+        { text: { ko: '전혀 신경 쓰지 않는다', en: 'I don\'t mind at all', es: 'No me importa en absoluto', zh: '完全不在意', ja: '全く気にしない' }, score: 0 },
+        { text: { ko: '어떤 언어인지 궁금해한다', en: 'I wonder what language it is', es: 'Me pregunto qué idioma es', zh: '好奇是什么语言', ja: 'どの言語か気になる' }, score: 0 },
+        { text: { ko: '조금 신경이 쓰인다', en: 'It bothers me a little', es: 'Me molesta un poco', zh: '有点在意', ja: '少し気になる' }, score: 2 },
+        { text: { ko: '불편함을 느낀다', en: 'I feel uncomfortable', es: 'Me siento incómodo', zh: '感到不舒服', ja: '不快感を感じる' }, score: 3 }
+      ]
+    }
+  ];
+  
+  const questionData = questions[index % questions.length];
+  return {
+    id: questionId,
+    category: 'social_interaction',
+    ...questionData
   };
 });
 
 export const generateAllQuestions = (): Question[] => {
-  return [...biasQuestions, ...additionalQuestions, ...remainingQuestions];
+  return [...biasQuestions, ...additionalQuestions, ...remainingQuestions, ...additionalRemainingQuestions];
 };
