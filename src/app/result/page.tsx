@@ -110,7 +110,21 @@ export default function ResultPage() {
     );
   }
 
-  const biasCategory = getBiasCategory(result.percentage);
+  let biasCategory;
+  try {
+    biasCategory = getBiasCategory(result.percentage);
+    if (!biasCategory) {
+      throw new Error('편향 카테고리를 찾을 수 없습니다');
+    }
+  } catch (categoryError) {
+    console.error('편향 카테고리 오류:', categoryError);
+    biasCategory = {
+      category: 'moderate',
+      title: { ko: '오류 발생' },
+      description: { ko: '결과 처리 중 오류가 발생했습니다.' },
+      solutions: { ko: '페이지를 새로고침해주세요.' }
+    };
+  }
 
   const handleRetakeTest = () => {
     resetTest();

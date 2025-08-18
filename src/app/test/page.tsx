@@ -97,9 +97,15 @@ export default function TestPage() {
       if (isLastQuestion) {
         console.log('마지막 질문이므로 약간의 지연 후 handleSubmitTest 호출');
         // 마지막 문항이면 상태 업데이트를 위해 약간 대기 후 제출
-        setTimeout(() => {
-          console.log('마지막 질문 제출 실행');
-          handleSubmitTest();
+        setTimeout(async () => {
+          try {
+            console.log('마지막 질문 제출 실행');
+            await handleSubmitTest();
+          } catch (submitError) {
+            console.error('handleSubmitTest 실행 중 오류:', submitError);
+            alert('테스트 제출 중 오류가 발생했습니다. 페이지를 새로고침 후 다시 시도해주세요.');
+            setIsProcessing(false);
+          }
         }, 100); // 상태 업데이트를 위한 최소 지연
       } else {
         console.log('다음 질문으로 이동 준비');
@@ -138,18 +144,19 @@ export default function TestPage() {
   };
 
   const handleSubmitTest = async () => {
-    console.log('=== handleSubmitTest 시작 ===');
-    console.log('현재 질문 번호:', currentQuestion);
-    console.log('isSubmitting 상태:', isSubmitting);
-    
-    // 이미 제출 중이면 중복 방지
-    if (isSubmitting) {
-      console.log('이미 제출 중이므로 중단');
-      return;
-    }
+    try {
+      console.log('=== handleSubmitTest 시작 ===');
+      console.log('현재 질문 번호:', currentQuestion);
+      console.log('isSubmitting 상태:', isSubmitting);
+      
+      // 이미 제출 중이면 중복 방지
+      if (isSubmitting) {
+        console.log('이미 제출 중이므로 중단');
+        return;
+      }
 
-    // 제출 상태 설정
-    setIsSubmitting(true);
+      // 제출 상태 설정
+      setIsSubmitting(true);
 
     try {
       // 최신 상태 가져오기 (약간의 지연을 두어 상태 업데이트 보장)
@@ -211,16 +218,21 @@ export default function TestPage() {
       console.log('=== 결과 저장 시작 ===');
       setResult(result);
       
-      // localStorage에도 백업 저장
-      if (typeof window !== 'undefined') {
-        const backupData = {
-          result: result,
-          userProfile: userProfile,
-          timestamp: Date.now(),
-          answers: currentAnswers
-        };
-        localStorage.setItem('bias-test-result-backup', JSON.stringify(backupData));
-        console.log('localStorage에 백업 저장 완료:', backupData);
+      // localStorage에도 백업 저장 (안전한 처리)
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const backupData = {
+            result: result,
+            userProfile: userProfile,
+            timestamp: Date.now(),
+            answers: currentAnswers
+          };
+          localStorage.setItem('bias-test-result-backup', JSON.stringify(backupData));
+          console.log('localStorage에 백업 저장 완료:', backupData);
+        }
+      } catch (storageError) {
+        console.error('localStorage 백업 저장 실패:', storageError);
+        // localStorage 실패해도 계속 진행
       }
       
       // 저장 후 약간의 대기
@@ -247,6 +259,13 @@ export default function TestPage() {
       alert(`테스트 제출 중 오류가 발생했습니다:\n${errorMessage}\n\n페이지를 새로고침하고 다시 시도해주세요.`);
       
       // 오류 발생 시 제출 상태 해제
+      setIsSubmitting(false);
+      setIsProcessing(false);
+    }
+    } catch (outerError) {
+      console.error('=== handleSubmitTest 최상위 오류 ===');
+      console.error('최상위 오류:', outerError);
+      alert('테스트 제출 중 심각한 오류가 발생했습니다. 페이지를 새로고침해주세요.');
       setIsSubmitting(false);
       setIsProcessing(false);
     }

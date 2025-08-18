@@ -17,12 +17,16 @@ export class BiasCalculator {
    * @returns 테스트 결과 객체
    */
   calculateResult(answers: number[], language: SupportedLanguage): TestResult {
-    console.log('BiasCalculator.calculateResult 시작:', {
-      answersLength: answers.length,
-      totalQuestions: this.totalQuestions,
-      language,
-      sampleAnswers: [...answers.slice(0, 5), '...', ...answers.slice(-5)]
-    });
+    try {
+      console.log('BiasCalculator.calculateResult 시작:', {
+        answersLength: answers?.length || 0,
+        totalQuestions: this.totalQuestions,
+        language,
+        sampleAnswers: answers ? [...(answers.slice(0, 5) || []), '...', ...(answers.slice(-5) || [])] : []
+      });
+    } catch (logError) {
+      console.error('로깅 오류:', logError);
+    }
 
     // 입력 검증
     if (!Array.isArray(answers)) {
