@@ -11,6 +11,7 @@ import { ProgressBar } from '@/components/ui/ProgressBar';
 import { QuestionCard } from '@/components/ui/QuestionCard';
 import { Button } from '@/components/ui/Button';
 import { LanguageSelector } from '@/components/ui/LanguageSelector';
+import { DebugPanel } from '@/components/DebugPanel';
 
 export default function TestPage() {
   const router = useRouter();
@@ -66,13 +67,14 @@ export default function TestPage() {
   const currentQuestionData = questions[currentQuestion];
   const progress = Math.round(((currentQuestion + 1) / questions.length) * 100);
 
-  const handleAnswer = (score: number) => {
+  const handleAnswer = async (score: number) => {
     console.log('handleAnswer 호출:', {
       currentQuestion,
       score,
       isProcessing,
       isSubmitting,
-      questionsLength: questions.length
+      questionsLength: questions.length,
+      currentAnswersLength: answers.length
     });
     
     // 이미 처리 중이면 중복 방지
@@ -83,34 +85,38 @@ export default function TestPage() {
     
     setIsProcessing(true);
     
-    // 답변 저장
-    submitAnswer(score);
-    
-    console.log('답변 저장 후 다음 단계 처리 예약');
-    
-    // 선택지 클릭 시 자동으로 다음 문제로 이동
-    setTimeout(() => {
-      try {
-        const isLastQuestion = currentQuestion === questions.length - 1;
-        console.log('마지막 질문 여부:', isLastQuestion, `(${currentQuestion}/${questions.length - 1})`);
-        
-        if (isLastQuestion) {
-          console.log('마지막 질문이므로 handleSubmitTest 호출');
-          // 마지막 문항이면 제출
+    try {
+      // 답변 저장
+      console.log('답변 저장 중...');
+      submitAnswer(score);
+      
+      // 마지막 질문인지 확인
+      const isLastQuestion = currentQuestion === questions.length - 1;
+      console.log('마지막 질문 여부:', isLastQuestion, `(${currentQuestion}/${questions.length - 1})`);
+      
+      if (isLastQuestion) {
+        console.log('마지막 질문이므로 약간의 지연 후 handleSubmitTest 호출');
+        // 마지막 문항이면 상태 업데이트를 위해 약간 대기 후 제출
+        setTimeout(() => {
+          console.log('마지막 질문 제출 실행');
           handleSubmitTest();
-        } else {
+        }, 100); // 상태 업데이트를 위한 최소 지연
+      } else {
+        console.log('다음 질문으로 이동 준비');
+        // 일반 문항은 자동 이동
+        setTimeout(() => {
           console.log('다음 질문으로 이동');
           nextQuestion();
           setIsProcessing(false);
-        }
-      } catch (error) {
-        console.error('handleAnswer 오류:', error);
-        setIsProcessing(false);
+        }, 500);
       }
-    }, 500); // 0.5초 후 자동 이동
+    } catch (error) {
+      console.error('handleAnswer 오류:', error);
+      setIsProcessing(false);
+    }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const currentAnswer = getCurrentAnswer();
     if (currentAnswer === undefined) {
       alert(t.error.answerRequired);
@@ -119,8 +125,10 @@ export default function TestPage() {
     
     // 마지막 문항이면 자동으로 결과 제출
     if (currentQuestion === questions.length - 1) {
-      handleSubmitTest();
+      console.log('Next 버튼: 마지막 질문이므로 제출');
+      await handleSubmitTest();
     } else {
+      console.log('Next 버튼: 다음 질문으로 이동');
       nextQuestion();
     }
   };
@@ -132,10 +140,6 @@ export default function TestPage() {
   const handleSubmitTest = async () => {
     console.log('=== handleSubmitTest 시작 ===');
     console.log('현재 질문 번호:', currentQuestion);
-    console.log('현재 answers:', answers);
-    console.log('answers 길이:', answers.length);
-    console.log('전체 질문 수:', questions.length);
-    console.log('isTestCompleted():', isTestCompleted());
     console.log('isSubmitting 상태:', isSubmitting);
     
     // 이미 제출 중이면 중복 방지
@@ -144,60 +148,86 @@ export default function TestPage() {
       return;
     }
 
-    // answers 배열 상세 로그
-    console.log('=== Answers 상세 분석 ===');
-    answers.forEach((answer, index) => {
-      console.log(`질문 ${index + 1}: ${answer} (${answer === undefined ? 'undefined' : 'answered'})`);
-    });
-    
-    // 답변 개수 상세 확인
-    const validAnswers = answers.filter(answer => answer !== undefined && answer !== null);
-    const invalidAnswers = answers.filter(answer => answer === undefined || answer === null);
-    
-    console.log('유효한 답변 수:', validAnswers.length);
-    console.log('유효하지 않은 답변 수:', invalidAnswers.length);
-    
-    // 답변 수가 부족하면 누락된 질문 찾기
-    if (validAnswers.length < 40) {
-      const missingQuestions = [];
-      for (let i = 0; i < 40; i++) {
-        if (answers[i] === undefined || answers[i] === null) {
-          missingQuestions.push(i + 1);
-        }
-      }
-      console.error('누락된 질문들:', missingQuestions);
-      alert(`다음 질문들에 답변해주세요: ${missingQuestions.join(', ')}번 (총 ${validAnswers.length}/40개 답변 완료)`);
-      return;
-    }
-
+    // 제출 상태 설정
     setIsSubmitting(true);
-    
+
     try {
+      // 최신 상태 가져오기 (약간의 지연을 두어 상태 업데이트 보장)
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // 스토어에서 최신 answers 가져오기
+      const currentAnswers = useBiasTestStore.getState().answers;
+      console.log('=== 최신 Answers 상태 확인 ===');
+      console.log('현재 answers:', currentAnswers);
+      console.log('answers 길이:', currentAnswers.length);
+      console.log('전체 질문 수:', questions.length);
+      
+      // answers 배열 상세 로그
+      currentAnswers.forEach((answer, index) => {
+        console.log(`질문 ${index + 1}: ${answer} (${answer === undefined ? 'undefined' : 'answered'})`);
+      });
+      
+      // 답변 개수 상세 확인
+      const validAnswers = currentAnswers.filter(answer => answer !== undefined && answer !== null);
+      const invalidAnswers = currentAnswers.filter(answer => answer === undefined || answer === null);
+      
+      console.log('유효한 답변 수:', validAnswers.length);
+      console.log('유효하지 않은 답변 수:', invalidAnswers.length);
+      
+      // 답변 배열이 40개가 아니거나 유효한 답변이 40개가 아닌 경우
+      if (currentAnswers.length !== 40) {
+        throw new Error(`답변 배열 길이 오류: ${currentAnswers.length}/40`);
+      }
+      
+      if (validAnswers.length < 40) {
+        const missingQuestions = [];
+        for (let i = 0; i < 40; i++) {
+          if (currentAnswers[i] === undefined || currentAnswers[i] === null) {
+            missingQuestions.push(i + 1);
+          }
+        }
+        console.error('누락된 질문들:', missingQuestions);
+        throw new Error(`누락된 질문: ${missingQuestions.join(', ')}번 (총 ${validAnswers.length}/40개 답변 완료)`);
+      }
+      
       console.log('=== 결과 계산 시작 ===');
       
-      // 결과 계산 전 예비 검증
-      const answersForCalculation = [...answers];
-      console.log('계산에 사용할 답변들:', answersForCalculation);
+      // 결과 계산을 위한 배열 복사
+      const answersForCalculation = [...currentAnswers];
+      console.log('계산에 사용할 답변들:', answersForCalculation.slice(0, 5), '...', answersForCalculation.slice(-5));
       
-      if (answersForCalculation.length !== 40) {
-        throw new Error(`답변 길이 오류: ${answersForCalculation.length}/40`);
-      }
-      
+      // 최종 검증
       const hasUndefined = answersForCalculation.some(answer => answer === undefined || answer === null);
       if (hasUndefined) {
-        throw new Error('답변에 undefined 값이 포함되어 있음');
+        const undefinedIndices = answersForCalculation.map((a, i) => a === undefined || a === null ? i + 1 : null).filter(x => x !== null);
+        throw new Error(`답변에 undefined/null 값 포함: ${undefinedIndices.join(', ')}번 질문`);
       }
       
+      // 결과 계산
+      console.log('biasCalculator.calculateResult 호출 중...');
       const result = biasCalculator.calculateResult(answersForCalculation, language);
       console.log('계산된 결과:', result);
       
       console.log('=== 결과 저장 시작 ===');
       setResult(result);
       
-      // 저장 후 잘짠 주기
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // localStorage에도 백업 저장
+      if (typeof window !== 'undefined') {
+        const backupData = {
+          result: result,
+          userProfile: userProfile,
+          timestamp: Date.now(),
+          answers: currentAnswers
+        };
+        localStorage.setItem('bias-test-result-backup', JSON.stringify(backupData));
+        console.log('localStorage에 백업 저장 완료:', backupData);
+      }
+      
+      // 저장 후 약간의 대기
+      await new Promise(resolve => setTimeout(resolve, 300));
       
       console.log('=== 결과 페이지로 이동 ===');
+      // 강제 페이지 이동 (Next.js 라우터 이슈 방지)
       if (typeof window !== 'undefined') {
         window.location.href = '/result';
       } else {
@@ -205,7 +235,7 @@ export default function TestPage() {
       }
       
     } catch (error) {
-      console.error('=== 결과 계산 오류 ===');
+      console.error('=== 결과 제출 오류 ===');
       console.error('오류 내용:', error);
       
       if (error instanceof Error) {
@@ -214,8 +244,11 @@ export default function TestPage() {
       }
       
       const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
-      alert(`결과 계산 중 오류가 발생했습니다:\n${errorMessage}\n\n다시 시도해주세요.`);
+      alert(`테스트 제출 중 오류가 발생했습니다:\n${errorMessage}\n\n페이지를 새로고침하고 다시 시도해주세요.`);
+      
+      // 오류 발생 시 제출 상태 해제
       setIsSubmitting(false);
+      setIsProcessing(false);
     }
   };
 
@@ -326,6 +359,9 @@ export default function TestPage() {
           </div>
         </div>
       </main>
+      
+      {/* Development Debug Panel */}
+      <DebugPanel />
     </div>
   );
 }

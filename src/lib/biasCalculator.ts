@@ -17,22 +17,72 @@ export class BiasCalculator {
    * @returns 테스트 결과 객체
    */
   calculateResult(answers: number[], language: SupportedLanguage): TestResult {
+    console.log('BiasCalculator.calculateResult 시작:', {
+      answersLength: answers.length,
+      totalQuestions: this.totalQuestions,
+      language,
+      sampleAnswers: [...answers.slice(0, 5), '...', ...answers.slice(-5)]
+    });
+
+    // 입력 검증
+    if (!Array.isArray(answers)) {
+      throw new Error(`답변이 배열이 아닙니다: ${typeof answers}`);
+    }
+
     if (answers.length !== this.totalQuestions) {
       throw new Error(`Expected ${this.totalQuestions} answers, got ${answers.length}`);
     }
 
-    const totalScore = answers.reduce((sum, score) => sum + score, 0);
-    const percentage = Math.round((totalScore / this.maxScore) * 100);
-    
-    const biasCategory = getBiasCategory(percentage);
+    // undefined/null 검증
+    const invalidAnswers = answers.map((answer, index) => 
+      (answer === undefined || answer === null) ? index + 1 : null
+    ).filter(x => x !== null);
 
-    return {
-      totalScore,
-      percentage,
-      category: biasCategory.category,
-      solutions: biasCategory.solutions,
-      completedAt: new Date()
-    };
+    if (invalidAnswers.length > 0) {
+      throw new Error(`Invalid answers at questions: ${invalidAnswers.join(', ')}`);
+    }
+
+    // 점수 범위 검증
+    const invalidScores = answers.map((answer, index) => 
+      (typeof answer !== 'number' || answer < 0 || answer > 3) ? { question: index + 1, score: answer } : null
+    ).filter(x => x !== null);
+
+    if (invalidScores.length > 0) {
+      throw new Error(`Invalid scores: ${invalidScores.map(s => `Q${s.question}:${s.score}`).join(', ')}`);
+    }
+
+    try {
+      const totalScore = answers.reduce((sum, score) => sum + score, 0);
+      const percentage = Math.round((totalScore / this.maxScore) * 100);
+      
+      console.log('점수 계산 결과:', {
+        totalScore,
+        maxScore: this.maxScore,
+        percentage
+      });
+      
+      const biasCategory = getBiasCategory(percentage);
+      console.log('편향 카테고리:', biasCategory);
+
+      if (!biasCategory) {
+        throw new Error(`Failed to determine bias category for percentage: ${percentage}`);
+      }
+
+      const result: TestResult = {
+        totalScore,
+        percentage,
+        category: biasCategory.category,
+        solutions: biasCategory.solutions,
+        completedAt: new Date()
+      };
+
+      console.log('최종 결과 생성 완료:', result);
+      return result;
+
+    } catch (error) {
+      console.error('BiasCalculator 내부 오류:', error);
+      throw error;
+    }
   }
 
   /**

@@ -16,18 +16,95 @@ export default function ResultPage() {
   const t = getTranslation(language);
 
   useEffect(() => {
-    if (!result || !userProfile.name) {
-      router.push('/');
+    console.log('=== Result Page 접근 로그 ===');
+    console.log('result:', result);
+    console.log('userProfile:', userProfile);
+    console.log('userProfile.name:', userProfile.name);
+    
+    // localStorage에서 백업 데이터 확인하는 함수
+    const tryRecoverFromBackup = (): boolean => {
+      if (typeof window !== 'undefined') {
+        try {
+          const backup = localStorage.getItem('bias-test-result-backup');
+          if (backup) {
+            const backupData = JSON.parse(backup);
+            console.log('localStorage 백업 데이터 발견:', backupData);
+            
+            // 백업 데이터가 최근 것인지 확인 (30분 이내)
+            const isRecent = Date.now() - backupData.timestamp < 30 * 60 * 1000;
+            if (isRecent && backupData.result && backupData.userProfile) {
+              console.log('백업 데이터로 복구 시도');
+              
+              // 백업 데이터로 상태 복구
+              const { setResult: storeSetResult, setUserProfile } = useBiasTestStore.getState();
+              storeSetResult(backupData.result);
+              setUserProfile(backupData.userProfile);
+              
+              console.log('백업 데이터로 상태 복구 완료');
+              return true;
+            } else {
+              console.log('백업 데이터가 너무 오래되었거나 유효하지 않음');
+              localStorage.removeItem('bias-test-result-backup');
+            }
+          } else {
+            console.log('localStorage에 백업 데이터가 없음');
+          }
+        } catch (error) {
+          console.error('백업 데이터 처리 오류:', error);
+          localStorage.removeItem('bias-test-result-backup');
+        }
+      }
+      return false;
+    };
+    
+    if (!result) {
+      console.error('result가 없음 - 백업 복구 시도');
+      
+      // 1차 시도: 즉시 백업 복구
+      const recovered = tryRecoverFromBackup();
+      
+      if (!recovered) {
+        console.log('백업 복구 실패 - 잠깐 대기 후 재시도');
+        // 2차 시도: 잠깐 대기 후 다시 확인
+        setTimeout(() => {
+          const currentResult = useBiasTestStore.getState().result;
+          console.log('대기 후 result 상태:', currentResult);
+          
+          if (!currentResult) {
+            // 3차 시도: 백업 복구 재시도
+            const finalRecovery = tryRecoverFromBackup();
+            
+            if (!finalRecovery) {
+              console.error('모든 복구 시도 실패 - 메인페이지로 이동');
+              alert('테스트 결과를 불러올 수 없습니다.\\n페이지를 새로고침하거나 테스트를 다시 진행해주세요.');
+              router.push('/');
+            } else {
+              console.log('최종 백업 복구 성공');
+              // 페이지 새로고침으로 상태 동기화
+              window.location.reload();
+            }
+          }
+        }, 1000);
+      } else {
+        console.log('백업 복구 성공 - 페이지 새로고침');
+        // 복구 성공 시 페이지 새로고침
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      }
       return;
     }
+    
+    console.log('Result 페이지 정상 로드 완료');
   }, [result, userProfile.name, router]);
 
-  if (!result || !userProfile.name) {
+  if (!result) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">결과를 불러오는 중...</p>
+          <p className="text-sm text-gray-500 mt-2">잠시만 기다려주세요</p>
         </div>
       </div>
     );

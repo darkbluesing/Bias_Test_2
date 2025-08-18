@@ -60,28 +60,37 @@ export const useBiasTestStore = create<BiasTestStore>()(
           currentQuestion: state.currentQuestion,
           answerScore,
           currentAnswersLength: state.answers.length,
-          currentAnswers: state.answers
+          currentAnswers: state.answers.slice(0, 5) + '...' + state.answers.slice(-5) // 로그 단축
         });
         
         // answers 배열을 40개로 초기화 (이전에 초기화되지 않았다면)
-        const newAnswers = state.answers.length === 0 
-          ? new Array(40).fill(undefined) 
-          : [...state.answers];
+        let newAnswers;
+        if (state.answers.length === 0) {
+          console.log('answers 배열이 비어있음, 40개로 초기화');
+          newAnswers = new Array(40).fill(undefined);
+        } else {
+          newAnswers = [...state.answers];
+        }
         
         // 40개보다 적으면 40개로 확장
         while (newAnswers.length < 40) {
           newAnswers.push(undefined);
+          console.log(`answers 배열 확장: ${newAnswers.length}`);
         }
         
         // 현재 질문에 답변 저장
         if (state.currentQuestion >= 0 && state.currentQuestion < 40) {
+          console.log(`질문 ${state.currentQuestion + 1}에 답변 ${answerScore} 저장`);
           newAnswers[state.currentQuestion] = answerScore;
         } else {
           console.error('잘못된 질문 인덱스:', state.currentQuestion);
+          return {}; // 상태 변경 없이 반환
         }
         
-        console.log('업데이트된 answers:', newAnswers);
-        console.log('업데이트된 answers 길이:', newAnswers.length);
+        // 업데이트 후 검증
+        const validCount = newAnswers.filter(a => a !== undefined && a !== null).length;
+        console.log(`answers 업데이트 완료: ${validCount}/40개 답변 완료`);
+        console.log('샘플 답변들:', newAnswers.slice(0, 10));
         
         return {
           answers: newAnswers
