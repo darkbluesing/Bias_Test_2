@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { RadioGroup } from '@headlessui/react';
 import { Question } from '@/types';
 import { useBiasTestStore } from '@/lib/store';
@@ -18,16 +18,55 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
   const t = getTranslation(language);
   
   const [selected, setSelected] = useState<number | undefined>(selectedAnswer);
+  const isProcessingRef = useRef(false);
+  const lastAnswerRef = useRef<number | undefined>(undefined);
 
   // selectedAnswer가 변경될 때마다 로컬 상태 업데이트
   useEffect(() => {
     setSelected(selectedAnswer);
+    lastAnswerRef.current = selectedAnswer;
   }, [selectedAnswer, question.id]);
 
+  // 질문이 변경될 때 처리 상태 초기화
+  useEffect(() => {
+    isProcessingRef.current = false;
+    lastAnswerRef.current = selectedAnswer;
+  }, [question.id]);
+
   const handleChange = (value: string) => {
+    console.log('handleChange 호출:', {
+      questionId: question.id,
+      value,
+      isProcessing: isProcessingRef.current,
+      lastAnswer: lastAnswerRef.current
+    });
+
+    // 이미 처리 중이면 중복 방지
+    if (isProcessingRef.current) {
+      console.log('처리 중이므로 중복 호출 방지');
+      return;
+    }
+
     const score = parseInt(value);
+    
+    // 같은 답변 중복 선택 방지
+    if (lastAnswerRef.current === score) {
+      console.log('동일한 답변 중복 선택 방지:', score);
+      return;
+    }
+
+    isProcessingRef.current = true;
     setSelected(score);
-    onAnswer(score);
+    lastAnswerRef.current = score;
+    
+    // 작은 딜레이 후 onAnswer 호출
+    setTimeout(() => {
+      onAnswer(score);
+      // 처리 완료 후 상태 초기화 (더 긴 딜레이)
+      setTimeout(() => {
+        isProcessingRef.current = false;
+      }, 100);
+    }, 50);
   };
 
   return (

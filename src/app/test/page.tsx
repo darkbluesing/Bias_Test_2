@@ -67,22 +67,47 @@ export default function TestPage() {
   const progress = Math.round(((currentQuestion + 1) / questions.length) * 100);
 
   const handleAnswer = (score: number) => {
+    console.log('handleAnswer 호출:', {
+      currentQuestion,
+      score,
+      isProcessing,
+      isSubmitting,
+      questionsLength: questions.length
+    });
+    
     // 이미 처리 중이면 중복 방지
-    if (isProcessing || isSubmitting) return;
+    if (isProcessing || isSubmitting) {
+      console.log('이미 처리 중이므로 handleAnswer 중단');
+      return;
+    }
     
     setIsProcessing(true);
+    
+    // 답변 저장
     submitAnswer(score);
+    
+    console.log('답변 저장 후 다음 단계 처리 예약');
     
     // 선택지 클릭 시 자동으로 다음 문제로 이동
     setTimeout(() => {
-      if (currentQuestion === questions.length - 1) {
-        // 마지막 문항이면 자동으로 결과 제출
-        handleSubmitTest();
-      } else {
-        nextQuestion();
+      try {
+        const isLastQuestion = currentQuestion === questions.length - 1;
+        console.log('마지막 질문 여부:', isLastQuestion, `(${currentQuestion}/${questions.length - 1})`);
+        
+        if (isLastQuestion) {
+          console.log('마지막 질문이므로 handleSubmitTest 호출');
+          // 마지막 문항이면 제출
+          handleSubmitTest();
+        } else {
+          console.log('다음 질문으로 이동');
+          nextQuestion();
+          setIsProcessing(false);
+        }
+      } catch (error) {
+        console.error('handleAnswer 오류:', error);
+        setIsProcessing(false);
       }
-      setIsProcessing(false);
-    }, 500); // 0.5초 후 자동 이동 (사용자가 선택을 확인할 시간)
+    }, 500); // 0.5초 후 자동 이동
   };
 
   const handleNext = () => {
@@ -105,26 +130,91 @@ export default function TestPage() {
   };
 
   const handleSubmitTest = async () => {
-    if (!isTestCompleted()) {
-      alert(t.error.testIncomplete);
+    console.log('=== handleSubmitTest 시작 ===');
+    console.log('현재 질문 번호:', currentQuestion);
+    console.log('현재 answers:', answers);
+    console.log('answers 길이:', answers.length);
+    console.log('전체 질문 수:', questions.length);
+    console.log('isTestCompleted():', isTestCompleted());
+    console.log('isSubmitting 상태:', isSubmitting);
+    
+    // 이미 제출 중이면 중복 방지
+    if (isSubmitting) {
+      console.log('이미 제출 중이므로 중단');
+      return;
+    }
+
+    // answers 배열 상세 로그
+    console.log('=== Answers 상세 분석 ===');
+    answers.forEach((answer, index) => {
+      console.log(`질문 ${index + 1}: ${answer} (${answer === undefined ? 'undefined' : 'answered'})`);
+    });
+    
+    // 답변 개수 상세 확인
+    const validAnswers = answers.filter(answer => answer !== undefined && answer !== null);
+    const invalidAnswers = answers.filter(answer => answer === undefined || answer === null);
+    
+    console.log('유효한 답변 수:', validAnswers.length);
+    console.log('유효하지 않은 답변 수:', invalidAnswers.length);
+    
+    // 답변 수가 부족하면 누락된 질문 찾기
+    if (validAnswers.length < 40) {
+      const missingQuestions = [];
+      for (let i = 0; i < 40; i++) {
+        if (answers[i] === undefined || answers[i] === null) {
+          missingQuestions.push(i + 1);
+        }
+      }
+      console.error('누락된 질문들:', missingQuestions);
+      alert(`다음 질문들에 답변해주세요: ${missingQuestions.join(', ')}번 (총 ${validAnswers.length}/40개 답변 완료)`);
       return;
     }
 
     setIsSubmitting(true);
     
     try {
-      const result = biasCalculator.calculateResult(answers, language);
+      console.log('=== 결과 계산 시작 ===');
+      
+      // 결과 계산 전 예비 검증
+      const answersForCalculation = [...answers];
+      console.log('계산에 사용할 답변들:', answersForCalculation);
+      
+      if (answersForCalculation.length !== 40) {
+        throw new Error(`답변 길이 오류: ${answersForCalculation.length}/40`);
+      }
+      
+      const hasUndefined = answersForCalculation.some(answer => answer === undefined || answer === null);
+      if (hasUndefined) {
+        throw new Error('답변에 undefined 값이 포함되어 있음');
+      }
+      
+      const result = biasCalculator.calculateResult(answersForCalculation, language);
+      console.log('계산된 결과:', result);
+      
+      console.log('=== 결과 저장 시작 ===');
       setResult(result);
       
-      // static export 호환성을 위해 window.location 사용
+      // 저장 후 잘짠 주기
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      console.log('=== 결과 페이지로 이동 ===');
       if (typeof window !== 'undefined') {
         window.location.href = '/result';
       } else {
         router.push('/result');
       }
+      
     } catch (error) {
-      console.error('Test submission error:', error);
-      alert(t.error.networkError);
+      console.error('=== 결과 계산 오류 ===');
+      console.error('오류 내용:', error);
+      
+      if (error instanceof Error) {
+        console.error('오류 메시지:', error.message);
+        console.error('오류 스택:', error.stack);
+      }
+      
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
+      alert(`결과 계산 중 오류가 발생했습니다:\n${errorMessage}\n\n다시 시도해주세요.`);
       setIsSubmitting(false);
     }
   };
