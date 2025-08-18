@@ -17,6 +17,7 @@ export default function TestPage() {
   const isHydrated = useHydration();
   const [questions] = useState(generateAllQuestions());
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const {
     currentQuestion,
@@ -66,6 +67,10 @@ export default function TestPage() {
   const progress = Math.round(((currentQuestion + 1) / questions.length) * 100);
 
   const handleAnswer = (score: number) => {
+    // 이미 처리 중이면 중복 방지
+    if (isProcessing || isSubmitting) return;
+    
+    setIsProcessing(true);
     submitAnswer(score);
     
     // 선택지 클릭 시 자동으로 다음 문제로 이동
@@ -76,7 +81,8 @@ export default function TestPage() {
       } else {
         nextQuestion();
       }
-    }, 300); // 0.3초 후 자동 이동 (사용자가 선택을 확인할 시간)
+      setIsProcessing(false);
+    }, 500); // 0.5초 후 자동 이동 (사용자가 선택을 확인할 시간)
   };
 
   const handleNext = () => {
@@ -109,11 +115,16 @@ export default function TestPage() {
     try {
       const result = biasCalculator.calculateResult(answers, language);
       setResult(result);
-      router.push('/result');
+      
+      // static export 호환성을 위해 window.location 사용
+      if (typeof window !== 'undefined') {
+        window.location.href = '/result';
+      } else {
+        router.push('/result');
+      }
     } catch (error) {
       console.error('Test submission error:', error);
       alert(t.error.networkError);
-    } finally {
       setIsSubmitting(false);
     }
   };

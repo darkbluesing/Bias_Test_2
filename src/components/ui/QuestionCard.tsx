@@ -34,10 +34,9 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
     <div className={`bg-white rounded-xl shadow-lg p-6 md:p-8 ${className}`}>
       <div className="mb-6">
         <div className="flex items-center mb-3">
-          <span className="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-pink-100 to-purple-100 text-pink-600 rounded-full text-sm font-bold mr-3">
+          <span className="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-pink-100 to-purple-100 text-pink-600 rounded-full text-sm font-bold">
             {question.id}
           </span>
-          <span className="text-sm text-gray-500 font-medium">질문 {question.id}번</span>
         </div>
         <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 leading-relaxed">
           {question.text[language]}
