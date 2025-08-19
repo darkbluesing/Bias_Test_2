@@ -132,7 +132,7 @@ export default function ResultPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" style={{ minHeight: '100vh' }}>
       {/* 헤더 */}
       <header className="bg-white shadow-sm px-4 py-4">
         <div className="max-w-mobile mx-auto flex items-center justify-between">
@@ -155,7 +155,7 @@ export default function ResultPage() {
 
       {/* 메인 컨텐츠 */}
       <main className="px-4 py-8">
-        <div className="max-w-mobile mx-auto">
+        <div className="max-w-mobile mx-auto" style={{ minHeight: '60vh' }}>
           {/* 광고 공간 - 상단 */}
           <div className="mb-8" data-hide-in-export="true">
             <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">

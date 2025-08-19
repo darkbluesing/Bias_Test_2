@@ -90,23 +90,24 @@ export default function TestPage() {
       console.log('답변 저장 중...');
       submitAnswer(score);
       
+      // 상태 업데이트를 위해 짧은 대기
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
       // 마지막 질문인지 확인
       const isLastQuestion = currentQuestion === questions.length - 1;
       console.log('마지막 질문 여부:', isLastQuestion, `(${currentQuestion}/${questions.length - 1})`);
       
       if (isLastQuestion) {
-        console.log('마지막 질문이므로 약간의 지연 후 handleSubmitTest 호출');
-        // 마지막 문항이면 상태 업데이트를 위해 약간 대기 후 제출
-        setTimeout(async () => {
-          try {
-            console.log('마지막 질문 제출 실행');
-            await handleSubmitTest();
-          } catch (submitError) {
-            console.error('handleSubmitTest 실행 중 오류:', submitError);
-            alert('테스트 제출 중 오류가 발생했습니다. 페이지를 새로고침 후 다시 시도해주세요.');
-            setIsProcessing(false);
-          }
-        }, 100); // 상태 업데이트를 위한 최소 지연
+        console.log('마지막 질문 - 테스트 완료 처리 시작');
+        // 마지막 문항이면 상태 업데이트 후 결과 제출
+        try {
+          await handleSubmitTest();
+        } catch (submitError) {
+          console.error('테스트 제출 오류:', submitError);
+          alert('테스트 제출 중 오류가 발생했습니다. 새로고침 후 다시 시도해주세요.');
+          setIsProcessing(false);
+          setIsSubmitting(false);
+        }
       } else {
         console.log('다음 질문으로 이동 준비');
         // 일반 문항은 자동 이동
@@ -114,33 +115,57 @@ export default function TestPage() {
           console.log('다음 질문으로 이동');
           nextQuestion();
           setIsProcessing(false);
-        }, 500);
+        }, 300);
       }
     } catch (error) {
       console.error('handleAnswer 오류:', error);
       setIsProcessing(false);
+      setIsSubmitting(false);
     }
   };
 
   const handleNext = async () => {
+    if (isProcessing || isSubmitting) {
+      console.log('Next 버튼: 이미 처리 중이므로 중단');
+      return;
+    }
+    
     const currentAnswer = getCurrentAnswer();
     if (currentAnswer === undefined) {
       alert(t.error.answerRequired);
       return;
     }
     
-    // 마지막 문항이면 자동으로 결과 제출
-    if (currentQuestion === questions.length - 1) {
-      console.log('Next 버튼: 마지막 질문이므로 제출');
-      await handleSubmitTest();
-    } else {
-      console.log('Next 버튼: 다음 질문으로 이동');
-      nextQuestion();
+    setIsProcessing(true);
+    
+    try {
+      // 마지막 문항이면 자동으로 결과 제출
+      if (currentQuestion === questions.length - 1) {
+        console.log('Next 버튼: 마지막 질문이므로 제출');
+        await handleSubmitTest();
+      } else {
+        console.log('Next 버튼: 다음 질문으로 이동');
+        nextQuestion();
+        setIsProcessing(false);
+      }
+    } catch (error) {
+      console.error('Next 버튼 오류:', error);
+      setIsProcessing(false);
     }
   };
 
   const handlePrevious = () => {
-    prevQuestion();
+    if (isProcessing || isSubmitting) {
+      console.log('Previous 버튼: 이미 처리 중이므로 중단');
+      return;
+    }
+    
+    setIsProcessing(true);
+    
+    setTimeout(() => {
+      prevQuestion();
+      setIsProcessing(false);
+    }, 100);
   };
 
   const handleSubmitTest = async () => {
@@ -157,10 +182,11 @@ export default function TestPage() {
 
       // 제출 상태 설정
       setIsSubmitting(true);
+      console.log('제출 상태 설정 완료');
 
     try {
-      // 최신 상태 가져오기 (약간의 지연을 두어 상태 업데이트 보장)
-      await new Promise(resolve => setTimeout(resolve, 50));
+      // 최신 상태 가져오기 (상태 업데이트 보장을 위한 대기)
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       // 스토어에서 최신 answers 가져오기
       const currentAnswers = useBiasTestStore.getState().answers;
@@ -239,10 +265,15 @@ export default function TestPage() {
       await new Promise(resolve => setTimeout(resolve, 300));
       
       console.log('=== 결과 페이지로 이동 ===');
+      // 상태 저장 완료 후 페이지 이동
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       // 강제 페이지 이동 (Next.js 라우터 이슈 방지)
       if (typeof window !== 'undefined') {
+        console.log('window.location.href로 결과 페이지 이동');
         window.location.href = '/result';
       } else {
+        console.log('router.push로 결과 페이지 이동');
         router.push('/result');
       }
       
@@ -283,7 +314,7 @@ export default function TestPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" style={{ minHeight: '100vh' }}>
       {/* 헤더 */}
       <header className="bg-white shadow-sm px-4 py-4 sticky top-0 z-10">
         <div className="max-w-mobile mx-auto flex items-center justify-between">
@@ -320,8 +351,15 @@ export default function TestPage() {
 
       {/* 메인 컨텐츠 */}
       <main className="px-4 py-8">
-        <div className="max-w-mobile mx-auto">
-          {/* 광고 공간 - 질문 상단 */}
+        <div className="max-w-mobile mx-auto" style={{ minHeight: '60vh' }}>
+          {/* 광고 공간 - 상단 */}
+          <div className="mb-8">
+            <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
+              광고 공간 (728x90 / 320x50)
+            </div>
+          </div>
+
+          {/* 추가 네이티브 광고 공간 - 10번마다 */}
           {currentQuestion % 10 === 5 && (
             <div className="mb-8">
               <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
@@ -331,12 +369,14 @@ export default function TestPage() {
           )}
 
           {/* 질문 카드 */}
-          <QuestionCard
-            question={currentQuestionData}
-            onAnswer={handleAnswer}
-            selectedAnswer={getCurrentAnswer()}
-            className="mb-8"
-          />
+          <div className="min-h-[400px] flex flex-col">
+            <QuestionCard
+              question={currentQuestionData}
+              onAnswer={handleAnswer}
+              selectedAnswer={getCurrentAnswer()}
+              className="mb-8 flex-grow"
+            />
+          </div>
 
           {/* 네비게이션 버튼 */}
           <div className="flex items-center justify-between gap-4">

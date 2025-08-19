@@ -49,12 +49,7 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
 
     const score = parseInt(value);
     
-    // 같은 답변 중복 선택 방지
-    if (lastAnswerRef.current === score) {
-      console.log('동일한 답변 중복 선택 방지:', score);
-      return;
-    }
-
+    // UI 상태 즉시 업데이트
     isProcessingRef.current = true;
     setSelected(score);
     lastAnswerRef.current = score;
@@ -62,10 +57,10 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
     // 작은 딜레이 후 onAnswer 호출
     setTimeout(() => {
       onAnswer(score);
-      // 처리 완료 후 상태 초기화 (더 긴 딜레이)
+      // 처리 완룼 후 상태 초기화
       setTimeout(() => {
         isProcessingRef.current = false;
-      }, 100);
+      }, 200);
     }, 50);
   };
 
@@ -86,8 +81,9 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
         <div className="space-y-3">
           {question.options.map((option, index) => (
             <RadioGroup.Option
-              key={index}
+              key={`${question.id}-${index}-${option.score}`}
               value={option.score.toString()}
+              disabled={isProcessingRef.current}
               className={({ checked, active }) =>
                 `${
                   checked
@@ -95,7 +91,8 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
                     : 'bg-white border-gray-300 hover:bg-pink-25'
                 }
                 ${active ? 'ring-2 ring-offset-2 ring-pink-300' : ''}
-                relative flex cursor-pointer rounded-lg px-5 py-4 border focus:outline-none transition-all duration-200`
+                ${isProcessingRef.current ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}
+                relative flex rounded-lg px-5 py-4 border focus:outline-none transition-all duration-200`
               }
             >
               {({ checked }) => (

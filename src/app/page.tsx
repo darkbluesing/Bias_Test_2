@@ -97,8 +97,8 @@ export default function HomePage() {
           </div>
 
           {/* 테스트 시작 카드 */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 mb-12">
-            <div className="max-w-md mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 mb-12" style={{ minHeight: '280px' }}>
+            <div className="max-w-md mx-auto h-full flex flex-col justify-center">
               <div className="mb-6">
                 <label className="block text-lg font-medium text-gray-700 mb-3">
                   {t.welcome.nameInput}
@@ -122,7 +122,7 @@ export default function HomePage() {
                 loading={isStarting}
                 size="lg"
                 fullWidth
-                className="text-lg py-4"
+                className="text-lg py-4 min-h-[52px]"
               >
                 {t.welcome.startButton}
               </Button>
