@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { RadioGroup } from '@headlessui/react';
 import { Question } from '@/types';
 import { useBiasTestStore } from '@/lib/store';
-import { getTranslation } from '@/lib/i18n';
 
 interface QuestionCardProps {
   question: Question;
@@ -15,65 +14,30 @@ interface QuestionCardProps {
 
 export function QuestionCard({ question, onAnswer, selectedAnswer, className = '' }: QuestionCardProps) {
   const { language } = useBiasTestStore();
-  const t = getTranslation(language);
   
   const [selected, setSelected] = useState<number | undefined>(selectedAnswer);
-  const isProcessingRef = useRef(false);
-  const lastAnswerRef = useRef<number | undefined>(undefined);
-  const lastQuestionIdRef = useRef<number>(question.id);
 
-  // selectedAnswer가 변경될 때마다 로컬 상태 업데이트
+  // selectedAnswer가 변경될 때마다 로컬 상태 동기화
   useEffect(() => {
     setSelected(selectedAnswer);
-    lastAnswerRef.current = selectedAnswer;
   }, [selectedAnswer, question.id]);
 
-  // 질문이 변경될 때 처리 상태 완전 초기화
-  useEffect(() => {
-    if (lastQuestionIdRef.current !== question.id) {
-      console.log(`질문 변경: ${lastQuestionIdRef.current} -> ${question.id}`);
-      isProcessingRef.current = false;
-      lastAnswerRef.current = selectedAnswer;
-      lastQuestionIdRef.current = question.id;
-      setSelected(selectedAnswer); // 질문 변경 시 선택 상태 리셋
-    }
-  }, [question.id, selectedAnswer]);
-
   const handleChange = (value: string) => {
-    console.log('handleChange 호출:', {
-      questionId: question.id,
-      value,
-      isProcessing: isProcessingRef.current,
-      lastAnswer: lastAnswerRef.current,
-      selected: selected
-    });
-
-    // 이미 처리 중이면 중복 방지
-    if (isProcessingRef.current) {
-      console.log('처리 중이므로 중복 호출 방지');
-      return;
-    }
-
     const score = parseInt(value);
     
-    // 동일한 답변 선택 시 중복 방지
-    if (selected === score || lastAnswerRef.current === score) {
-      console.log('동일한 답변 선택 방지:', score);
+    console.log(`📝 QuestionCard ${question.id} 답변 선택: ${score}`);
+
+    // 중복 선택 방지
+    if (selected === score) {
+      console.log('⚠️ 동일한 답변 선택 - 무시');
       return;
     }
     
     // UI 상태 즉시 업데이트
-    isProcessingRef.current = true;
     setSelected(score);
-    lastAnswerRef.current = score;
     
-    // onAnswer 호출 (딜레이 제거)
+    // 상위 컴포넌트로 전달 (중복 방지는 상위에서 처리)
     onAnswer(score);
-    
-    // 처리 완료 후 상태 초기화
-    setTimeout(() => {
-      isProcessingRef.current = false;
-    }, 150);
   };
 
   return (
@@ -95,7 +59,7 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
             <RadioGroup.Option
               key={`${question.id}-${index}-${option.score}`}
               value={option.score.toString()}
-              disabled={isProcessingRef.current}
+              disabled={false}
               className={({ checked, active }) =>
                 `${
                   checked
@@ -103,7 +67,7 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
                     : 'bg-white border-gray-300 hover:bg-pink-25'
                 }
                 ${active ? 'ring-2 ring-offset-2 ring-pink-300' : ''}
-                ${isProcessingRef.current ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}
+                cursor-pointer
                 relative flex rounded-lg px-5 py-4 border focus:outline-none transition-all duration-200`
               }
             >

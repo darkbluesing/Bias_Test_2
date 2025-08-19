@@ -66,62 +66,86 @@ export default function TestPage() {
   const currentQuestionData = questions[currentQuestion];
   const progress = Math.round(((currentQuestion + 1) / questions.length) * 100);
 
-  // 🎯 통합 결과 처리 함수 (중복 로직 완전 제거)
+  // 🎯 통합 결과 처리 함수 (강화된 디버깅)
   const processTestCompletion = async () => {
-    console.log('=== 테스트 완료 처리 시작 ===');
+    console.log('🚀 === 테스트 완료 처리 시작 ===');
     
     try {
-      // 상태 저장 완료 대기
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // 상태 저장 완료를 위한 충분한 대기
+      console.log('⏳ Zustand 상태 업데이트 대기...');
+      await new Promise(resolve => setTimeout(resolve, 300));
       
       // 최신 답변 상태 가져오기
       const latestAnswers = useBiasTestStore.getState().answers;
-      console.log('최종 답변 검증:', {
-        length: latestAnswers.length,
-        validCount: latestAnswers.filter(a => typeof a === 'number').length
+      console.log('📊 최종 답변 상태 검증:', {
+        answersLength: latestAnswers.length,
+        validCount: latestAnswers.filter(a => typeof a === 'number').length,
+        invalidCount: latestAnswers.filter(a => a === undefined || a === null).length,
+        firstFive: latestAnswers.slice(0, 5),
+        lastFive: latestAnswers.slice(-5)
       });
       
-      // 답변 검증
-      if (!Array.isArray(latestAnswers) || latestAnswers.length !== 40) {
-        throw new Error(`답변 배열 오류: ${latestAnswers.length}/40`);
+      // 답변 배열 기본 검증
+      if (!Array.isArray(latestAnswers)) {
+        throw new Error('답변이 배열이 아닙니다');
       }
       
-      const invalidAnswers = latestAnswers.filter(a => a === undefined || a === null);
-      if (invalidAnswers.length > 0) {
-        throw new Error(`미답변 질문 ${invalidAnswers.length}개 존재`);
+      if (latestAnswers.length !== 40) {
+        throw new Error(`답변 배열 길이 오류: ${latestAnswers.length}/40`);
+      }
+      
+      // 미답변 질문 확인
+      const invalidIndices: number[] = [];
+      latestAnswers.forEach((answer, index) => {
+        if (answer === undefined || answer === null) {
+          invalidIndices.push(index + 1);
+        }
+      });
+      
+      if (invalidIndices.length > 0) {
+        console.error('❌ 미답변 질문들:', invalidIndices);
+        throw new Error(`미답변 질문 ${invalidIndices.length}개: ${invalidIndices.slice(0, 10).join(', ')}${invalidIndices.length > 10 ? '...' : ''}`);
       }
       
       // 결과 계산
-      console.log('결과 계산 시작');
+      console.log('🧮 결과 계산 시작...');
       const result = biasCalculator.calculateResult([...latestAnswers], language);
+      console.log('✅ 결과 계산 완료:', {
+        totalScore: result.totalScore,
+        percentage: result.percentage,
+        category: result.category
+      });
+      
       setResult(result);
       
       // 백업 저장
       try {
-        const backupData = { result, userProfile, timestamp: Date.now() };
+        const backupData = { result, userProfile, timestamp: Date.now(), answers: latestAnswers };
         localStorage.setItem('bias-test-result-backup', JSON.stringify(backupData));
+        console.log('💾 백업 저장 완료');
       } catch (storageError) {
-        console.warn('백업 저장 실패:', storageError);
+        console.warn('⚠️ 백업 저장 실패:', storageError);
       }
       
       // 결과 페이지로 이동
-      console.log('결과 페이지로 이동');
-      await new Promise(resolve => setTimeout(resolve, 100));
+      console.log('🎯 결과 페이지로 이동 중...');
+      await new Promise(resolve => setTimeout(resolve, 200));
       window.location.href = '/result';
       
     } catch (error) {
-      console.error('테스트 완료 처리 오류:', error);
-      alert(`테스트 완료 중 오류 발생:\n${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+      console.error('❌ 테스트 완료 처리 오류:', error);
+      console.error('오류 스택:', error instanceof Error ? error.stack : '스택 없음');
+      alert(`테스트 완료 중 오류 발생:\n${error instanceof Error ? error.message : '알 수 없는 오류'}\n\n개발자 도구의 콘솔을 확인해주세요.`);
       setIsProcessing(false);
     }
   };
 
   const handleAnswer = async (score: number) => {
-    console.log(`질문 ${currentQuestion + 1} 답변: ${score}`);
+    console.log(`=== 질문 ${currentQuestion + 1} 답변 처리 시작: ${score} ===`);
     
     // 중복 실행 방지
     if (isProcessing) {
-      console.log('이미 처리 중 - 무시');
+      console.log('❌ 이미 처리 중 - 무시');
       return;
     }
     
@@ -129,21 +153,26 @@ export default function TestPage() {
     
     try {
       // 답변 저장
+      console.log('📝 답변 저장 중...');
       submitAnswer(score);
+      
+      // 상태 업데이트 완료 대기 (Zustand의 비동기 상태 업데이트)
+      await new Promise(resolve => setTimeout(resolve, 50));
       
       // 마지막 질문(40번째)인지 확인
       const isLastQuestion = currentQuestion === questions.length - 1;
+      console.log(`🔍 마지막 질문 여부: ${isLastQuestion} (${currentQuestion + 1}/40)`);
       
       if (isLastQuestion) {
-        console.log('마지막 질문 - 테스트 완료 처리');
+        console.log('🎯 마지막 질문 - 테스트 완료 처리 시작');
         await processTestCompletion();
       } else {
-        console.log('다음 질문으로 이동');
+        console.log('➡️ 다음 질문으로 이동');
         nextQuestion();
         setIsProcessing(false);
       }
     } catch (error) {
-      console.error('답변 처리 오류:', error);
+      console.error('❌ 답변 처리 오류:', error);
       alert('답변 처리 중 오류가 발생했습니다.');
       setIsProcessing(false);
     }
