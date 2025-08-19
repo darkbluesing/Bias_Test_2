@@ -22,18 +22,38 @@ export class BiasCalculator {
         answersLength: answers?.length || 0,
         totalQuestions: this.totalQuestions,
         language,
-        sampleAnswers: answers ? [...(answers.slice(0, 5) || []), '...', ...(answers.slice(-5) || [])] : []
+        answersType: typeof answers,
+        isArray: Array.isArray(answers)
       });
+      
+      if (answers && Array.isArray(answers) && answers.length > 0) {
+        console.log('답변 샘플:', {
+          first5: answers.slice(0, 5),
+          last5: answers.slice(-5),
+          allDefined: answers.every(a => a !== undefined && a !== null),
+          validNumbers: answers.filter(a => typeof a === 'number' && a >= 0 && a <= 3).length
+        });
+      }
     } catch (logError) {
       console.error('로깅 오류:', logError);
     }
 
-    // 입력 검증
+    // 입력 검증 강화
+    if (!answers) {
+      throw new Error('답변 배열이 null 또는 undefined입니다');
+    }
+    
     if (!Array.isArray(answers)) {
+      console.error('답변 타입 오류:', typeof answers, answers);
       throw new Error(`답변이 배열이 아닙니다: ${typeof answers}`);
     }
 
     if (answers.length !== this.totalQuestions) {
+      console.error('답변 개수 오류:', {
+        expected: this.totalQuestions,
+        actual: answers.length,
+        answers: answers
+      });
       throw new Error(`Expected ${this.totalQuestions} answers, got ${answers.length}`);
     }
 
@@ -56,20 +76,40 @@ export class BiasCalculator {
     }
 
     try {
-      const totalScore = answers.reduce((sum, score) => sum + score, 0);
+      // 안전한 점수 계산
+      let totalScore = 0;
+      for (let i = 0; i < answers.length; i++) {
+        const score = answers[i];
+        if (typeof score === 'number' && !isNaN(score) && score >= 0 && score <= 3) {
+          totalScore += score;
+        } else {
+          console.error(`잘못된 점수 값 발견: 질문 ${i + 1}, 점수: ${score}`);
+          throw new Error(`Invalid score at question ${i + 1}: ${score}`);
+        }
+      }
+      
       const percentage = Math.round((totalScore / this.maxScore) * 100);
       
       console.log('점수 계산 결과:', {
         totalScore,
         maxScore: this.maxScore,
-        percentage
+        percentage,
+        isValidPercentage: percentage >= 0 && percentage <= 100
       });
       
+      if (percentage < 0 || percentage > 100 || isNaN(percentage)) {
+        throw new Error(`잘못된 백분율 계산: ${percentage}`);
+      }
+      
       const biasCategory = getBiasCategory(percentage);
-      console.log('편향 카테고리:', biasCategory);
+      console.log('편향 카테고리 가져오기 결과:', biasCategory);
 
       if (!biasCategory) {
         throw new Error(`Failed to determine bias category for percentage: ${percentage}`);
+      }
+      
+      if (!biasCategory.category || !biasCategory.title || !biasCategory.description || !biasCategory.solutions) {
+        throw new Error('불완전한 biasCategory 객체');
       }
 
       const result: TestResult = {
@@ -80,11 +120,19 @@ export class BiasCalculator {
         completedAt: new Date()
       };
 
-      console.log('최종 결과 생성 완료:', result);
+      console.log('최종 결과 생성 완료:', {
+        totalScore: result.totalScore,
+        percentage: result.percentage,
+        category: result.category,
+        hasSolutions: !!result.solutions,
+        completedAt: result.completedAt
+      });
+      
       return result;
 
     } catch (error) {
       console.error('BiasCalculator 내부 오류:', error);
+      console.error('오류 시점의 answers:', answers);
       throw error;
     }
   }

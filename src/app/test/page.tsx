@@ -99,18 +99,56 @@ export default function TestPage() {
         // 마지막 질문은 답변 저장 후 바로 결과 계산 및 이동
         await new Promise(resolve => setTimeout(resolve, 100)); // 상태 저장 대기
         
-        // 최신 answers 가져오기 
-        const latestAnswers = useBiasTestStore.getState().answers;
-        console.log('최종 답변 확인:', latestAnswers.length, latestAnswers.filter(a => a !== undefined).length);
-        
-        // 결과 계산
-        const result = biasCalculator.calculateResult(latestAnswers, language);
-        setResult(result);
-        
-        // 결과 페이지로 직접 이동
-        console.log('결과페이지로 강제 이동');
-        window.location.href = '/result';
-        return;
+        try {
+          // 최신 answers 가져오기 
+          const latestAnswers = useBiasTestStore.getState().answers;
+          console.log('최종 답변 확인:', {
+            length: latestAnswers?.length || 0,
+            validCount: latestAnswers?.filter(a => a !== undefined && a !== null).length || 0,
+            sample: latestAnswers?.slice(0, 5) || []
+          });
+          
+          // 답변 유효성 검증
+          if (!Array.isArray(latestAnswers) || latestAnswers.length !== 40) {
+            throw new Error(`잘못된 answers 배열: length=${latestAnswers?.length || 0}`);
+          }
+          
+          const validAnswers = latestAnswers.filter(a => a !== undefined && a !== null && typeof a === 'number');
+          if (validAnswers.length !== 40) {
+            throw new Error(`유효하지 않은 답변 존재: ${validAnswers.length}/40`);
+          }
+          
+          // 결과 계산 (안전한 방식)
+          console.log('결과 계산 시작...');
+          const result = biasCalculator.calculateResult([...latestAnswers], language);
+          console.log('결과 계산 성공:', result);
+          
+          setResult(result);
+          
+          // localStorage에 백업 저장
+          try {
+            const backupData = {
+              result,
+              userProfile,
+              timestamp: Date.now()
+            };
+            localStorage.setItem('bias-test-result-backup', JSON.stringify(backupData));
+            console.log('백업 데이터 저장 완료');
+          } catch (storageError) {
+            console.warn('localStorage 저장 실패:', storageError);
+          }
+          
+          // 결과 페이지로 직접 이동
+          await new Promise(resolve => setTimeout(resolve, 100));
+          console.log('결과페이지로 이동');
+          window.location.href = '/result';
+          return;
+        } catch (calculationError) {
+          console.error('결과 계산 오류:', calculationError);
+          alert('결과 계산 중 오류가 발생했습니다. \n' + (calculationError instanceof Error ? calculationError.message : '알 수 없는 오류'));
+          setIsProcessing(false);
+          return;
+        }
       } else {
         console.log('다음 질문으로 이동 준비');
         // 일반 문항은 즉시 이동 (딜레이 제거)
@@ -146,12 +184,26 @@ export default function TestPage() {
       if (currentQuestion === questions.length - 1) {
         console.log('Next 버튼: 마지막 질문 - 결과 계산 후 이동');
         
-        const latestAnswers = useBiasTestStore.getState().answers;
-        const result = biasCalculator.calculateResult(latestAnswers, language);
-        setResult(result);
-        
-        window.location.href = '/result';
-        return;
+        try {
+          const latestAnswers = useBiasTestStore.getState().answers;
+          
+          // 유효성 검증
+          if (!Array.isArray(latestAnswers) || latestAnswers.length !== 40) {
+            throw new Error(`Next: 잘못된 answers: length=${latestAnswers?.length || 0}`);
+          }
+          
+          const result = biasCalculator.calculateResult([...latestAnswers], language);
+          setResult(result);
+          
+          await new Promise(resolve => setTimeout(resolve, 100));
+          window.location.href = '/result';
+          return;
+        } catch (nextError) {
+          console.error('Next 버튼 결과 계산 오류:', nextError);
+          alert('결과 처리 중 오류가 발생했습니다.');
+          setIsProcessing(false);
+          return;
+        }
       } else {
         console.log('Next 버튼: 다음 질문으로 이동');
         nextQuestion();

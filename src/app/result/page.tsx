@@ -21,6 +21,17 @@ export default function ResultPage() {
     console.log('userProfile:', userProfile);
     console.log('userProfile.name:', userProfile.name);
     
+    // 안전 검사: result 객체 구조 확인
+    if (result) {
+      console.log('Result 객체 상세 정보:', {
+        totalScore: result.totalScore,
+        percentage: result.percentage,
+        category: result.category,
+        solutions: typeof result.solutions,
+        completedAt: result.completedAt
+      });
+    }
+    
     // localStorage에서 백업 데이터 확인하는 함수
     const tryRecoverFromBackup = (): boolean => {
       if (typeof window !== 'undefined') {
@@ -112,17 +123,50 @@ export default function ResultPage() {
 
   let biasCategory;
   try {
-    biasCategory = getBiasCategory(result.percentage);
-    if (!biasCategory) {
-      throw new Error('편향 카테고리를 찾을 수 없습니다');
+    if (!result || typeof result.percentage !== 'number') {
+      throw new Error('result 또는 percentage가 유효하지 않습니다');
     }
+    
+    console.log('getBiasCategory 호출:', result.percentage);
+    biasCategory = getBiasCategory(result.percentage);
+    console.log('biasCategory 결과:', biasCategory);
+    
+    if (!biasCategory) {
+      throw new Error(`편향 카테고리를 찾을 수 없습니다: ${result.percentage}%`);
+    }
+    
+    // 안전성 검사
+    if (!biasCategory.title || !biasCategory.description || !biasCategory.solutions) {
+      throw new Error('비어있는 biasCategory 필드 발견');
+    }
+    
   } catch (categoryError) {
     console.error('편향 카테고리 오류:', categoryError);
+    // 안전한 fallback 데이터
     biasCategory = {
       category: 'moderate',
-      title: { ko: '오류 발생' },
-      description: { ko: '결과 처리 중 오류가 발생했습니다.' },
-      solutions: { ko: '페이지를 새로고침해주세요.' }
+      range: [41, 60],
+      title: { 
+        ko: '결과 처리 오류',
+        en: 'Result Processing Error',
+        es: 'Error de Procesamiento de Resultado',
+        zh: '结果处理错误',
+        ja: '結果処理エラー'
+      },
+      description: { 
+        ko: '결과 처리 중 오류가 발생했습니다.',
+        en: 'An error occurred while processing results.',
+        es: 'Ocurrió un error al procesar los resultados.',
+        zh: '处理结果时发生错误。',
+        ja: '結果処理中にエラーが発生しました。'
+      },
+      solutions: { 
+        ko: '페이지를 새로고침해주세요.',
+        en: 'Please refresh the page.',
+        es: 'Por favor actualiza la página.',
+        zh: '请刷新页面。',
+        ja: 'ページを更新してください。'
+      }
     };
   }
 
