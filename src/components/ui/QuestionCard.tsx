@@ -20,6 +20,7 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
   const [selected, setSelected] = useState<number | undefined>(selectedAnswer);
   const isProcessingRef = useRef(false);
   const lastAnswerRef = useRef<number | undefined>(undefined);
+  const lastQuestionIdRef = useRef<number>(question.id);
 
   // selectedAnswer가 변경될 때마다 로컬 상태 업데이트
   useEffect(() => {
@@ -27,18 +28,24 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
     lastAnswerRef.current = selectedAnswer;
   }, [selectedAnswer, question.id]);
 
-  // 질문이 변경될 때 처리 상태 초기화
+  // 질문이 변경될 때 처리 상태 완전 초기화
   useEffect(() => {
-    isProcessingRef.current = false;
-    lastAnswerRef.current = selectedAnswer;
-  }, [question.id]);
+    if (lastQuestionIdRef.current !== question.id) {
+      console.log(`질문 변경: ${lastQuestionIdRef.current} -> ${question.id}`);
+      isProcessingRef.current = false;
+      lastAnswerRef.current = selectedAnswer;
+      lastQuestionIdRef.current = question.id;
+      setSelected(selectedAnswer); // 질문 변경 시 선택 상태 리셋
+    }
+  }, [question.id, selectedAnswer]);
 
   const handleChange = (value: string) => {
     console.log('handleChange 호출:', {
       questionId: question.id,
       value,
       isProcessing: isProcessingRef.current,
-      lastAnswer: lastAnswerRef.current
+      lastAnswer: lastAnswerRef.current,
+      selected: selected
     });
 
     // 이미 처리 중이면 중복 방지
@@ -49,23 +56,28 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
 
     const score = parseInt(value);
     
+    // 동일한 답변 선택 시 중복 방지
+    if (selected === score || lastAnswerRef.current === score) {
+      console.log('동일한 답변 선택 방지:', score);
+      return;
+    }
+    
     // UI 상태 즉시 업데이트
     isProcessingRef.current = true;
     setSelected(score);
     lastAnswerRef.current = score;
     
-    // 작은 딜레이 후 onAnswer 호출
+    // onAnswer 호출 (딜레이 제거)
+    onAnswer(score);
+    
+    // 처리 완료 후 상태 초기화
     setTimeout(() => {
-      onAnswer(score);
-      // 처리 완룼 후 상태 초기화
-      setTimeout(() => {
-        isProcessingRef.current = false;
-      }, 200);
-    }, 50);
+      isProcessingRef.current = false;
+    }, 150);
   };
 
   return (
-    <div className={`bg-white rounded-xl shadow-lg p-6 md:p-8 ${className}`}>
+    <div className={`bg-white rounded-xl shadow-lg p-6 md:p-8 ${className}`} style={{ minHeight: '450px' }}>
       <div className="mb-6">
         <div className="flex items-center mb-3">
           <span className="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-pink-100 to-purple-100 text-pink-600 rounded-full text-sm font-bold">

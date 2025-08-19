@@ -20,14 +20,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     children, 
     ...props 
   }, ref) => {
-    const baseClasses = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none';
+    const baseClasses = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none transform-none';
     
     const variants = {
-      primary: 'bg-gradient-to-r from-pink-200 to-purple-200 hover:from-pink-300 hover:to-purple-300 text-gray-700 focus:ring-pink-300 shadow-sm',
-      secondary: 'bg-gradient-to-r from-blue-200 to-cyan-200 hover:from-blue-300 hover:to-cyan-300 text-gray-700 focus:ring-blue-300 shadow-sm',
+      primary: 'bg-gradient-to-r from-pink-200 to-purple-200 hover:from-pink-300 hover:to-purple-300 text-gray-700 focus:ring-pink-300',
+      secondary: 'bg-gradient-to-r from-blue-200 to-cyan-200 hover:from-blue-300 hover:to-cyan-300 text-gray-700 focus:ring-blue-300',
       outline: 'border border-pink-200 bg-white hover:bg-pink-50 text-gray-700 focus:ring-pink-300',
       ghost: 'text-gray-600 hover:text-gray-900 hover:bg-pink-50 focus:ring-pink-300',
-      danger: 'bg-gradient-to-r from-red-200 to-pink-200 hover:from-red-300 hover:to-pink-300 text-gray-700 focus:ring-red-300 shadow-sm'
+      danger: 'bg-gradient-to-r from-red-200 to-pink-200 hover:from-red-300 hover:to-pink-300 text-gray-700 focus:ring-red-300'
     };
     
     const sizes = {

@@ -90,35 +90,38 @@ export default function TestPage() {
       console.log('답변 저장 중...');
       submitAnswer(score);
       
-      // 상태 업데이트를 위해 짧은 대기
-      await new Promise(resolve => setTimeout(resolve, 50));
-      
       // 마지막 질문인지 확인
       const isLastQuestion = currentQuestion === questions.length - 1;
       console.log('마지막 질문 여부:', isLastQuestion, `(${currentQuestion}/${questions.length - 1})`);
       
       if (isLastQuestion) {
-        console.log('마지막 질문 - 테스트 완료 처리 시작');
-        // 마지막 문항이면 상태 업데이트 후 결과 제출
-        try {
-          await handleSubmitTest();
-        } catch (submitError) {
-          console.error('테스트 제출 오류:', submitError);
-          alert('테스트 제출 중 오류가 발생했습니다. 새로고침 후 다시 시도해주세요.');
-          setIsProcessing(false);
-          setIsSubmitting(false);
-        }
+        console.log('** 마지막 질문 - 직접 결과페이지로 이동 **');
+        // 마지막 질문은 답변 저장 후 바로 결과 계산 및 이동
+        await new Promise(resolve => setTimeout(resolve, 100)); // 상태 저장 대기
+        
+        // 최신 answers 가져오기 
+        const latestAnswers = useBiasTestStore.getState().answers;
+        console.log('최종 답변 확인:', latestAnswers.length, latestAnswers.filter(a => a !== undefined).length);
+        
+        // 결과 계산
+        const result = biasCalculator.calculateResult(latestAnswers, language);
+        setResult(result);
+        
+        // 결과 페이지로 직접 이동
+        console.log('결과페이지로 강제 이동');
+        window.location.href = '/result';
+        return;
       } else {
         console.log('다음 질문으로 이동 준비');
-        // 일반 문항은 자동 이동
-        setTimeout(() => {
-          console.log('다음 질문으로 이동');
-          nextQuestion();
-          setIsProcessing(false);
-        }, 300);
+        // 일반 문항은 즉시 이동 (딜레이 제거)
+        console.log('다음 질문으로 즉시 이동');
+        nextQuestion();
+        setIsProcessing(false);
       }
     } catch (error) {
       console.error('handleAnswer 오류:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert('오류가 발생했습니다: ' + errorMessage);
       setIsProcessing(false);
       setIsSubmitting(false);
     }
@@ -139,10 +142,16 @@ export default function TestPage() {
     setIsProcessing(true);
     
     try {
-      // 마지막 문항이면 자동으로 결과 제출
+      // 마지막 문항이면 결과 계산 후 이동
       if (currentQuestion === questions.length - 1) {
-        console.log('Next 버튼: 마지막 질문이므로 제출');
-        await handleSubmitTest();
+        console.log('Next 버튼: 마지막 질문 - 결과 계산 후 이동');
+        
+        const latestAnswers = useBiasTestStore.getState().answers;
+        const result = biasCalculator.calculateResult(latestAnswers, language);
+        setResult(result);
+        
+        window.location.href = '/result';
+        return;
       } else {
         console.log('Next 버튼: 다음 질문으로 이동');
         nextQuestion();
@@ -150,6 +159,8 @@ export default function TestPage() {
       }
     } catch (error) {
       console.error('Next 버튼 오류:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert('오류가 발생했습니다: ' + errorMessage);
       setIsProcessing(false);
     }
   };
@@ -160,12 +171,8 @@ export default function TestPage() {
       return;
     }
     
-    setIsProcessing(true);
-    
-    setTimeout(() => {
-      prevQuestion();
-      setIsProcessing(false);
-    }, 100);
+    // 즉시 이전 질문으로 이동 (딜레이 제거)
+    prevQuestion();
   };
 
   const handleSubmitTest = async () => {
@@ -368,13 +375,13 @@ export default function TestPage() {
             </div>
           )}
 
-          {/* 질문 카드 */}
-          <div className="min-h-[400px] flex flex-col">
+          {/* 질문 카드 - 고정 높이 컨테이너 */}
+          <div className="mb-8" style={{ minHeight: '500px' }}>
             <QuestionCard
               question={currentQuestionData}
               onAnswer={handleAnswer}
               selectedAnswer={getCurrentAnswer()}
-              className="mb-8 flex-grow"
+              className=""
             />
           </div>
 

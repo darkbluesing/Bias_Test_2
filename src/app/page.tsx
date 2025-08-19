@@ -117,15 +117,18 @@ export default function HomePage() {
                 />
               </div>
               
-              <Button
-                onClick={handleStartTest}
-                loading={isStarting}
-                size="lg"
-                fullWidth
-                className="text-lg py-4 min-h-[52px]"
-              >
-                {t.welcome.startButton}
-              </Button>
+              <div className="relative" style={{ height: '60px' }}>
+                <Button
+                  onClick={handleStartTest}
+                  loading={isStarting}
+                  size="lg"
+                  fullWidth
+                  className="text-lg py-4 h-[60px] absolute inset-0"
+                  style={{ transform: 'none', boxShadow: 'none' }}
+                >
+                  {t.welcome.startButton}
+                </Button>
+              </div>
             </div>
           </div>
 
