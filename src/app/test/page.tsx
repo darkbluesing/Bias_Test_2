@@ -116,7 +116,22 @@ export default function TestPage() {
         category: result.category
       });
       
+      // 결과 저장 (여러 방법으로 안전하게)
+      console.log('💾 결과 저장 중...');
       setResult(result);
+      
+      // 상태 저장 완료 대기
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // 저장 확인
+      const savedResult = useBiasTestStore.getState().result;
+      if (!savedResult) {
+        console.error('❌ 결과 저장 실패 - 재시도');
+        setResult(result);
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+      
+      console.log('✅ 결과 저장 확인:', !!useBiasTestStore.getState().result);
       
       // 백업 저장
       try {
@@ -129,6 +144,10 @@ export default function TestPage() {
       
       // 결과 페이지로 이동
       console.log('🎯 결과 페이지로 이동 중...');
+      
+      // 테스트 완료 플래그 설정 (직접 접근 방지용)
+      sessionStorage.setItem('test-completed', 'true');
+      
       await new Promise(resolve => setTimeout(resolve, 200));
       window.location.href = '/result';
       

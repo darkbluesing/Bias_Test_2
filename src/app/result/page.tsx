@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useBiasTestStore } from '@/lib/store';
 import { getTranslation } from '@/lib/i18n';
@@ -14,12 +14,27 @@ export default function ResultPage() {
   const router = useRouter();
   const { result, userProfile, language, resetTest } = useBiasTestStore();
   const t = getTranslation(language);
+  
+  // 직접 접근 방지를 위한 플래그
+  const [isDirectAccess, setIsDirectAccess] = useState(false);
 
   useEffect(() => {
-    console.log('=== Result Page 접근 로그 ===');
-    console.log('result:', result);
-    console.log('userProfile:', userProfile);
-    console.log('userProfile.name:', userProfile.name);
+    console.log('🏁 === Result Page 접근 로그 ===');
+    console.log('📊 result:', result);
+    console.log('👤 userProfile:', userProfile);
+    console.log('🔑 userProfile.name:', userProfile.name);
+    
+    // 직접 URL 접근 감지 (referrer 확인)
+    const isDirectUrlAccess = !document.referrer.includes('/test') && 
+                              !sessionStorage.getItem('test-completed');
+    
+    if (isDirectUrlAccess && !result) {
+      console.log('🚫 직접 URL 접근 감지 - 테스트 페이지로 리다이렉트');
+      setIsDirectAccess(true);
+      alert('테스트를 먼저 완료해주세요.');
+      router.push('/');
+      return;
+    }
     
     // 안전 검사: result 객체 구조 확인
     if (result) {
@@ -69,39 +84,34 @@ export default function ResultPage() {
     };
     
     if (!result) {
-      console.error('result가 없음 - 백업 복구 시도');
+      console.error('❌ result가 없음 - 백업 복구 시도');
       
-      // 1차 시도: 즉시 백업 복구
-      const recovered = tryRecoverFromBackup();
+      // 무한 루프 방지를 위한 플래그 확인
+      const recoveryAttempted = sessionStorage.getItem('recovery-attempted');
       
-      if (!recovered) {
-        console.log('백업 복구 실패 - 잠깐 대기 후 재시도');
-        // 2차 시도: 잠깐 대기 후 다시 확인
-        setTimeout(() => {
-          const currentResult = useBiasTestStore.getState().result;
-          console.log('대기 후 result 상태:', currentResult);
-          
-          if (!currentResult) {
-            // 3차 시도: 백업 복구 재시도
-            const finalRecovery = tryRecoverFromBackup();
-            
-            if (!finalRecovery) {
-              console.error('모든 복구 시도 실패 - 메인페이지로 이동');
-              alert('테스트 결과를 불러올 수 없습니다.\\n페이지를 새로고침하거나 테스트를 다시 진행해주세요.');
-              router.push('/');
-            } else {
-              console.log('최종 백업 복구 성공');
-              // 페이지 새로고침으로 상태 동기화
-              window.location.reload();
-            }
-          }
-        }, 1000);
-      } else {
-        console.log('백업 복구 성공 - 페이지 새로고침');
-        // 복구 성공 시 페이지 새로고침
-        setTimeout(() => {
+      if (!recoveryAttempted) {
+        console.log('🔄 첫 번째 백업 복구 시도');
+        sessionStorage.setItem('recovery-attempted', 'true');
+        
+        // 백업 복구 시도
+        const recovered = tryRecoverFromBackup();
+        
+        if (!recovered) {
+          console.error('💥 백업 복구 실패 - 메인페이지로 이동');
+          sessionStorage.removeItem('recovery-attempted');
+          alert('테스트 결과를 불러올 수 없습니다.\n다시 테스트를 진행해주세요.');
+          router.push('/');
+        } else {
+          console.log('✅ 백업 복구 성공 - 상태 갱신');
+          // 페이지 새로고침 대신 상태 강제 갱신
+          sessionStorage.removeItem('recovery-attempted');
           window.location.reload();
-        }, 100);
+        }
+      } else {
+        console.error('🚫 복구 시도 이미 완료 - 메인페이지로 강제 이동');
+        sessionStorage.removeItem('recovery-attempted');
+        alert('테스트 결과를 불러올 수 없습니다.\n다시 테스트를 진행해주세요.');
+        router.push('/');
       }
       return;
     }
