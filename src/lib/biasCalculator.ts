@@ -117,7 +117,7 @@ export class BiasCalculator {
         percentage,
         category: biasCategory.category,
         solutions: biasCategory.solutions,
-        completedAt: new Date()
+        completedAt: new Date().toISOString() // ISO string으로 저장하여 직렬화 문제 해결
       };
 
       console.log('최종 결과 생성 완료:', {

@@ -115,54 +115,10 @@ export default function ResultPage() {
     );
   }
 
-  let biasCategory;
-  try {
-    if (!result || typeof result.percentage !== 'number') {
-      throw new Error('result 또는 percentage가 유효하지 않습니다');
-    }
-    
-    console.log('getBiasCategory 호출:', result.percentage);
-    biasCategory = getBiasCategory(result.percentage);
-    console.log('biasCategory 결과:', biasCategory);
-    
-    if (!biasCategory) {
-      throw new Error(`편향 카테고리를 찾을 수 없습니다: ${result.percentage}%`);
-    }
-    
-    // 안전성 검사
-    if (!biasCategory.title || !biasCategory.description || !biasCategory.solutions) {
-      throw new Error('비어있는 biasCategory 필드 발견');
-    }
-    
-  } catch (categoryError) {
-    console.error('편향 카테고리 오류:', categoryError);
-    // 안전한 fallback 데이터
-    biasCategory = {
-      category: 'moderate',
-      range: [41, 60],
-      title: { 
-        ko: '결과 처리 오류',
-        en: 'Result Processing Error',
-        es: 'Error de Procesamiento de Resultado',
-        zh: '结果处理错误',
-        ja: '結果処理エラー'
-      },
-      description: { 
-        ko: '결과 처리 중 오류가 발생했습니다.',
-        en: 'An error occurred while processing results.',
-        es: 'Ocurrió un error al procesar los resultados.',
-        zh: '处理结果时发生错误。',
-        ja: '結果処理中にエラーが発生しました。'
-      },
-      solutions: { 
-        ko: '페이지를 새로고침해주세요.',
-        en: 'Please refresh the page.',
-        es: 'Por favor actualiza la página.',
-        zh: '请刷新页面。',
-        ja: 'ページを更新してください。'
-      }
-    };
-  }
+  // getBiasCategory는 항상 fallback을 반환하므로 단순하게 처리
+  console.log('getBiasCategory 호출:', result.percentage);
+  const biasCategory = getBiasCategory(result.percentage);
+  console.log('biasCategory 결과:', biasCategory);
 
   const handleRetakeTest = () => {
     resetTest();
@@ -183,7 +139,7 @@ export default function ResultPage() {
                 {t.result.title}
               </h1>
               <p className="text-sm text-gray-600">
-                {userProfile.name}님의 결과
+                {userProfile.name || '사용자'}님의 결과
               </p>
             </div>
           </div>
@@ -288,7 +244,7 @@ export default function ResultPage() {
 
             {/* 완료 시간 */}
             <div className="text-center text-sm text-gray-500">
-              <p>테스트 완료: {result.completedAt.toLocaleDateString()}</p>
+              <p>테스트 완료: {new Date(result.completedAt).toLocaleDateString()}</p>
             </div>
           </div>
 

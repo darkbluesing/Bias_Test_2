@@ -21,7 +21,6 @@ export default function TestPage() {
   
   const {
     currentQuestion,
-    answers,
     language,
     userProfile,
     nextQuestion,
@@ -49,7 +48,7 @@ export default function TestPage() {
       }
       return;
     }
-  }, [isHydrated, userProfile.name, router]);
+  }, [isHydrated, userProfile, router]);
 
   // Hydration이 완료되지 않았으면 로딩 화면 표시
   if (!isHydrated) {
@@ -64,7 +63,6 @@ export default function TestPage() {
   }
 
   const currentQuestionData = questions[currentQuestion];
-  const progress = Math.round(((currentQuestion + 1) / questions.length) * 100);
 
   // 🎯 통합 결과 처리 함수 (강화된 디버깅)
   const processTestCompletion = async () => {

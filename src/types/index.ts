@@ -46,7 +46,7 @@ export interface TestResult {
     zh: string;
     ja: string;
   };
-  completedAt: Date;
+  completedAt: string; // ISO string으로 변경하여 직렬화 문제 해결
 }
 
 export interface BiasTestState {

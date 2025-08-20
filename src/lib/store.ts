@@ -60,7 +60,7 @@ export const useBiasTestStore = create<BiasTestStore>()(
           currentQuestion: state.currentQuestion,
           answerScore,
           currentAnswersLength: state.answers.length,
-          currentAnswers: state.answers.slice(0, 5) + '...' + state.answers.slice(-5) // 로그 단축
+          currentAnswers: `${state.answers.slice(0, 5).join(',')}...${state.answers.slice(-5).join(',')}` // 안전한 문자열 연결
         });
         
         // answers 배열을 40개로 초기화 (이전에 초기화되지 않았다면)
