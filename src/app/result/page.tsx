@@ -27,6 +27,20 @@ export default function ResultPage() {
     
     const initializePage = async () => {
       try {
+        // 디버깅을 위한 상세 로깅
+        console.log('🔍 Result page initialization debug:', {
+          result: result ? { 
+            percentage: result.percentage, 
+            totalScore: result.totalScore, 
+            category: result.category,
+            completedAt: result.completedAt,
+            completedAtType: typeof result.completedAt
+          } : null,
+          userProfileName: userProfile.name,
+          windowType: typeof window,
+          sessionStorageCompleted: typeof window !== 'undefined' ? sessionStorage.getItem('test-completed') : 'unavailable'
+        });
+        
         // 1. 결과 데이터가 있으면 즉시 표시
         if (result && result.percentage !== undefined) {
           console.log('✅ 결과 데이터 존재 - 즉시 표시');
