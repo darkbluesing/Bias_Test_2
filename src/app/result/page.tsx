@@ -15,117 +15,101 @@ export default function ResultPage() {
   const { result, userProfile, language, resetTest } = useBiasTestStore();
   const t = getTranslation(language);
   
-  // 직접 접근 방지를 위한 플래그
-  const [isDirectAccess, setIsDirectAccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
-    console.log('🏁 === Result Page 접근 로그 ===');
-    console.log('📊 result:', result);
-    console.log('👤 userProfile:', userProfile);
-    console.log('🔑 userProfile.name:', userProfile.name);
+    if (hasInitialized) return; // 한 번만 실행
     
-    // 직접 URL 접근 감지 (referrer 확인)
-    const isDirectUrlAccess = !document.referrer.includes('/test') && 
-                              !sessionStorage.getItem('test-completed');
+    console.log('🏁 === Result Page 초기화 시작 ===');
+    console.log('📊 result:', !!result);
+    console.log('👤 userProfile.name:', userProfile.name);
     
-    if (isDirectUrlAccess && !result) {
-      console.log('🚫 직접 URL 접근 감지 - 테스트 페이지로 리다이렉트');
-      setIsDirectAccess(true);
-      alert('테스트를 먼저 완료해주세요.');
-      router.push('/');
-      return;
-    }
-    
-    // 안전 검사: result 객체 구조 확인
-    if (result) {
-      console.log('Result 객체 상세 정보:', {
-        totalScore: result.totalScore,
-        percentage: result.percentage,
-        category: result.category,
-        solutions: typeof result.solutions,
-        completedAt: result.completedAt
-      });
-    }
-    
-    // localStorage에서 백업 데이터 확인하는 함수
-    const tryRecoverFromBackup = (): boolean => {
-      if (typeof window !== 'undefined') {
-        try {
+    const initializePage = async () => {
+      try {
+        // 1. 결과 데이터가 있으면 즉시 표시
+        if (result && result.percentage !== undefined) {
+          console.log('✅ 결과 데이터 존재 - 즉시 표시');
+          setIsLoading(false);
+          setHasInitialized(true);
+          return;
+        }
+        
+        // 2. 결과 데이터가 없으면 백업 복구 시도
+        console.log('⚠️ 결과 데이터 없음 - 백업 복구 시도');
+        
+        if (typeof window !== 'undefined') {
           const backup = localStorage.getItem('bias-test-result-backup');
           if (backup) {
-            const backupData = JSON.parse(backup);
-            console.log('localStorage 백업 데이터 발견:', backupData);
-            
-            // 백업 데이터가 최근 것인지 확인 (30분 이내)
-            const isRecent = Date.now() - backupData.timestamp < 30 * 60 * 1000;
-            if (isRecent && backupData.result && backupData.userProfile) {
-              console.log('백업 데이터로 복구 시도');
+            try {
+              const backupData = JSON.parse(backup);
               
-              // 백업 데이터로 상태 복구
-              const { setResult: storeSetResult, setUserProfile } = useBiasTestStore.getState();
-              storeSetResult(backupData.result);
-              setUserProfile(backupData.userProfile);
-              
-              console.log('백업 데이터로 상태 복구 완료');
-              return true;
-            } else {
-              console.log('백업 데이터가 너무 오래되었거나 유효하지 않음');
+              // 백업 데이터 유효성 확인
+              if (backupData.result && backupData.result.percentage !== undefined) {
+                console.log('💾 백업 데이터로 복구');
+                
+                const { setResult: storeSetResult, setUserProfile } = useBiasTestStore.getState();
+                storeSetResult(backupData.result);
+                if (backupData.userProfile) {
+                  setUserProfile(backupData.userProfile);
+                }
+                
+                setIsLoading(false);
+                setHasInitialized(true);
+                return;
+              }
+            } catch (error) {
+              console.error('백업 데이터 파싱 오류:', error);
               localStorage.removeItem('bias-test-result-backup');
             }
-          } else {
-            console.log('localStorage에 백업 데이터가 없음');
           }
-        } catch (error) {
-          console.error('백업 데이터 처리 오류:', error);
-          localStorage.removeItem('bias-test-result-backup');
         }
-      }
-      return false;
-    };
-    
-    if (!result) {
-      console.error('❌ result가 없음 - 백업 복구 시도');
-      
-      // 무한 루프 방지를 위한 플래그 확인
-      const recoveryAttempted = sessionStorage.getItem('recovery-attempted');
-      
-      if (!recoveryAttempted) {
-        console.log('🔄 첫 번째 백업 복구 시도');
-        sessionStorage.setItem('recovery-attempted', 'true');
         
-        // 백업 복구 시도
-        const recovered = tryRecoverFromBackup();
-        
-        if (!recovered) {
-          console.error('💥 백업 복구 실패 - 메인페이지로 이동');
-          sessionStorage.removeItem('recovery-attempted');
-          alert('테스트 결과를 불러올 수 없습니다.\n다시 테스트를 진행해주세요.');
+        // 3. 복구 실패 시 홈으로 리다이렉트
+        console.log('❌ 복구 실패 - 홈으로 이동');
+        setTimeout(() => {
+          alert('테스트 결과를 찾을 수 없습니다.\n다시 테스트를 진행해주세요.');
           router.push('/');
-        } else {
-          console.log('✅ 백업 복구 성공 - 상태 갱신');
-          // 페이지 새로고침 대신 상태 강제 갱신
-          sessionStorage.removeItem('recovery-attempted');
-          window.location.reload();
-        }
-      } else {
-        console.error('🚫 복구 시도 이미 완료 - 메인페이지로 강제 이동');
-        sessionStorage.removeItem('recovery-attempted');
-        alert('테스트 결과를 불러올 수 없습니다.\n다시 테스트를 진행해주세요.');
+        }, 1000);
+        
+      } catch (error) {
+        console.error('페이지 초기화 오류:', error);
+        alert('오류가 발생했습니다. 다시 테스트를 진행해주세요.');
         router.push('/');
       }
-      return;
-    }
+      
+      setHasInitialized(true);
+    };
     
-    console.log('Result 페이지 정상 로드 완료');
-  }, [result, userProfile.name, router]);
+    initializePage();
+  }, [result, userProfile, router, hasInitialized]);
 
-  if (!result) {
+  // 로딩 상태 표시
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">결과를 불러오는 중...</p>
           <p className="text-sm text-gray-500 mt-2">잠시만 기다려주세요</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 결과 데이터가 없으면 에러 페이지
+  if (!result || result.percentage === undefined) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">결과를 찾을 수 없습니다</h1>
+          <p className="text-gray-600 mb-6">테스트를 다시 진행해주세요.</p>
+          <button 
+            onClick={() => router.push('/')}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            홈으로 가기
+          </button>
         </div>
       </div>
     );
