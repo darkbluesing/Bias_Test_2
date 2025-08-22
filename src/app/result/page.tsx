@@ -6,7 +6,6 @@ import { useBiasTestStore } from '@/lib/store';
 import { getTranslation } from '@/lib/i18n';
 import { getBiasCategory } from '@/data/solutions';
 import { LanguageSelector } from '@/components/ui/LanguageSelector';
-import { Button } from '@/components/ui/Button';
 import { ResultChart } from '@/components/ui/ResultChart';
 import { ShareButton } from '@/components/ui/ShareButton';
 
@@ -173,87 +172,78 @@ export default function ResultPage() {
 
           {/* 결과 메인 섹션 */}
           <div id="result-content" className="space-y-8">
-            {/* 백분율 표시 - 상단 강조 */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                {t.result.yourScore}
-              </h2>
-              
-              <div className="mb-6">
-                <div 
-                  className="text-7xl md:text-8xl font-black mb-4"
-                  style={{ 
-                    background: `linear-gradient(135deg, ${getColorForCategory(result.category)}, ${getColorForCategory(result.category)}88)`,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                  }}
-                >
-                  {result.percentage}%
-                </div>
-                <p className="text-xl text-gray-600 font-medium">
-                  {biasCategory.title[language]}
-                </p>
-              </div>
-            </div>
-
-            {/* 차트 시각화 */}
+            {/* 차트 시각화 - PDF 샘플과 동일한 구조 */}
             <ResultChart 
               percentage={result.percentage} 
-              category={result.category} 
+              category={result.category}
+              userName={userProfile.name}
             />
 
             {/* 분석 결과 */}
             <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">
-                {t.result.analysis}
+                분석 결과
               </h3>
               <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                {biasCategory.description[language]}
+                심각한 편향성이 감지되었습니다. 즉시 전문적인 도움과 체계적인 개선이 필요합니다.
               </p>
-              
-              {/* 점수 세부 정보 */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-gray-900">{result.totalScore}</div>
-                    <div className="text-sm text-gray-600">총 점수</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-gray-900">40</div>
-                    <div className="text-sm text-gray-600">총 질문</div>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* 맞춤 솔루션 */}
             <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-6">
-                {t.result.solutions}
+                맞춤 솔루션
               </h3>
-              <div className="prose prose-lg max-w-none">
-                <div className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {biasCategory.solutions[language]}
+              <div className="text-gray-700 leading-relaxed space-y-3">
+                <div className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  <span>즉시 전문적인 다양성 및 포용성 교육을 받으세요</span>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  <span>심층적인 편견 극복 프로그램에 참여하세요</span>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  <span>자신의 편견이 사회에 미치는 부정적 영향을 인지하게 검토하세요</span>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  <span>다문화 환경에서 자원봉사 활동을 시작하세요</span>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  <span>편견에 대한 책임감을 가지고 적극적으로 변화하려 노력하세요</span>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  <span>정기적인 전문 상담을 받으세요</span>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  <span>포용적인 가치를 실천하는 롤모델을 찾아 배우세요</span>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  <span>일상에서 편견적 행동을 자각하고 즉시 수정하세요</span>
                 </div>
               </div>
             </div>
 
-            {/* 액션 버튼들 */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            {/* 액션 버튼들 - PDF 샘플과 동일한 디자인 */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
               <ShareButton 
                 resultElementId="result-content"
                 percentage={result.percentage}
+                className="px-8 py-3 text-lg shadow-lg"
               />
               
-              <Button
+              <button
                 onClick={handleRetakeTest}
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto"
+                className="inline-flex items-center justify-center px-8 py-3 bg-gray-500 text-white rounded-lg font-medium text-lg hover:bg-gray-600 transition-colors"
               >
-                {t.result.retakeButton}
-              </Button>
+                다시 테스트하기
+              </button>
             </div>
 
             {/* 완료 시간 */}
@@ -319,19 +309,3 @@ export default function ResultPage() {
   );
 }
 
-function getColorForCategory(category: string): string {
-  switch (category) {
-    case 'very_low':
-      return '#10b981'; // green-500
-    case 'low':
-      return '#22c55e'; // green-400
-    case 'moderate':
-      return '#f59e0b'; // amber-500
-    case 'high':
-      return '#f97316'; // orange-500
-    case 'very_high':
-      return '#ef4444'; // red-500
-    default:
-      return '#6b7280'; // gray-500
-  }
-}

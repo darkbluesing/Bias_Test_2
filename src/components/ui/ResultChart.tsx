@@ -1,83 +1,70 @@
 'use client';
 
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 interface ResultChartProps {
   percentage: number;
   category: 'very_low' | 'low' | 'moderate' | 'high' | 'very_high';
+  userName?: string;
   className?: string;
 }
 
-export function ResultChart({ percentage, category, className = '' }: ResultChartProps) {
+export function ResultChart({ percentage, category, userName, className = '' }: ResultChartProps) {
   const remainingPercentage = 100 - percentage;
   
   const pieData = [
-    { name: 'Bias', value: percentage, color: getColorForCategory(category) },
-    { name: 'Remaining', value: remainingPercentage, color: '#e5e7eb' },
-  ];
-
-  const barData = [
-    { name: 'Your Score', value: percentage, color: getColorForCategory(category) }
+    { name: 'Bias', value: percentage },
+    { name: 'Remaining', value: remainingPercentage },
   ];
 
   return (
-    <div className={`bg-white rounded-xl shadow-lg p-6 ${className}`}>
-      {/* 백분율 표시 - 상단 강조 */}
-      <div className="text-center mb-8">
-        <div className="relative inline-block">
-          <div className="text-6xl md:text-7xl font-bold mb-2" style={{ color: getColorForCategory(category) }}>
-            {percentage}%
-          </div>
-          <div className="text-lg text-gray-600 font-medium">
-            편향성 지수
+    <div className={`bg-white rounded-2xl shadow-xl p-8 text-center ${className}`}>
+      {/* 당신의 편향성 지수 제목 */}
+      <h2 className="text-2xl font-bold text-gray-900 mb-8">
+        {userName ? `${userName}님의 편향성 지수` : '당신의 편향성 지수'}
+      </h2>
+      
+      {/* 도넛 차트 */}
+      <div className="relative mb-8">
+        <ResponsiveContainer width="100%" height={280}>
+          <PieChart>
+            <Pie
+              data={pieData}
+              cx="50%"
+              cy="50%"
+              innerRadius={80}
+              outerRadius={120}
+              paddingAngle={2}
+              dataKey="value"
+              startAngle={90}
+              endAngle={450}
+            >
+              <Cell fill={getColorForCategory(category)} />
+              <Cell fill="#e5e7eb" />
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+        
+        {/* 중앙 백분율 표시 */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <div 
+              className="text-5xl md:text-6xl font-black mb-2"
+              style={{ color: getColorForCategory(category) }}
+            >
+              {percentage}%
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 차트 섹션 */}
-      <div className="grid md:grid-cols-2 gap-8 mb-8">
-        {/* 파이 차트 */}
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">전체 비율</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={90}
-                paddingAngle={5}
-                dataKey="value"
-                startAngle={90}
-                endAngle={450}
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => `${value}%`} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* 바 차트 */}
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">점수 분포</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={barData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis domain={[0, 100]} />
-              <Tooltip formatter={(value) => `${value}%`} />
-              <Bar dataKey="value" fill={getColorForCategory(category)} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* 레벨 인디케이터 */}
-      <div className="mb-6">
+      {/* 편향성 범위 바 */}
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          매우 높은 편향성 (81-100%)
+        </h3>
+        
+        {/* 범위 표시 라벨 */}
         <div className="flex justify-between text-xs text-gray-600 mb-2">
           <span>매우 낮음</span>
           <span>낮음</span>
@@ -85,14 +72,11 @@ export function ResultChart({ percentage, category, className = '' }: ResultChar
           <span>높음</span>
           <span>매우 높음</span>
         </div>
-        <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
-          <div className="absolute inset-0 flex">
-            <div className="bg-green-400 h-full" style={{ width: '20%' }} />
-            <div className="bg-green-300 h-full" style={{ width: '20%' }} />
-            <div className="bg-yellow-400 h-full" style={{ width: '20%' }} />
-            <div className="bg-orange-400 h-full" style={{ width: '20%' }} />
-            <div className="bg-red-400 h-full" style={{ width: '20%' }} />
-          </div>
+        
+        {/* 그라데이션 바 */}
+        <div className="relative h-6 rounded-full overflow-hidden" style={{
+          background: 'linear-gradient(to right, #10b981 0%, #22c55e 20%, #f59e0b 40%, #f97316 60%, #ef4444 80%, #dc2626 100%)'
+        }}>
           {/* 현재 위치 표시 */}
           <div
             className="absolute top-0 h-full w-1 bg-gray-800 shadow-lg"
@@ -102,19 +86,17 @@ export function ResultChart({ percentage, category, className = '' }: ResultChar
       </div>
 
       {/* 범례 */}
-      <div className="flex justify-center">
-        <div className="inline-flex items-center space-x-4 text-sm">
-          <div className="flex items-center">
-            <div 
-              className="w-3 h-3 rounded-full mr-2" 
-              style={{ backgroundColor: getColorForCategory(category) }}
-            />
-            <span>편향성</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-gray-300 mr-2" />
-            <span>객관성</span>
-          </div>
+      <div className="flex justify-center space-x-6 text-sm">
+        <div className="flex items-center">
+          <div 
+            className="w-4 h-4 rounded-full mr-2" 
+            style={{ backgroundColor: getColorForCategory(category) }}
+          />
+          <span className="text-gray-700">편향성</span>
+        </div>
+        <div className="flex items-center">
+          <div className="w-4 h-4 rounded-full bg-gray-300 mr-2" />
+          <span className="text-gray-700">객관성</span>
         </div>
       </div>
     </div>

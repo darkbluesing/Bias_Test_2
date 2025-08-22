@@ -9,7 +9,6 @@ import { biasCalculator } from '@/lib/biasCalculator';
 import { useHydration } from '@/lib/useHydration';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { QuestionCard } from '@/components/ui/QuestionCard';
-import { Button } from '@/components/ui/Button';
 import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import { DebugPanel } from '@/components/DebugPanel';
 
@@ -330,35 +329,46 @@ export default function TestPage() {
             />
           </div>
 
-          {/* 네비게이션 버튼 */}
-          <div className="flex items-center justify-between gap-4">
-            <Button
+          {/* 네비게이션 버튼 - PDF 샘플과 동일한 스타일 */}
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <button
               onClick={handlePrevious}
-              variant="outline"
               disabled={currentQuestion === 0 || isProcessing}
-              className="flex-1"
+              className="inline-flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-600 rounded-lg font-medium hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              ← {t.test.previous}
-            </Button>
+              ← 이전
+            </button>
 
             {currentQuestion < questions.length - 1 ? (
-              <Button
+              <button
                 onClick={handleNext}
                 disabled={getCurrentAnswer() === undefined || isProcessing}
-                loading={isProcessing}
-                className="flex-1"
+                className="inline-flex items-center justify-center px-6 py-3 bg-pink-500 text-white rounded-lg font-medium hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {t.test.next} →
-              </Button>
+                {isProcessing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    처리 중...
+                  </>
+                ) : (
+                  <>다음 →</>
+                )}
+              </button>
             ) : (
-              <Button
+              <button
                 onClick={handleSubmitTest}
-                loading={isProcessing}
                 disabled={!isTestCompleted() || isProcessing}
-                className="flex-1"
+                className="inline-flex items-center justify-center px-6 py-3 bg-pink-500 text-white rounded-lg font-medium hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {t.test.submit}
-              </Button>
+                {isProcessing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    완료 처리 중...
+                  </>
+                ) : (
+                  '테스트 완료'
+                )}
+              </button>
             )}
           </div>
 

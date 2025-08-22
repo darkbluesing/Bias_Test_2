@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { RadioGroup } from '@headlessui/react';
 import { Question } from '@/types';
 import { useBiasTestStore } from '@/lib/store';
 
@@ -22,9 +21,7 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
     setSelected(selectedAnswer);
   }, [selectedAnswer, question.id]);
 
-  const handleChange = (value: string) => {
-    const score = parseInt(value);
-    
+  const handleOptionClick = (score: number) => {
     console.log(`📝 QuestionCard ${question.id} 답변 선택: ${score}`);
 
     // 중복 선택 방지
@@ -41,67 +38,52 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
   };
 
   return (
-    <div className={`bg-white rounded-xl shadow-lg p-6 md:p-8 ${className}`} style={{ minHeight: '450px' }}>
-      <div className="mb-6">
-        <div className="flex items-center mb-3">
-          <span className="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-pink-100 to-purple-100 text-pink-600 rounded-full text-sm font-bold">
+    <div className={`bg-white rounded-xl shadow-lg p-8 ${className}`} style={{ minHeight: '500px' }}>
+      {/* 광고 공간 - 상단 */}
+      <div className="mb-8">
+        <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm">
+          광고 공간 (728x90 / 320x50)
+        </div>
+      </div>
+
+      {/* 질문 번호와 제목 */}
+      <div className="mb-8 text-center">
+        <div className="flex items-center justify-center mb-4">
+          <span className="inline-flex items-center justify-center w-10 h-10 bg-pink-100 text-pink-600 rounded-full text-lg font-bold">
             {question.id}
           </span>
         </div>
-        <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 leading-relaxed">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900 leading-relaxed">
           {question.text[language]}
         </h2>
       </div>
 
-      <RadioGroup value={selected?.toString() || ''} onChange={handleChange}>
-        <div className="space-y-3">
-          {question.options.map((option, index) => (
-            <RadioGroup.Option
-              key={`${question.id}-${index}-${option.score}`}
-              value={option.score.toString()}
-              disabled={false}
-              className={({ checked, active }) =>
-                `${
-                  checked
-                    ? 'bg-gradient-to-r from-pink-50 to-purple-50 border-pink-200 ring-2 ring-pink-300'
-                    : 'bg-white border-gray-300 hover:bg-pink-25'
-                }
-                ${active ? 'ring-2 ring-offset-2 ring-pink-300' : ''}
-                cursor-pointer
-                relative flex rounded-lg px-5 py-4 border focus:outline-none transition-all duration-200`
+      {/* 선택지 버튼들 - PDF 샘플과 동일한 스타일 */}
+      <div className="space-y-4 mb-8">
+        {question.options.map((option, index) => (
+          <button
+            key={`${question.id}-${index}-${option.score}`}
+            onClick={() => handleOptionClick(option.score)}
+            className={`
+              w-full p-6 rounded-xl border-2 text-left font-medium text-lg transition-all duration-200
+              ${
+                selected === option.score
+                  ? 'bg-blue-50 border-blue-300 text-blue-800 shadow-md'
+                  : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300'
               }
-            >
-              {({ checked }) => (
-                <div className="flex w-full items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="text-sm">
-                      <RadioGroup.Label
-                        as="p"
-                        className={`font-medium ${
-                          checked ? 'text-pink-800' : 'text-gray-900'
-                        }`}
-                      >
-                        {option.text[language]}
-                      </RadioGroup.Label>
-                    </div>
-                  </div>
-                  {checked && (
-                    <div className="shrink-0 text-pink-600">
-                      <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-              )}
-            </RadioGroup.Option>
-          ))}
+            `}
+          >
+            {option.text[language]}
+          </button>
+        ))}
+      </div>
+
+      {/* 광고 공간 - 하단 */}
+      <div className="mt-8">
+        <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm">
+          광고 공간 (728x90 / 320x50)
         </div>
-      </RadioGroup>
+      </div>
     </div>
   );
 }
