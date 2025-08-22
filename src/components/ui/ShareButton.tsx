@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import html2canvas from 'html2canvas';
-import { saveAs } from 'file-saver';
 
 interface ShareButtonProps {
   resultElementId: string;
@@ -20,7 +19,8 @@ export function ShareButton({ resultElementId, percentage, className = '' }: Sha
     try {
       const element = document.getElementById(resultElementId);
       if (!element) {
-        throw new Error('결과 요소를 찾을 수 없습니다.');
+        console.error('결과 요소를 찾을 수 없습니다.');
+        return;
       }
 
       // 불필요한 요소들을 숨김 (광고, 공유 버튼 등)
@@ -29,32 +29,22 @@ export function ShareButton({ resultElementId, percentage, className = '' }: Sha
         (el as HTMLElement).style.display = 'none';
       });
 
-      // 캡처 옵션 설정 - PDF 샘플 크기에 맞춰서 조정
+      // 캡처 옵션 설정 - 단순화
       const canvas = await html2canvas(element, {
-        backgroundColor: '#f9fafb', // 배경색을 회색으로 설정
-        scale: 2, // 고화질
-        width: 400, // A4 비율에 맞춰 조정
-        height: 600,
-        useCORS: true,
-        allowTaint: true,
-        scrollX: 0,
-        scrollY: 0,
-        removeContainer: true,
+        backgroundColor: '#ffffff',
+        scale: 2,
+        logging: false,
+        useCORS: true
       });
 
-      // 워터마크 추가
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.font = '14px Arial';
-        ctx.fillStyle = '#666666';
-        ctx.textAlign = 'center';
-        ctx.fillText('광고 공간 (728x90 / 320x50)', canvas.width / 2, canvas.height - 20);
-      }
-
-      // 이미지 다운로드
+      // 이미지 다운로드 - 단순화
       canvas.toBlob((blob) => {
         if (blob) {
-          saveAs(blob, `편견테스트-결과-${percentage}%.png`);
+          const link = document.createElement('a');
+          link.download = `편견테스트-결과-${percentage}%.png`;
+          link.href = URL.createObjectURL(blob);
+          link.click();
+          URL.revokeObjectURL(link.href);
         }
       }, 'image/png');
 
@@ -65,7 +55,7 @@ export function ShareButton({ resultElementId, percentage, className = '' }: Sha
 
     } catch (error) {
       console.error('이미지 생성 오류:', error);
-      alert('이미지 생성 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      // 에러 팝업 완전 제거 - 조용히 실패
     } finally {
       setIsGenerating(false);
     }

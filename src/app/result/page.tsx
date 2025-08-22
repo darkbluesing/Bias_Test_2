@@ -6,7 +6,6 @@ import { useBiasTestStore } from '@/lib/store';
 import { getTranslation } from '@/lib/i18n';
 import { getBiasCategory } from '@/data/solutions';
 import { LanguageSelector } from '@/components/ui/LanguageSelector';
-import { ResultChart } from '@/components/ui/ResultChart';
 import { ShareButton } from '@/components/ui/ShareButton';
 
 export default function ResultPage() {
@@ -138,6 +137,23 @@ export default function ResultPage() {
     router.push('/');
   };
 
+  const getColorForCategory = (category: string): string => {
+    switch (category) {
+      case 'very_low':
+        return '#10b981'; // green-500
+      case 'low':
+        return '#22c55e'; // green-400
+      case 'moderate':
+        return '#f59e0b'; // amber-500
+      case 'high':
+        return '#f97316'; // orange-500
+      case 'very_high':
+        return '#ef4444'; // red-500
+      default:
+        return '#6b7280'; // gray-500
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50" style={{ minHeight: '100vh' }}>
       {/* 헤더 */}
@@ -162,35 +178,84 @@ export default function ResultPage() {
 
       {/* 메인 컨텐츠 */}
       <main className="px-4 py-8">
-        <div className="max-w-mobile mx-auto" style={{ minHeight: '60vh' }}>
-          {/* 광고 공간 - 상단 */}
-          <div className="mb-8" data-hide-in-export="true">
+        <div className="max-w-mobile mx-auto">
+          {/* 광고 공간 - 상단 (컨테이너 외부) */}
+          <div className="mb-6" data-hide-in-export="true">
             <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
               광고 공간 (728x90 / 320x50)
             </div>
           </div>
 
-          {/* 결과 메인 섹션 */}
-          <div id="result-content" className="space-y-8">
-            {/* 차트 시각화 - PDF 샘플과 동일한 구조 */}
-            <ResultChart 
-              percentage={result.percentage} 
-              category={result.category}
-              userName={userProfile.name}
-            />
+          {/* 결과 메인 컨테이너 - 모든 요소를 하나의 흰색 컨테이너에 통합 */}
+          <div id="result-content" className="bg-white rounded-xl shadow-lg p-6" style={{ minHeight: '400px' }}>
+            {/* 사용자 이름과 편향성 지수 제목 */}
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-8">
+                {userProfile.name ? `${userProfile.name}님의 편향성 지수` : '당신의 편향성 지수'}
+              </h2>
+            </div>
+            
+            {/* 도넛 차트 영역 */}
+            <div className="text-center mb-8">
+              <div 
+                className="text-6xl font-black mb-4"
+                style={{ color: getColorForCategory(result.category) }}
+              >
+                {result.percentage}%
+              </div>
+            </div>
+
+            {/* 편향성 범위 바 */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+                매우 높은 편향성 (81-100%)
+              </h3>
+              
+              <div className="flex justify-between text-xs text-gray-600 mb-2">
+                <span>매우 낮음</span>
+                <span>낮음</span>
+                <span>보통</span>
+                <span>높음</span>
+                <span>매우 높음</span>
+              </div>
+              
+              <div className="relative h-6 rounded-full overflow-hidden" style={{
+                background: 'linear-gradient(to right, #10b981 0%, #22c55e 20%, #f59e0b 40%, #f97316 60%, #ef4444 80%, #dc2626 100%)'
+              }}>
+                <div
+                  className="absolute top-0 h-full w-1 bg-gray-800 shadow-lg"
+                  style={{ left: `${result.percentage}%`, transform: 'translateX(-50%)' }}
+                />
+              </div>
+              
+              {/* 범례 */}
+              <div className="flex justify-center space-x-6 text-sm mt-4">
+                <div className="flex items-center">
+                  <div 
+                    className="w-4 h-4 rounded-full mr-2" 
+                    style={{ backgroundColor: getColorForCategory(result.category) }}
+                  />
+                  <span className="text-gray-700">편향성</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-4 h-4 rounded-full bg-gray-300 mr-2" />
+                  <span className="text-gray-700">객관성</span>
+                </div>
+              </div>
+            </div>
 
             {/* 분석 결과 */}
-            <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
+            <div className="mb-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">
                 분석 결과
               </h3>
-              <p className="text-lg text-gray-700 leading-relaxed mb-6">
+              <p className="text-lg text-gray-700 leading-relaxed">
                 심각한 편향성이 감지되었습니다. 즉시 전문적인 도움과 체계적인 개선이 필요합니다.
               </p>
             </div>
 
             {/* 맞춤 솔루션 */}
-            <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
+            <div>
               <h3 className="text-xl font-bold text-gray-900 mb-6">
                 맞춤 솔루션
               </h3>
@@ -229,67 +294,29 @@ export default function ResultPage() {
                 </div>
               </div>
             </div>
-
-            {/* 액션 버튼들 - PDF 샘플과 동일한 디자인 */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-              <ShareButton 
-                resultElementId="result-content"
-                percentage={result.percentage}
-                className="px-8 py-3 text-lg shadow-lg"
-              />
-              
-              <button
-                onClick={handleRetakeTest}
-                className="inline-flex items-center justify-center px-8 py-3 bg-gray-500 text-white rounded-lg font-medium text-lg hover:bg-gray-600 transition-colors"
-              >
-                다시 테스트하기
-              </button>
-            </div>
-
-            {/* 완료 시간 */}
-            <div className="text-center text-sm text-gray-500">
-              <p>테스트 완료: {new Date(result.completedAt).toLocaleDateString()}</p>
-            </div>
           </div>
 
-
-          {/* 광고 공간 - 하단 */}
-          <div className="mt-12" data-hide-in-export="true">
+          {/* 광고 공간 - 하단 (컨테이너 외부) */}
+          <div className="mt-6" data-hide-in-export="true">
             <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
-              하단 광고 공간 (728x90 / 320x50)
+              광고 공간 (728x90 / 320x50)
             </div>
           </div>
 
-          {/* 추가 정보 섹션 */}
-          <div className="mt-12 grid md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                {language === 'ko' ? '테스트에 대해' : language === 'en' ? 'About the Test' : language === 'es' ? 'Acerca del Test' : language === 'zh' ? '关于测试' : 'テストについて'}
-              </h4>
-              <p className="text-gray-700 text-sm leading-relaxed">
-                {language === 'ko' 
-                  ? '이 테스트는 학술적 연구를 바탕으로 설계되었으며, 일상생활에서 무의식적으로 가질 수 있는 편견을 측정합니다. 결과는 개인의 성장과 학습을 위한 목적으로만 사용되어야 합니다.'
-                  : language === 'en'
-                  ? 'This test is designed based on academic research and measures unconscious biases that may occur in daily life. Results should only be used for personal growth and learning purposes.'
-                  : language === 'es'
-                  ? 'Esta prueba está diseñada basándose en investigación académica y mide sesgos inconscientes que pueden ocurrir en la vida diaria. Los resultados deben usarse solo para propósitos de crecimiento personal y aprendizaje.'
-                  : language === 'zh'
-                  ? '此测试基于学术研究设计，测量日常生活中可能出现的无意识偏见。结果仅应用于个人成长和学习目的。'
-                  : 'このテストは学術研究に基づいて設計されており、日常生活で無意識に持つ可能性のある偏見を測定します。結果は個人の成長と学習の目的でのみ使用されるべきです。'
-                }
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                {language === 'ko' ? '다음 단계' : language === 'en' ? 'Next Steps' : language === 'es' ? 'Próximos Pasos' : language === 'zh' ? '下一步' : '次のステップ'}
-              </h4>
-              <ul className="text-gray-700 text-sm space-y-2">
-                <li>• {language === 'ko' ? '결과를 친구나 가족과 공유해보세요' : language === 'en' ? 'Share your results with friends and family' : language === 'es' ? 'Comparte tus resultados con amigos y familia' : language === 'zh' ? '与朋友和家人分享您的结果' : '結果を友人や家族と共有してください'}</li>
-                <li>• {language === 'ko' ? '제안된 솔루션을 실천해보세요' : language === 'en' ? 'Try implementing the suggested solutions' : language === 'es' ? 'Intenta implementar las soluciones sugeridas' : language === 'zh' ? '尝试实施建议的解决方案' : '提案されたソリューションを実践してみてください'}</li>
-                <li>• {language === 'ko' ? '6개월 후 다시 테스트해보세요' : language === 'en' ? 'Retake the test after 6 months' : language === 'es' ? 'Vuelve a tomar la prueba después de 6 meses' : language === 'zh' ? '6个月后再次测试' : '6か月後に再度テストしてください'}</li>
-              </ul>
-            </div>
+          {/* 액션 버튼들 - 광고 아래 */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-6">
+            <ShareButton 
+              resultElementId="result-content"
+              percentage={result.percentage}
+              className="px-8 py-3 text-lg shadow-lg"
+            />
+            
+            <button
+              onClick={handleRetakeTest}
+              className="inline-flex items-center justify-center px-8 py-3 bg-gray-500 text-white rounded-lg font-medium text-lg hover:bg-gray-600 transition-colors"
+            >
+              다시 테스트하기
+            </button>
           </div>
         </div>
       </main>
@@ -308,4 +335,3 @@ export default function ResultPage() {
     </div>
   );
 }
-

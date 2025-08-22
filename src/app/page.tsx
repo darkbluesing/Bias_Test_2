@@ -25,6 +25,12 @@ export default function HomePage() {
   }, [isHydrated, setLanguage]);
 
   const handleStartTest = async () => {
+    // 중복 실행 방지
+    if (isStarting) {
+      console.log('이미 시작 중 - 무시');
+      return;
+    }
+
     console.log('handleStartTest 호출됨', { name: name.trim() });
     
     if (!name.trim()) {
@@ -39,17 +45,14 @@ export default function HomePage() {
       // 상태 업데이트
       setUserProfile({ name: name.trim() });
       
-      // 상태가 저장될 시간을 더 충분히 확보
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // 상태가 저장될 시간을 충분히 확보
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       console.log('페이지 이동 시작...');
       
-      // router.push 대신 window.location을 사용 (static export에서 더 안정적)
-      if (typeof window !== 'undefined') {
-        window.location.href = '/test';
-      } else {
-        router.push('/test');
-      }
+      // 즉시 이동 - 단일 클릭으로 작동
+      window.location.href = '/test';
+      
     } catch (error) {
       console.error('테스트 시작 중 오류:', error);
       setIsStarting(false);

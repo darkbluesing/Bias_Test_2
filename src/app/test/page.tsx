@@ -310,27 +310,17 @@ export default function TestPage() {
             </div>
           </div>
 
-          {/* 추가 네이티브 광고 공간 - 10번마다 */}
-          {currentQuestion % 10 === 5 && (
-            <div className="mb-8">
-              <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
-                네이티브 광고 공간
-              </div>
-            </div>
-          )}
 
-          {/* 질문 카드 - 고정 높이 컨테이너 */}
-          <div className="mb-8" style={{ minHeight: '500px' }}>
-            <QuestionCard
-              question={currentQuestionData}
-              onAnswer={handleAnswer}
-              selectedAnswer={getCurrentAnswer()}
-              className=""
-            />
-          </div>
+          {/* 질문 카드 */}
+          <QuestionCard
+            question={currentQuestionData}
+            onAnswer={handleAnswer}
+            selectedAnswer={getCurrentAnswer()}
+            className=""
+          />
 
-          {/* 네비게이션 버튼 - PDF 샘플과 동일한 스타일 */}
-          <div className="flex items-center justify-center gap-4 mt-8">
+          {/* 네비게이션 버튼 - 하단 광고 바로 아래 */}
+          <div className="flex items-center justify-center gap-4 mt-6">
             <button
               onClick={handlePrevious}
               disabled={currentQuestion === 0 || isProcessing}
@@ -370,14 +360,6 @@ export default function TestPage() {
                 )}
               </button>
             )}
-          </div>
-
-
-          {/* 광고 공간 - 하단 */}
-          <div className="mt-8">
-            <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm">
-              배너 광고 공간
-            </div>
           </div>
         </div>
       </main>
