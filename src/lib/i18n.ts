@@ -12,13 +12,13 @@ export const translations = {
   ko: {
     // 네비게이션
     nav: {
-      title: '편견 테스트',
+      title: '나의 인종차별적 성향 테스트',
       subtitle: '무의식적 편견을 발견하고 개선해보세요'
     },
     
     // 시작 화면
     welcome: {
-      title: '무의식적 편견 테스트',
+      title: '나의 인종차별적 성향 테스트',
       subtitle: '당신의 숨겨진 편견을 발견하고 더 포용적인 사고를 기르세요',
       description: '이 테스트는 일상에서 무의식적으로 가질 수 있는 편견을 측정합니다. 솔직하게 답변해 주시면 개인맞춤 개선 방안을 제공합니다.',
       startButton: '테스트 시작',
@@ -40,7 +40,7 @@ export const translations = {
     // 결과 화면
     result: {
       title: '테스트 결과',
-      yourScore: '당신의 편향성 지수',
+      yourScore: '무의식적 편견 지수',
       analysis: '분석 결과',
       solutions: '맞춤 솔루션',
       shareButton: '결과 공유하기',
@@ -67,12 +67,12 @@ export const translations = {
   
   en: {
     nav: {
-      title: 'Bias Test',
+      title: 'My Racial Bias Test',
       subtitle: 'Discover and improve unconscious biases'
     },
     
     welcome: {
-      title: 'Unconscious Bias Test',
+      title: 'My Racial Bias Test',
       subtitle: 'Discover your hidden biases and develop more inclusive thinking',
       description: 'This test measures unconscious biases you may have in daily life. Answer honestly and we\'ll provide personalized improvement recommendations.',
       startButton: 'Start Test',
@@ -92,7 +92,7 @@ export const translations = {
     
     result: {
       title: 'Test Results',
-      yourScore: 'Your Bias Index',
+      yourScore: 'Unconscious Bias Index',
       analysis: 'Analysis',
       solutions: 'Personalized Solutions',
       shareButton: 'Share Results',

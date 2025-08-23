@@ -86,51 +86,54 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* 메인 섹션 */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              {t.welcome.title}
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              {t.welcome.subtitle}
-            </p>
-            <p className="text-lg text-gray-700 mb-12 leading-relaxed max-w-2xl mx-auto">
-              {t.welcome.description}
-            </p>
-          </div>
-
-          {/* 테스트 시작 카드 */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 mb-12" style={{ minHeight: '280px' }}>
-            <div className="max-w-md mx-auto h-full flex flex-col justify-center">
-              <div className="mb-6">
-                <label className="block text-lg font-medium text-gray-700 mb-3">
-                  {t.welcome.nameInput}
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder={t.welcome.namePlaceholder}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleStartTest();
-                    }
-                  }}
-                />
+          {/* 확장된 테스트 시작 카드 - 제목/설명 포함 */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 mb-12" style={{ minHeight: '500px' }}>
+            <div className="max-w-2xl mx-auto">
+              {/* 제목과 설명을 카드 내부로 이동 */}
+              <div className="text-center mb-12">
+                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                  {t.welcome.title}
+                </h1>
+                <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
+                  {t.welcome.subtitle}
+                </p>
+                <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+                  {t.welcome.description}
+                </p>
               </div>
-              
-              <div className="relative" style={{ height: '60px' }}>
-                <Button
-                  onClick={handleStartTest}
-                  loading={isStarting}
-                  size="lg"
-                  fullWidth
-                  className="text-lg py-4 h-[60px] absolute inset-0"
-                  style={{ transform: 'none', boxShadow: 'none' }}
-                >
-                  {t.welcome.startButton}
-                </Button>
+
+              {/* 이름 입력 섹션 */}
+              <div className="max-w-md mx-auto">
+                <div className="mb-6">
+                  <label className="block text-lg font-medium text-gray-700 mb-3">
+                    {t.welcome.nameInput}
+                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder={t.welcome.namePlaceholder}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleStartTest();
+                      }
+                    }}
+                  />
+                </div>
+                
+                <div className="relative" style={{ height: '60px' }}>
+                  <Button
+                    onClick={handleStartTest}
+                    loading={isStarting}
+                    size="lg"
+                    fullWidth
+                    className="text-lg py-4 h-[60px] absolute inset-0"
+                    style={{ transform: 'none', boxShadow: 'none' }}
+                  >
+                    {t.welcome.startButton}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

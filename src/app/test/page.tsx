@@ -266,28 +266,8 @@ export default function TestPage() {
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ minHeight: '100vh' }}>
-      {/* 헤더 */}
-      <header className="bg-white shadow-sm px-4 py-4 sticky top-0 z-10">
-        <div className="max-w-mobile mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">B</span>
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-gray-900">
-                {t.nav.title}
-              </h1>
-              <p className="text-sm text-gray-600">
-                {userProfile.name}님의 테스트
-              </p>
-            </div>
-          </div>
-          <LanguageSelector className="w-32" />
-        </div>
-      </header>
-
-      {/* 프로그레스 바 */}
-      <div className="bg-white px-4 py-4 border-b">
+      {/* 프로그레스 바 - 상단 고정 */}
+      <div className="bg-white px-4 py-4 border-b sticky top-0 z-10">
         <div className="max-w-mobile mx-auto">
           <ProgressBar
             current={currentQuestion + 1}

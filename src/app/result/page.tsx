@@ -191,7 +191,7 @@ export default function ResultPage() {
             {/* 사용자 이름과 편향성 지수 제목 */}
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-8">
-                {userProfile.name ? `${userProfile.name}님의 편향성 지수` : '당신의 편향성 지수'}
+                {userProfile.name ? `${userProfile.name}님의 무의식적 편견 지수` : '당신의 무의식적 편견 지수'}
               </h2>
             </div>
             
@@ -206,7 +206,7 @@ export default function ResultPage() {
                       cy="128"
                       r="100"
                       stroke="#e5e7eb"
-                      strokeWidth="20"
+                      strokeWidth="21"
                       fill="transparent"
                       className="opacity-30"
                     />
@@ -216,7 +216,7 @@ export default function ResultPage() {
                       cy="128"
                       r="100"
                       stroke={getColorForCategory(result.category)}
-                      strokeWidth="20"
+                      strokeWidth="21"
                       fill="transparent"
                       strokeDasharray={`${2 * Math.PI * 100}`}
                       strokeDashoffset={`${2 * Math.PI * 100 * (1 - result.percentage / 100)}`}
@@ -239,7 +239,7 @@ export default function ResultPage() {
                       >
                         {result.percentage}%
                       </div>
-                      <div className="text-base text-gray-600 font-medium">편향성 지수</div>
+                      <div className="text-base text-gray-600 font-medium">무의식적 편견</div>
                     </div>
                   </div>
                 </div>
