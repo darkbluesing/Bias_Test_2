@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useBiasTestStore } from '@/lib/store';
 import { getTranslation } from '@/lib/i18n';
 import { getBiasCategory } from '@/data/solutions';
-import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import { ShareButton } from '@/components/ui/ShareButton';
 
 export default function ResultPage() {
@@ -172,7 +171,14 @@ export default function ResultPage() {
               </p>
             </div>
           </div>
-          <LanguageSelector className="w-32" />
+          <a 
+            href="https://www.areyoubiased.life" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm text-blue-600 hover:text-blue-800 underline"
+          >
+            www.areyoubiased.life
+          </a>
         </div>
       </header>
 
@@ -249,15 +255,15 @@ export default function ResultPage() {
             {/* 편향성 범위 바 */}
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
-                매우 높은 편향성 (81-100%)
+                {biasCategory.title[language]}
               </h3>
               
               <div className="flex justify-between text-xs text-gray-600 mb-2">
-                <span>매우 낮음</span>
-                <span>낮음</span>
-                <span>보통</span>
-                <span>높음</span>
-                <span>매우 높음</span>
+                <span>{t.result.veryLow || '매우 낮음'}</span>
+                <span>{t.result.low || '낮음'}</span>
+                <span>{t.result.moderate || '보통'}</span>
+                <span>{t.result.high || '높음'}</span>
+                <span>{t.result.veryHigh || '매우 높음'}</span>
               </div>
               
               <div className="relative h-6 rounded-full overflow-hidden" style={{
@@ -276,11 +282,11 @@ export default function ResultPage() {
                     className="w-4 h-4 rounded-full mr-2" 
                     style={{ backgroundColor: getColorForCategory(result.category) }}
                   />
-                  <span className="text-gray-700">편향성</span>
+                  <span className="text-gray-700">{t.result.biasLabel || '편향성'}</span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-4 h-4 rounded-full bg-gray-300 mr-2" />
-                  <span className="text-gray-700">객관성</span>
+                  <span className="text-gray-700">{t.result.objectivityLabel || '객관성'}</span>
                 </div>
               </div>
             </div>
@@ -288,51 +294,28 @@ export default function ResultPage() {
             {/* 분석 결과 */}
             <div className="mb-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">
-                분석 결과
+                {t.result.analysis}
               </h3>
               <p className="text-lg text-gray-700 leading-relaxed">
-                심각한 편향성이 감지되었습니다. 즉시 전문적인 도움과 체계적인 개선이 필요합니다.
+                {biasCategory.description[language]}
               </p>
             </div>
 
             {/* 맞춤 솔루션 */}
             <div>
               <h3 className="text-xl font-bold text-gray-900 mb-6">
-                맞춤 솔루션
+                {t.result.solutions}
               </h3>
               <div className="text-gray-700 leading-relaxed space-y-3">
-                <div className="flex items-start">
-                  <span className="text-blue-600 mr-2">•</span>
-                  <span>즉시 전문적인 다양성 및 포용성 교육을 받으세요</span>
-                </div>
-                <div className="flex items-start">
-                  <span className="text-blue-600 mr-2">•</span>
-                  <span>심층적인 편견 극복 프로그램에 참여하세요</span>
-                </div>
-                <div className="flex items-start">
-                  <span className="text-blue-600 mr-2">•</span>
-                  <span>자신의 편견이 사회에 미치는 부정적 영향을 인지하게 검토하세요</span>
-                </div>
-                <div className="flex items-start">
-                  <span className="text-blue-600 mr-2">•</span>
-                  <span>다문화 환경에서 자원봉사 활동을 시작하세요</span>
-                </div>
-                <div className="flex items-start">
-                  <span className="text-blue-600 mr-2">•</span>
-                  <span>편견에 대한 책임감을 가지고 적극적으로 변화하려 노력하세요</span>
-                </div>
-                <div className="flex items-start">
-                  <span className="text-blue-600 mr-2">•</span>
-                  <span>정기적인 전문 상담을 받으세요</span>
-                </div>
-                <div className="flex items-start">
-                  <span className="text-blue-600 mr-2">•</span>
-                  <span>포용적인 가치를 실천하는 롤모델을 찾아 배우세요</span>
-                </div>
-                <div className="flex items-start">
-                  <span className="text-blue-600 mr-2">•</span>
-                  <span>일상에서 편견적 행동을 자각하고 즉시 수정하세요</span>
-                </div>
+                {(biasCategory.solutions && Array.isArray(biasCategory.solutions[language]) 
+                  ? biasCategory.solutions[language] 
+                  : t.result.solutionItems || []
+                ).map((solution: string, index: number) => (
+                  <div key={index} className="flex items-start">
+                    <span className="text-blue-600 mr-2">•</span>
+                    <span>{solution}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

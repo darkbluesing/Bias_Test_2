@@ -45,7 +45,27 @@ export const translations = {
       solutions: '맞춤 솔루션',
       shareButton: '결과 공유하기',
       downloadButton: '결과 다운로드',
-      retakeButton: '다시 테스트하기'
+      retakeButton: '다시 테스트하기',
+      // 결과 상세 텍스트
+      biasRange: '편향성 범위',
+      veryLow: '매우 낮음',
+      low: '낮음',
+      moderate: '보통',
+      high: '높음',
+      veryHigh: '매우 높음',
+      biasLabel: '편향성',
+      objectivityLabel: '객관성',
+      analysisText: '심각한 편향성이 감지되었습니다. 즉시 전문적인 도움과 체계적인 개선이 필요합니다.',
+      solutionItems: [
+        '즉시 전문적인 다양성 및 포용성 교육을 받으세요',
+        '심층적인 편견 극복 프로그램에 참여하세요',
+        '자신의 편견이 사회에 미치는 부정적 영향을 인지하게 검토하세요',
+        '다문화 환경에서 자원봉사 활동을 시작하세요',
+        '편견에 대한 책임감을 가지고 적극적으로 변화하려 노력하세요',
+        '정기적인 전문 상담을 받으세요',
+        '포용적인 가치를 실천하는 롤모델을 찾아 배우세요',
+        '일상에서 편견적 행동을 자각하고 즉시 수정하세요'
+      ]
     },
     
     // 공유 기능
@@ -97,7 +117,27 @@ export const translations = {
       solutions: 'Personalized Solutions',
       shareButton: 'Share Results',
       downloadButton: 'Download Results',
-      retakeButton: 'Retake Test'
+      retakeButton: 'Retake Test',
+      // 결과 상세 텍스트
+      biasRange: 'Bias Range',
+      veryLow: 'Very Low',
+      low: 'Low',
+      moderate: 'Moderate',
+      high: 'High',
+      veryHigh: 'Very High',
+      biasLabel: 'Bias',
+      objectivityLabel: 'Objectivity',
+      analysisText: 'Serious bias has been detected. Immediate professional help and systematic improvement are needed.',
+      solutionItems: [
+        'Immediately receive professional diversity and inclusion training',
+        'Participate in in-depth bias reduction programs',
+        'Review and recognize the negative impact of your biases on society',
+        'Start volunteering in multicultural environments',
+        'Take responsibility for biases and actively work to change',
+        'Receive regular professional counseling',
+        'Find and learn from role models who practice inclusive values',
+        'Recognize biased behaviors in daily life and correct them immediately'
+      ]
     },
     
     share: {
@@ -147,7 +187,27 @@ export const translations = {
       solutions: 'Soluciones Personalizadas',
       shareButton: 'Compartir Resultados',
       downloadButton: 'Descargar Resultados',
-      retakeButton: 'Repetir Test'
+      retakeButton: 'Repetir Test',
+      // 결과 상세 텍스트
+      biasRange: 'Rango de Sesgo',
+      veryLow: 'Muy Bajo',
+      low: 'Bajo',
+      moderate: 'Moderado',
+      high: 'Alto',
+      veryHigh: 'Muy Alto',
+      biasLabel: 'Sesgo',
+      objectivityLabel: 'Objetividad',
+      analysisText: 'Se ha detectado un sesgo grave. Se necesita ayuda profesional inmediata y mejora sistemática.',
+      solutionItems: [
+        'Recibe inmediatamente entrenamiento profesional en diversidad e inclusión',
+        'Participa en programas profundos de reducción de sesgos',
+        'Revisa y reconoce el impacto negativo de tus sesgos en la sociedad',
+        'Comienza a hacer voluntariado en ambientes multiculturales',
+        'Toma responsabilidad por los sesgos y trabaja activamente para cambiar',
+        'Recibe asesoramiento profesional regular',
+        'Encuentra y aprende de modelos a seguir que practiquen valores inclusivos',
+        'Reconoce comportamientos sesgados en la vida diaria y corrígelos inmediatamente'
+      ]
     },
     
     share: {
@@ -197,7 +257,27 @@ export const translations = {
       solutions: '个性化解决方案',
       shareButton: '分享结果',
       downloadButton: '下载结果',
-      retakeButton: '重新测试'
+      retakeButton: '重新测试',
+      // 결과 상세 텍스트
+      biasRange: '偏见范围',
+      veryLow: '非常低',
+      low: '低',
+      moderate: '中等',
+      high: '高',
+      veryHigh: '非常高',
+      biasLabel: '偏见',
+      objectivityLabel: '客观性',
+      analysisText: '检测到严重偏见。需要立即专业帮助和系统改进。',
+      solutionItems: [
+        '立即接受专业的多样性和包容性培训',
+        '参与深度偏见减少计划',
+        '审查并认识到您的偏见对社会的负面影响',
+        '开始在多元文化环境中志愿服务',
+        '对偏见承担责任并积极努力改变',
+        '接受定期专业咨询',
+        '寻找并学习实践包容价值观的榜样',
+        '识别日常生活中的偏见行为并立即纠正'
+      ]
     },
     
     share: {
@@ -247,7 +327,27 @@ export const translations = {
       solutions: 'パーソナライズドソリューション',
       shareButton: '結果をシェア',
       downloadButton: '結果をダウンロード',
-      retakeButton: 'テストを再受験'
+      retakeButton: 'テストを再受験',
+      // 결과 상세 텍스트
+      biasRange: 'バイアス範囲',
+      veryLow: '非常に低い',
+      low: '低い',
+      moderate: '普通',
+      high: '高い',
+      veryHigh: '非常に高い',
+      biasLabel: 'バイアス',
+      objectivityLabel: '客観性',
+      analysisText: '深刻なバイアスが検出されました。即座に専門的な助けと体系的な改善が必要です。',
+      solutionItems: [
+        '即座に専門的な多様性と包括性の教育を受けてください',
+        '深層的なバイアス克服プログラムに参加してください',
+        '自分のバイアスが社会に与える負の影響を認識し検討してください',
+        '多文化環境でボランティア活動を始めてください',
+        'バイアスに対する責任感を持ち、積極的に変化しようと努力してください',
+        '定期的な専門カウンセリングを受けてください',
+        '包括的な価値を実践するロールモデルを見つけて学んでください',
+        '日常でバイアス的行動を自覚し、即座に修正してください'
+      ]
     },
     
     share: {
