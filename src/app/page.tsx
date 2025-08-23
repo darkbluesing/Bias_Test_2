@@ -60,7 +60,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-gray-50" style={{ minHeight: '100vh' }}>
       {/* 헤더 */}
       <header className="px-4 py-6">
         <div className="max-w-mobile mx-auto flex items-center justify-between">
@@ -81,7 +81,7 @@ export default function HomePage() {
         <div className="max-w-mobile mx-auto">
           {/* 광고 공간 - 상단 배너 */}
           <div className="mb-12">
-            <div className="bg-gray-100 rounded-lg h-24 flex items-center justify-center text-gray-500 text-sm">
+            <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
               광고 공간 (728x90 / 320x50)
             </div>
           </div>
@@ -137,7 +137,7 @@ export default function HomePage() {
 
           {/* 광고 공간 - 하단 배너 */}
           <div className="mb-8">
-            <div className="bg-gray-100 rounded-lg h-24 flex items-center justify-center text-gray-500 text-sm">
+            <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
               광고 공간 (728x90 / 320x50)
             </div>
           </div>

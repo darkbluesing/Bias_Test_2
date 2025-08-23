@@ -319,6 +319,13 @@ export default function TestPage() {
             className=""
           />
 
+          {/* 광고 공간 - 하단 */}
+          <div className="mt-8 mb-6">
+            <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
+              광고 공간 (728x90 / 320x50)
+            </div>
+          </div>
+
           {/* 네비게이션 버튼 - 하단 광고 바로 아래 */}
           <div className="flex items-center justify-center gap-4 mt-6">
             <button

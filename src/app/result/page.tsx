@@ -187,7 +187,7 @@ export default function ResultPage() {
           </div>
 
           {/* 결과 메인 컨테이너 - 모든 요소를 하나의 흰색 컨테이너에 통합 */}
-          <div id="result-content" className="bg-white rounded-xl shadow-lg p-6" style={{ minHeight: '400px' }}>
+          <div id="result-content" className="bg-white rounded-xl shadow-lg p-8" style={{ minHeight: '600px', maxWidth: '100%' }}>
             {/* 사용자 이름과 편향성 지수 제목 */}
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-8">
@@ -197,11 +197,52 @@ export default function ResultPage() {
             
             {/* 도넛 차트 영역 */}
             <div className="text-center mb-8">
-              <div 
-                className="text-6xl font-black mb-4"
-                style={{ color: getColorForCategory(result.category) }}
-              >
-                {result.percentage}%
+              <div className="flex justify-center mb-4">
+                <div className="relative w-64 h-64">
+                  <svg className="transform -rotate-90 w-64 h-64" viewBox="0 0 256 256">
+                    {/* 배경 원 */}
+                    <circle
+                      cx="128"
+                      cy="128"
+                      r="100"
+                      stroke="#e5e7eb"
+                      strokeWidth="20"
+                      fill="transparent"
+                      className="opacity-30"
+                    />
+                    {/* 진행률 원 */}
+                    <circle
+                      cx="128"
+                      cy="128"
+                      r="100"
+                      stroke={getColorForCategory(result.category)}
+                      strokeWidth="20"
+                      fill="transparent"
+                      strokeDasharray={`${2 * Math.PI * 100}`}
+                      strokeDashoffset={`${2 * Math.PI * 100 * (1 - result.percentage / 100)}`}
+                      className="transition-all duration-2000 ease-out"
+                      strokeLinecap="round"
+                      style={{
+                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
+                      }}
+                    />
+                  </svg>
+                  {/* 중앙 텍스트 */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div 
+                        className="text-5xl font-black mb-2"
+                        style={{ 
+                          color: getColorForCategory(result.category),
+                          textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        }}
+                      >
+                        {result.percentage}%
+                      </div>
+                      <div className="text-base text-gray-600 font-medium">편향성 지수</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 

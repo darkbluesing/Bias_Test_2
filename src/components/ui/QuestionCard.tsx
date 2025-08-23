@@ -39,18 +39,11 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
 
   return (
     <div className={className}>
-      {/* 광고 공간 - 상단 (컨테이너 외부) */}
-      <div className="mb-6">
-        <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm">
-          광고 공간 (728x90 / 320x50)
-        </div>
-      </div>
-
-      {/* 메인 질문 컨테이너 */}
-      <div className="bg-white rounded-xl shadow-lg p-6" style={{ minHeight: '400px' }}>
-        {/* 질문 번호와 제목 */}
-        <div className="mb-6">
-          <div className="flex items-start mb-4">
+      {/* 메인 질문 컨테이너 - 여백 축소 */}
+      <div className="bg-white rounded-xl shadow-lg p-6" style={{ minHeight: '350px' }}>
+        {/* 질문 번호와 제목 - 여백 축소 */}
+        <div className="mb-4">
+          <div className="flex items-start mb-3">
             <span className="inline-flex items-center justify-center w-8 h-8 bg-pink-100 text-pink-600 rounded-full text-base font-bold mr-4 mt-1 flex-shrink-0">
               {question.id}
             </span>
@@ -60,14 +53,14 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
           </div>
         </div>
 
-        {/* 선택지 버튼들 */}
-        <div className="space-y-3">
+        {/* 선택지 버튼들 - 여백 축소 */}
+        <div className="space-y-2">
           {question.options.map((option, index) => (
             <button
               key={`${question.id}-${index}-${option.score}`}
               onClick={() => handleOptionClick(option.score)}
               className={`
-                w-full p-4 rounded-xl border-2 text-left font-medium text-lg transition-all duration-200
+                w-full p-3 rounded-xl border-2 text-left font-medium text-base transition-all duration-200
                 ${
                   selected === option.score
                     ? 'bg-blue-50 border-blue-300 text-blue-800 shadow-md'
@@ -78,13 +71,6 @@ export function QuestionCard({ question, onAnswer, selectedAnswer, className = '
               {option.text[language]}
             </button>
           ))}
-        </div>
-      </div>
-
-      {/* 광고 공간 - 하단 (컨테이너 외부) */}
-      <div className="mt-6">
-        <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm">
-          광고 공간 (728x90 / 320x50)
         </div>
       </div>
     </div>
