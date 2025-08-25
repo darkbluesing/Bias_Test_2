@@ -7,6 +7,21 @@ body {
   color: #1f2937;
 }
 
+/* ResultChart 애니메이션 */
+@keyframes chart-fill {
+  0% {
+    stroke-dashoffset: var(--circumference);
+  }
+  100% {
+    stroke-dashoffset: var(--stroke-dashoffset);
+  }
+}
+
+.chart-progress {
+  animation: chart-fill 2s ease-out forwards;
+  animation-delay: 0.5s;
+}
+
 /* 반응형 최적화 - 모바일 비율 동일화 */
 @media (max-width: 768px) {
   .mobile-padding {

@@ -6,6 +6,7 @@ import { useBiasTestStore } from '@/lib/store';
 import { getTranslation } from '@/lib/i18n';
 import { getBiasCategory } from '@/data/solutions';
 import { ShareButton } from '@/components/ui/ShareButton';
+import { ResultChart } from '@/components/ui/ResultChart';
 
 export default function ResultPage() {
   const router = useRouter();
@@ -136,22 +137,6 @@ export default function ResultPage() {
     router.push('/');
   };
 
-  const getColorForCategory = (category: string): string => {
-    switch (category) {
-      case 'very_low':
-        return '#10b981'; // green-500
-      case 'low':
-        return '#22c55e'; // green-400
-      case 'moderate':
-        return '#f59e0b'; // amber-500
-      case 'high':
-        return '#f97316'; // orange-500
-      case 'very_high':
-        return '#ef4444'; // red-500
-      default:
-        return '#6b7280'; // gray-500
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ minHeight: '100vh' }}>
@@ -192,133 +177,53 @@ export default function ResultPage() {
             </div>
           </div>
 
-          {/* 결과 메인 컨테이너 - 모든 요소를 하나의 흰색 컨테이너에 통합 */}
-          <div id="result-content" className="bg-white rounded-xl shadow-lg p-8" style={{ minHeight: '600px', maxWidth: '100%' }}>
-            {/* 사용자 이름과 편향성 지수 제목 */}
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-8">
-                {userProfile.name ? `${userProfile.name}님의 무의식적 편견 지수` : '당신의 무의식적 편견 지수'}
-              </h2>
-            </div>
+          {/* 결과 메인 컨테이너 - ResultChart 컴포넌트 사용 */}
+          <div id="result-content" className="bg-white rounded-xl shadow-lg" style={{ minHeight: '600px', maxWidth: '100%' }}>
+            <ResultChart
+              percentage={result.percentage}
+              category={result.category}
+              userName={userProfile.name}
+              size="lg"
+              className="shadow-none p-8"
+            />
             
-            {/* 도넛 차트 영역 */}
-            <div className="text-center mb-8">
-              <div className="flex justify-center mb-4">
-                <div className="relative w-64 h-64">
-                  <svg className="transform -rotate-90 w-64 h-64" viewBox="0 0 256 256">
-                    {/* 배경 원 */}
-                    <circle
-                      cx="128"
-                      cy="128"
-                      r="100"
-                      stroke="#e5e7eb"
-                      strokeWidth="21"
-                      fill="transparent"
-                      className="opacity-30"
-                    />
-                    {/* 진행률 원 */}
-                    <circle
-                      cx="128"
-                      cy="128"
-                      r="100"
-                      stroke={getColorForCategory(result.category)}
-                      strokeWidth="21"
-                      fill="transparent"
-                      strokeDasharray={`${2 * Math.PI * 100}`}
-                      strokeDashoffset={`${2 * Math.PI * 100 * (1 - result.percentage / 100)}`}
-                      className="transition-all duration-2000 ease-out"
-                      strokeLinecap="round"
-                      style={{
-                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
-                      }}
-                    />
-                  </svg>
-                  {/* 중앙 텍스트 */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div 
-                        className="text-5xl font-black mb-2"
-                        style={{ 
-                          color: getColorForCategory(result.category),
-                          textShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                        }}
-                      >
-                        {result.percentage}%
+              <div className="px-8 pb-8">
+                {/* 카테고리 제목 표시 */}
+                <div className="text-center mb-8">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {biasCategory.title[language]}
+                  </h3>
+                </div>
+
+                {/* 분석 결과 */}
+                <div className="mb-8">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                    {t.result.analysis}
+                  </h3>
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    {biasCategory.description[language]}
+                  </p>
+                </div>
+
+                {/* 맞춤 솔루션 */}
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-6">
+                    {t.result.solutions}
+                  </h3>
+                  <div className="text-gray-700 leading-relaxed space-y-3">
+                    {(biasCategory.solutions && Array.isArray(biasCategory.solutions[language]) 
+                      ? biasCategory.solutions[language] 
+                      : t.result.solutionItems || []
+                    ).map((solution: string, index: number) => (
+                      <div key={index} className="flex items-start">
+                        <span className="text-blue-600 mr-2">•</span>
+                        <span>{solution}</span>
                       </div>
-                      <div className="text-base text-gray-600 font-medium">무의식적 편견</div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* 편향성 범위 바 */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
-                {biasCategory.title[language]}
-              </h3>
-              
-              <div className="flex justify-between text-xs text-gray-600 mb-2">
-                <span>{t.result.veryLow || '매우 낮음'}</span>
-                <span>{t.result.low || '낮음'}</span>
-                <span>{t.result.moderate || '보통'}</span>
-                <span>{t.result.high || '높음'}</span>
-                <span>{t.result.veryHigh || '매우 높음'}</span>
-              </div>
-              
-              <div className="relative h-6 rounded-full overflow-hidden" style={{
-                background: 'linear-gradient(to right, #10b981 0%, #22c55e 20%, #f59e0b 40%, #f97316 60%, #ef4444 80%, #dc2626 100%)'
-              }}>
-                <div
-                  className="absolute top-0 h-full w-1 bg-gray-800 shadow-lg"
-                  style={{ left: `${result.percentage}%`, transform: 'translateX(-50%)' }}
-                />
-              </div>
-              
-              {/* 범례 */}
-              <div className="flex justify-center space-x-6 text-sm mt-4">
-                <div className="flex items-center">
-                  <div 
-                    className="w-4 h-4 rounded-full mr-2" 
-                    style={{ backgroundColor: getColorForCategory(result.category) }}
-                  />
-                  <span className="text-gray-700">{t.result.biasLabel || '편향성'}</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-4 h-4 rounded-full bg-gray-300 mr-2" />
-                  <span className="text-gray-700">{t.result.objectivityLabel || '객관성'}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 분석 결과 */}
-            <div className="mb-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                {t.result.analysis}
-              </h3>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                {biasCategory.description[language]}
-              </p>
-            </div>
-
-            {/* 맞춤 솔루션 */}
-            <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-6">
-                {t.result.solutions}
-              </h3>
-              <div className="text-gray-700 leading-relaxed space-y-3">
-                {(biasCategory.solutions && Array.isArray(biasCategory.solutions[language]) 
-                  ? biasCategory.solutions[language] 
-                  : t.result.solutionItems || []
-                ).map((solution: string, index: number) => (
-                  <div key={index} className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
-                    <span>{solution}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
 
           {/* 광고 공간 - 하단 (컨테이너 외부) */}
           <div className="mt-6" data-hide-in-export="true">
