@@ -156,29 +156,24 @@ export default function ResultPage() {
               </p>
             </div>
           </div>
-          <a 
-            href="https://www.areyoubiased.life" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-sm text-blue-600 hover:text-blue-800 underline"
-          >
+          <span className="text-sm text-gray-900 font-bold">
             www.areyoubiased.life
-          </a>
+          </span>
         </div>
       </header>
 
       {/* 메인 컨텐츠 */}
       <main className="px-4 py-8">
         <div className="max-w-mobile mx-auto">
-          {/* 광고 공간 - 상단 (컨테이너 외부) */}
-          <div className="mb-6" data-hide-in-export="true">
-            <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
-              광고 공간 (728x90 / 320x50)
-            </div>
-          </div>
-
-          {/* 결과 메인 컨테이너 - ResultChart 컴포넌트 사용 */}
+          {/* 통합된 결과 컨테이너 */}
           <div id="result-content" className="bg-white rounded-xl shadow-lg" style={{ minHeight: '600px', maxWidth: '100%' }}>
+            {/* 광고 공간 - 상단 (컨테이너 내부 상단) */}
+            <div className="p-6 pb-0" data-hide-in-export="true">
+              <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
+                광고 공간 (728x90 / 320x50)
+              </div>
+            </div>
+
             <ResultChart
               percentage={result.percentage}
               category={result.category}
@@ -187,65 +182,66 @@ export default function ResultPage() {
               className="shadow-none p-8"
             />
             
-              <div className="px-8 pb-8">
-                {/* 카테고리 제목 표시 */}
-                <div className="text-center mb-8">
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    {biasCategory.title[language]}
-                  </h3>
-                </div>
+            <div className="px-8 pb-8">
+              {/* 카테고리 제목 표시 */}
+              <div className="text-center mb-8">
+                <h3 className="text-xl font-semibold text-gray-800">
+                  {biasCategory.title[language]}
+                </h3>
+              </div>
 
-                {/* 분석 결과 */}
-                <div className="mb-8">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    {t.result.analysis}
-                  </h3>
-                  <p className="text-lg text-gray-700 leading-relaxed">
-                    {biasCategory.description[language]}
-                  </p>
-                </div>
+              {/* 분석 결과 */}
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  {t.result.analysis}
+                </h3>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  {biasCategory.description[language]}
+                </p>
+              </div>
 
-                {/* 맞춤 솔루션 */}
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-6">
-                    {t.result.solutions}
-                  </h3>
-                  <div className="text-gray-700 leading-relaxed space-y-3">
-                    {(biasCategory.solutions && Array.isArray(biasCategory.solutions[language]) 
-                      ? biasCategory.solutions[language] 
-                      : t.result.solutionItems || []
-                    ).map((solution: string, index: number) => (
-                      <div key={index} className="flex items-start">
-                        <span className="text-blue-600 mr-2">•</span>
-                        <span>{solution}</span>
-                      </div>
-                    ))}
-                  </div>
+              {/* 맞춤 솔루션 */}
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">
+                  {t.result.solutions}
+                </h3>
+                <div className="text-gray-700 leading-relaxed space-y-3">
+                  {(biasCategory.solutions && Array.isArray(biasCategory.solutions[language]) 
+                    ? biasCategory.solutions[language] 
+                    : t.result.solutionItems || []
+                  ).map((solution: string, index: number) => (
+                    <div key={index} className="flex items-start">
+                      <span className="text-blue-600 mr-2">•</span>
+                      <span>{solution}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
 
-          {/* 광고 공간 - 하단 (컨테이너 외부) */}
-          <div className="mt-6" data-hide-in-export="true">
-            <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
-              광고 공간 (728x90 / 320x50)
-            </div>
-          </div>
+              {/* 광고 공간 - 하단 (컨테이너 내부 하단) */}
+              <div className="mb-6" data-hide-in-export="true">
+                <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
+                  광고 공간 (728x90 / 320x50)
+                </div>
+              </div>
 
-          {/* 액션 버튼들 - 광고 아래 */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-6">
-            <ShareButton 
-              resultElementId="result-content"
-              percentage={result.percentage}
-              className="px-8 py-3 text-lg shadow-lg"
-            />
-            
-            <button
-              onClick={handleRetakeTest}
-              className="inline-flex items-center justify-center px-8 py-3 bg-gray-500 text-white rounded-lg font-medium text-lg hover:bg-gray-600 transition-colors"
-            >
-              다시 테스트하기
-            </button>
+              {/* 액션 버튼들 - 컨테이너 내부 하단 */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center" data-hide-in-export="true">
+                <ShareButton 
+                  resultElementId="result-content"
+                  percentage={result.percentage}
+                  className="px-8 py-3 text-lg shadow-lg"
+                  buttonText={t.result.shareButton}
+                />
+                
+                <button
+                  onClick={handleRetakeTest}
+                  className="inline-flex items-center justify-center px-8 py-3 bg-gray-500 text-white rounded-lg font-medium text-lg hover:bg-gray-600 transition-colors"
+                >
+                  {t.result.retakeTest}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </main>

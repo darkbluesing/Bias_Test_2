@@ -22,9 +22,9 @@ export function ResultChart({
   size = 'md'
 }: ResultChartProps) {
   const chartSize = {
-    sm: { width: 200, height: 200, innerRadius: 60, strokeWidth: 20, fontSize: '3xl' },
-    md: { width: 256, height: 256, innerRadius: 80, strokeWidth: 24, fontSize: '4xl' },
-    lg: { width: 320, height: 320, innerRadius: 100, strokeWidth: 32, fontSize: '5xl' }
+    sm: { width: 200, height: 200, innerRadius: 60, strokeWidth: 20, fontSize: '4xl' },
+    md: { width: 256, height: 256, innerRadius: 80, strokeWidth: 24, fontSize: '5xl' },
+    lg: { width: 320, height: 320, innerRadius: 100, strokeWidth: 32, fontSize: '6xl' }
   }[size];
 
   const defaultTitle = userName ? `${userName}님의 무의식적 편견 지수` : '당신의 무의식적 편견 지수';
@@ -94,11 +94,11 @@ export function ResultChart({
             />
           </svg>
           
-          {/* 중앙 텍스트 */}
+          {/* 중앙 텍스트 - %만 표시 */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
               <div 
-                className={`${chartSize.fontSize} font-black mb-2 transition-all duration-1000 ease-out`}
+                className={`${chartSize.fontSize} font-black transition-all duration-1000 ease-out`}
                 style={{ 
                   color,
                   textShadow: '0 2px 4px rgba(0,0,0,0.1)'
@@ -106,7 +106,6 @@ export function ResultChart({
               >
                 {percentage}%
               </div>
-              <div className="text-base text-gray-600 font-medium">무의식적 편견</div>
             </div>
           </div>
         </div>

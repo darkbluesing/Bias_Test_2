@@ -8,9 +8,10 @@ interface ShareButtonProps {
   resultElementId: string;
   percentage: number;
   className?: string;
+  buttonText?: string;
 }
 
-export function ShareButton({ resultElementId, percentage, className = '' }: ShareButtonProps) {
+export function ShareButton({ resultElementId, percentage, className = '', buttonText = '결과 공유하기' }: ShareButtonProps) {
   const [isGenerating, setIsGenerating] = useState(false);
 
   // 폰트 로딩 완료 대기 함수
@@ -116,18 +117,47 @@ export function ShareButton({ resultElementId, percentage, className = '' }: Sha
       console.log('⏳ 폰트 및 렌더링 대기...');
       await waitForFonts();
 
-      // 3. 요소 숨김 처리 (간소화)
+      // 3. SNS용 컴팩트 스타일 적용
       const elementsToHide = element.querySelectorAll('[data-hide-in-export="true"], [data-share-button]');
-      const originalStyles: Map<HTMLElement, string> = new Map();
+      const originalStyles: Map<HTMLElement, {opacity: string, display: string}> = new Map();
+      const textElements = element.querySelectorAll('p, div, span, h1, h2, h3');
+      const originalTextStyles: Map<HTMLElement, {lineHeight: string, marginBottom: string, paddingBottom: string}> = new Map();
       
+      // 광고와 버튼 완전히 숨김
       elementsToHide.forEach(el => {
         const htmlEl = el as HTMLElement;
-        originalStyles.set(htmlEl, htmlEl.style.opacity);
-        htmlEl.style.opacity = '0';
-        htmlEl.style.pointerEvents = 'none';
+        originalStyles.set(htmlEl, {
+          opacity: htmlEl.style.opacity,
+          display: htmlEl.style.display
+        });
+        htmlEl.style.display = 'none';
+      });
+
+      // 텍스트 행간 줄이기 위한 스타일 적용
+      
+      textElements.forEach(el => {
+        const htmlEl = el as HTMLElement;
+        originalTextStyles.set(htmlEl, {
+          lineHeight: htmlEl.style.lineHeight,
+          marginBottom: htmlEl.style.marginBottom,
+          paddingBottom: htmlEl.style.paddingBottom
+        });
+        
+        // 행간 줄이고 여백 압축
+        if (!htmlEl.classList.contains('text-6xl') && !htmlEl.classList.contains('text-5xl')) {
+          htmlEl.style.lineHeight = '1.2';
+          if (htmlEl.style.marginBottom) {
+            const currentMargin = parseInt(htmlEl.style.marginBottom) || 0;
+            htmlEl.style.marginBottom = Math.max(currentMargin * 0.6, 4) + 'px';
+          }
+          if (htmlEl.style.paddingBottom) {
+            const currentPadding = parseInt(htmlEl.style.paddingBottom) || 0;
+            htmlEl.style.paddingBottom = Math.max(currentPadding * 0.6, 2) + 'px';
+          }
+        }
       });
       
-      console.log(`🔧 ${elementsToHide.length}개 요소 숨김 완료`);
+      console.log(`🔧 ${elementsToHide.length}개 요소 숨김, ${textElements.length}개 텍스트 압축 완료`);
 
       // 4. DOM 업데이트 완료 대기
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -201,9 +231,15 @@ export function ShareButton({ resultElementId, percentage, className = '' }: Sha
       }
 
       // 8. 스타일 복원
-      originalStyles.forEach((originalOpacity, el) => {
-        el.style.opacity = originalOpacity;
-        el.style.pointerEvents = '';
+      originalStyles.forEach((styles, el) => {
+        el.style.opacity = styles.opacity;
+        el.style.display = styles.display;
+      });
+
+      originalTextStyles.forEach((styles, el) => {
+        el.style.lineHeight = styles.lineHeight;
+        el.style.marginBottom = styles.marginBottom;
+        el.style.paddingBottom = styles.paddingBottom;
       });
       
       console.log('🎉 이미지 처리 완료!');
@@ -235,7 +271,7 @@ export function ShareButton({ resultElementId, percentage, className = '' }: Sha
       ) : (
         <>
           <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
-          결과 공유하기
+          {buttonText}
         </>
       )}
     </button>

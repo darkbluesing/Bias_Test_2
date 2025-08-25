@@ -45,7 +45,7 @@ export const translations = {
       solutions: '맞춤 솔루션',
       shareButton: '결과 공유하기',
       downloadButton: '결과 다운로드',
-      retakeButton: '다시 테스트하기',
+      retakeTest: '다시 테스트하기',
       // 결과 상세 텍스트
       biasRange: '편향성 범위',
       veryLow: '매우 낮음',
@@ -87,12 +87,12 @@ export const translations = {
   
   en: {
     nav: {
-      title: 'My Racial Bias Test',
+      title: 'My Unconscious Bias Test',
       subtitle: 'Discover and improve unconscious biases'
     },
     
     welcome: {
-      title: 'My Racial Bias Test',
+      title: 'My Unconscious Bias Test',
       subtitle: 'Discover your hidden biases and develop more inclusive thinking',
       description: 'This test measures unconscious biases you may have in daily life. Answer honestly and we\'ll provide personalized improvement recommendations.',
       startButton: 'Start Test',
@@ -117,7 +117,7 @@ export const translations = {
       solutions: 'Personalized Solutions',
       shareButton: 'Share Results',
       downloadButton: 'Download Results',
-      retakeButton: 'Retake Test',
+      retakeTest: 'Retake Test',
       // 결과 상세 텍스트
       biasRange: 'Bias Range',
       veryLow: 'Very Low',
@@ -157,12 +157,12 @@ export const translations = {
   
   es: {
     nav: {
-      title: 'Test de Sesgo',
+      title: 'Mi Test de Sesgo Inconsciente',
       subtitle: 'Descubre y mejora los sesgos inconscientes'
     },
     
     welcome: {
-      title: 'Test de Sesgo Inconsciente',
+      title: 'Mi Test de Sesgo Inconsciente',
       subtitle: 'Descubre tus sesgos ocultos y desarrolla un pensamiento más inclusivo',
       description: 'Este test mide los sesgos inconscientes que puedes tener en la vida diaria. Responde honestamente y te proporcionaremos recomendaciones de mejora personalizadas.',
       startButton: 'Iniciar Test',
@@ -182,12 +182,12 @@ export const translations = {
     
     result: {
       title: 'Resultados del Test',
-      yourScore: 'Tu Índice de Sesgo',
+      yourScore: 'Tu Índice de Sesgo Inconsciente',
       analysis: 'Análisis',
       solutions: 'Soluciones Personalizadas',
       shareButton: 'Compartir Resultados',
       downloadButton: 'Descargar Resultados',
-      retakeButton: 'Repetir Test',
+      retakeTest: 'Repetir Test',
       // 결과 상세 텍스트
       biasRange: 'Rango de Sesgo',
       veryLow: 'Muy Bajo',
@@ -227,12 +227,12 @@ export const translations = {
   
   zh: {
     nav: {
-      title: '偏见测试',
+      title: '我的无意识偏见测试',
       subtitle: '发现并改善无意识偏见'
     },
     
     welcome: {
-      title: '无意识偏见测试',
+      title: '我的无意识偏见测试',
       subtitle: '发现你隐藏的偏见，培养更包容的思维',
       description: '此测试测量您在日常生活中可能存在的无意识偏见。请诚实回答，我们将提供个性化的改进建议。',
       startButton: '开始测试',
@@ -252,12 +252,12 @@ export const translations = {
     
     result: {
       title: '测试结果',
-      yourScore: '您的偏见指数',
+      yourScore: '您的无意识偏见指数',
       analysis: '分析结果',
       solutions: '个性化解决方案',
       shareButton: '分享结果',
       downloadButton: '下载结果',
-      retakeButton: '重新测试',
+      retakeTest: '重新测试',
       // 결과 상세 텍스트
       biasRange: '偏见范围',
       veryLow: '非常低',
@@ -297,12 +297,12 @@ export const translations = {
   
   ja: {
     nav: {
-      title: 'バイアステスト',
+      title: '私の無意識バイアステスト',
       subtitle: '無意識のバイアスを発見し改善しましょう'
     },
     
     welcome: {
-      title: '無意識のバイアステスト',
+      title: '私の無意識バイアステスト',
       subtitle: '隠れたバイアスを発見し、より包括的な思考を育てましょう',
       description: 'このテストは日常生活で無意識に持つ可能性のあるバイアスを測定します。正直に答えていただければ、個人に合った改善案を提供します。',
       startButton: 'テスト開始',
@@ -322,12 +322,12 @@ export const translations = {
     
     result: {
       title: 'テスト結果',
-      yourScore: 'あなたのバイアス指数',
+      yourScore: 'あなたの無意識バイアス指数',
       analysis: '分析結果',
-      solutions: 'パーソナライズドソリューション',
+      solutions: '個人別解決策',
       shareButton: '結果をシェア',
       downloadButton: '結果をダウンロード',
-      retakeButton: 'テストを再受験',
+      retakeTest: 'テストを再受験',
       // 결과 상세 텍스트
       biasRange: 'バイアス範囲',
       veryLow: '非常に低い',
