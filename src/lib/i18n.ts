@@ -40,7 +40,8 @@ export const translations = {
     // 결과 화면
     result: {
       title: '테스트 결과',
-      yourScore: '무의식적 편견 지수',
+      yourScore: '편견 지수',
+      yourScoreWithName: '{name}님의 편견 지수',
       analysis: '분석 결과',
       solutions: '맞춤 솔루션',
       shareButton: '결과 공유하기',
@@ -112,7 +113,8 @@ export const translations = {
     
     result: {
       title: 'Test Results',
-      yourScore: 'Unconscious Bias Index',
+      yourScore: 'Bias Index',
+      yourScoreWithName: '{name}\'s Bias Index',
       analysis: 'Analysis',
       solutions: 'Personalized Solutions',
       shareButton: 'Share Results',
@@ -182,7 +184,8 @@ export const translations = {
     
     result: {
       title: 'Resultados del Test',
-      yourScore: 'Tu Índice de Sesgo Inconsciente',
+      yourScore: 'Tu Índice de Sesgo',
+      yourScoreWithName: 'Índice de Sesgo de {name}',
       analysis: 'Análisis',
       solutions: 'Soluciones Personalizadas',
       shareButton: 'Compartir Resultados',
@@ -252,7 +255,8 @@ export const translations = {
     
     result: {
       title: '测试结果',
-      yourScore: '您的无意识偏见指数',
+      yourScore: '您的偏见指数',
+      yourScoreWithName: '{name}的偏见指数',
       analysis: '分析结果',
       solutions: '个性化解决方案',
       shareButton: '分享结果',
@@ -322,7 +326,8 @@ export const translations = {
     
     result: {
       title: 'テスト結果',
-      yourScore: 'あなたの無意識バイアス指数',
+      yourScore: 'あなたのバイアス指数',
+      yourScoreWithName: '{name}さんのバイアス指数',
       analysis: '分析結果',
       solutions: '個人別解決策',
       shareButton: '結果をシェア',

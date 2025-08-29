@@ -156,8 +156,8 @@ export default function TestPage() {
     }
   };
 
-  const handleAnswer = async (score: number) => {
-    console.log(`=== 질문 ${currentQuestion + 1} 답변 처리 시작: ${score} ===`);
+  const handleAnswer = async (optionIndex: number) => {
+    console.log(`=== 질문 ${currentQuestion + 1} 답변 처리 시작: 옵션 ${optionIndex} ===`);
     
     // 중복 실행 방지
     if (isProcessing) {
@@ -168,9 +168,11 @@ export default function TestPage() {
     setIsProcessing(true);
     
     try {
-      // 답변 저장
+      // 답변 저장 (옵션 인덱스를 점수로 변환)
+      // 첫 10개 질문은 프로필 질문이므로 점수 계산에서 제외하고 옵션 인덱스만 저장
+      // 나머지 30개 질문(편견 질문)은 옵션 인덱스를 점수로 사용 (0=낮음, 1=중간, 2=높음)
       console.log('📝 답변 저장 중...');
-      submitAnswer(score);
+      submitAnswer(optionIndex);
       
       // 상태 업데이트 완료 대기 (Zustand의 비동기 상태 업데이트)
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -266,6 +268,20 @@ export default function TestPage() {
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ minHeight: '100vh' }}>
+      {/* 헤더 */}
+      <header className="bg-white shadow-sm px-4 py-4">
+        <div className="max-w-mobile mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">B</span>
+            </div>
+            <span className="text-lg font-bold text-gray-900">
+              www.areyoubiased.life
+            </span>
+          </div>
+        </div>
+      </header>
+
       {/* 프로그레스 바 - 상단 고정 */}
       <div className="bg-white px-4 py-4 border-b sticky top-0 z-10">
         <div className="max-w-mobile mx-auto">
@@ -282,7 +298,7 @@ export default function TestPage() {
 
       {/* 메인 컨텐츠 */}
       <main className="px-4 py-8">
-        <div className="max-w-mobile mx-auto" style={{ minHeight: '60vh' }}>
+        <div className="max-w-mobile mx-auto" style={{ minHeight: '80vh' }}>
           {/* 광고 공간 - 상단 */}
           <div className="mb-8">
             <div className="bg-gray-100 rounded-lg h-20 flex items-center justify-center text-gray-500 text-sm">
@@ -296,6 +312,7 @@ export default function TestPage() {
             question={currentQuestionData}
             onAnswer={handleAnswer}
             selectedAnswer={getCurrentAnswer()}
+            questionNumber={currentQuestion + 1}
             className=""
           />
 
@@ -306,12 +323,12 @@ export default function TestPage() {
             </div>
           </div>
 
-          {/* 네비게이션 버튼 - 하단 광고 바로 아래 */}
+          {/* 네비게이션 버튼 - 고정 크기로 안정화 */}
           <div className="flex items-center justify-center gap-4 mt-6">
             <button
               onClick={handlePrevious}
               disabled={currentQuestion === 0 || isProcessing}
-              className="inline-flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-600 rounded-lg font-medium hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-600 rounded-lg font-medium hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[140px] h-[48px]"
             >
               ← 이전
             </button>
@@ -320,7 +337,7 @@ export default function TestPage() {
               <button
                 onClick={handleNext}
                 disabled={getCurrentAnswer() === undefined || isProcessing}
-                className="inline-flex items-center justify-center px-6 py-3 bg-pink-500 text-white rounded-lg font-medium hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center justify-center px-6 py-3 bg-pink-500 text-white rounded-lg font-medium hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[140px] h-[48px]"
               >
                 {isProcessing ? (
                   <>
@@ -335,7 +352,7 @@ export default function TestPage() {
               <button
                 onClick={handleSubmitTest}
                 disabled={!isTestCompleted() || isProcessing}
-                className="inline-flex items-center justify-center px-6 py-3 bg-pink-500 text-white rounded-lg font-medium hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center justify-center px-6 py-3 bg-pink-500 text-white rounded-lg font-medium hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[140px] h-[48px]"
               >
                 {isProcessing ? (
                   <>

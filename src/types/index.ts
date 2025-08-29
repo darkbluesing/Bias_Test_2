@@ -1,7 +1,6 @@
 // 기본 타입 정의
 export interface Question {
-  id: number;
-  category: string;
+  id: string;
   text: {
     ko: string;
     en: string;
@@ -10,14 +9,11 @@ export interface Question {
     ja: string;
   };
   options: {
-    text: {
-      ko: string;
-      en: string;
-      es: string;
-      zh: string;
-      ja: string;
-    };
-    score: number; // 편향성 점수 (0-3 점수)
+    ko: string;
+    en: string;
+    es: string;
+    zh: string;
+    ja: string;
   }[];
 }
 

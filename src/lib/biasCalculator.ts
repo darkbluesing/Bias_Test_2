@@ -4,10 +4,13 @@ import { TestResult, SupportedLanguage } from '@/types';
 export class BiasCalculator {
   private readonly maxScore: number;
   private readonly totalQuestions: number;
+  private readonly profileQuestions: number = 10; // 첫 10개는 프로필 질문
+  private readonly biasQuestions: number = 30; // 나머지 30개는 편견 질문
 
-  constructor(totalQuestions: number = 40, maxScorePerQuestion: number = 3) {
+  constructor(totalQuestions: number = 40, maxScorePerQuestion: number = 2) {
     this.totalQuestions = totalQuestions;
-    this.maxScore = totalQuestions * maxScorePerQuestion;
+    // 편견 점수는 30개 질문 * 최대 2점(0,1,2 중 최대값)으로 계산
+    this.maxScore = this.biasQuestions * maxScorePerQuestion;
   }
 
   /**
@@ -66,25 +69,36 @@ export class BiasCalculator {
       throw new Error(`Invalid answers at questions: ${invalidAnswers.join(', ')}`);
     }
 
-    // 점수 범위 검증
-    const invalidScores = answers.map((answer, index) => 
-      (typeof answer !== 'number' || answer < 0 || answer > 3) ? { question: index + 1, score: answer } : null
-    ).filter(x => x !== null);
+    // 점수 범위 검증 (프로필 질문은 더 넓은 범위, 편견 질문은 0-2)
+    const invalidScores = answers.map((answer, index) => {
+      if (typeof answer !== 'number') return { question: index + 1, score: answer, reason: 'not number' };
+      
+      // 첫 10개 질문 (프로필): 더 넓은 범위 허용
+      if (index < this.profileQuestions) {
+        if (answer < 0 || answer > 10) return { question: index + 1, score: answer, reason: 'profile range' };
+      } 
+      // 나머지 30개 질문 (편견): 0-2 범위
+      else {
+        if (answer < 0 || answer > 2) return { question: index + 1, score: answer, reason: 'bias range' };
+      }
+      
+      return null;
+    }).filter(x => x !== null);
 
     if (invalidScores.length > 0) {
-      throw new Error(`Invalid scores: ${invalidScores.map(s => `Q${s.question}:${s.score}`).join(', ')}`);
+      throw new Error(`Invalid scores: ${invalidScores.map(s => `Q${s.question}:${s.score} (${s.reason})`).join(', ')}`);
     }
 
     try {
-      // 안전한 점수 계산
+      // 편견 점수만 계산 (첫 10개 프로필 질문은 제외)
       let totalScore = 0;
-      for (let i = 0; i < answers.length; i++) {
+      for (let i = this.profileQuestions; i < answers.length; i++) {
         const score = answers[i];
-        if (typeof score === 'number' && !isNaN(score) && score >= 0 && score <= 3) {
+        if (typeof score === 'number' && !isNaN(score) && score >= 0 && score <= 2) {
           totalScore += score;
         } else {
-          console.error(`잘못된 점수 값 발견: 질문 ${i + 1}, 점수: ${score}`);
-          throw new Error(`Invalid score at question ${i + 1}: ${score}`);
+          console.error(`잘못된 편견 점수 값 발견: 질문 ${i + 1}, 점수: ${score}`);
+          throw new Error(`Invalid bias score at question ${i + 1}: ${score}`);
         }
       }
       
