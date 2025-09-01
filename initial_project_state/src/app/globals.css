@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* Pretendard 폰트 및 반응형 최적화 */
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  background-color: #f9fafb;
+  color: #1f2937;
+}
+
+/* ResultChart 애니메이션 */
+@keyframes chart-fill {
+  0% {
+    stroke-dashoffset: var(--circumference);
+  }
+  100% {
+    stroke-dashoffset: var(--stroke-dashoffset);
+  }
+}
+
+.chart-progress {
+  animation: chart-fill 2s ease-out forwards;
+  animation-delay: 0.5s;
+}
+
+/* 반응형 최적화 - 모바일 비율 동일화 */
+@media (max-width: 768px) {
+  .mobile-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .max-w-mobile {
+    max-width: 414px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* 데스크톱에서도 모바일과 동일한 비율 유지 */
+@media (min-width: 769px) {
+  .max-w-mobile {
+    max-width: 414px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* 스크롤 최적화 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 터치 최적화 */
+@media (hover: none) and (pointer: coarse) {
+  button, .clickable {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}
+
+/* 버튼 클릭 문제 해결 */
+button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 라디오 버튼 최적화 */
+input[type="radio"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 고대비 접근성 */
+@media (prefers-contrast: high) {
+  .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+  }
+  
+  .border-gray-300 {
+    border-color: rgb(75 85 99);
+  }
+}
+
+/* 애니메이션 감소 설정 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 포커스 표시 개선 */
+.focus-visible:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
