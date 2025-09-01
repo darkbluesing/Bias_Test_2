@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import puppeteer from 'puppeteer';
+import { Buffer } from 'buffer'; // Buffer 타입을 사용하기 위해 import
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -23,7 +24,6 @@ export async function GET(request: NextRequest) {
     const page = await browser.newPage();
     await page.setViewport({ width: 428, height: 1000, deviceScaleFactor: 2 });
 
-    // networkidle0만으로 충분합니다.
     await page.goto(renderUrl, { waitUntil: 'networkidle0' });
 
     const element = await page.$('#result-container');
@@ -46,7 +46,8 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return new NextResponse(imageBuffer, {
+    // imageBuffer를 Buffer로 명시적으로 캐스팅하여 타입 오류 해결
+    return new NextResponse(imageBuffer as Buffer, {
       status: 200,
       headers: {
         'Content-Type': 'image/png',
