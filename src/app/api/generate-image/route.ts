@@ -45,8 +45,9 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // imageBuffer의 기본 ArrayBuffer를 사용하여 Blob 객체를 생성합니다.
-    const imageBlob = new Blob([imageBuffer.buffer], { type: 'image/png' });
+    // 타입을 확실하게 하기 위해 버퍼를 새로 생성합니다.
+    const cleanImageBuffer = new Uint8Array(imageBuffer);
+    const imageBlob = new Blob([cleanImageBuffer], { type: 'image/png' });
 
     return new NextResponse(imageBlob, {
       status: 200,
