@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import puppeteer from 'puppeteer';
-import { Buffer } from 'buffer'; // Buffer 타입을 사용하기 위해 import
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -46,8 +45,10 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // imageBuffer를 Buffer로 명시적으로 캐스팅하여 타입 오류 해결
-    return new NextResponse(imageBuffer as Buffer, {
+    // 이미지 버퍼를 Blob 객체로 변환하여 타입 문제를 해결합니다.
+    const imageBlob = new Blob([imageBuffer], { type: 'image/png' });
+
+    return new NextResponse(imageBlob, {
       status: 200,
       headers: {
         'Content-Type': 'image/png',
