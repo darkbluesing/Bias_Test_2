@@ -10,23 +10,27 @@ export const languages = {
 
 export const translations = {
   ko: {
-    // 네비게이션
     nav: {
-      title: '나의 인종차별적 성향 테스트',
+      title: '나의 인종차별적 편견 테스트',
       subtitle: '무의식적 편견을 발견하고 개선해보세요'
     },
-    
-    // 시작 화면
     welcome: {
-      title: '나의 인종차별적 성향 테스트',
-      subtitle: '당신의 숨겨진 편견을 발견하고 더 포용적인 사고를 기르세요',
-      description: '이 테스트는 일상에서 무의식적으로 가질 수 있는 편견을 측정합니다. 솔직하게 답변해 주시면 개인맞춤 개선 방안을 제공합니다.',
+      title: '나의 인종차별적 편견 테스트',
+      subtitle: '인간에 대한 당신의 숨겨진 편견을 발견하고 더 포용적인 사고를 기르세요',
+      description: [
+        '이 테스트는 당신의 인종에대한 차별적인 편견을 탐색하고, 다양성에 대한 인식을 높이며, 자기 성장을 위한 실질적인 솔루션을 얻을 수 있도록 돕는 교육적 도구입니다.',
+        '이 테스트는 심리적 진단이 아니며, 오락 및 교육적 목적으로 제공됩니다. 결과는 당신의 인격을 판단하는 것이 아니며, 자기 성찰과 성장을 위한 도구로 활용되기를 바랍니다.'
+      ],
+      description_points: [
+        '이 테스트는 어떤 개인도 \'인종차별주의자\'로 낙인찍지 않습니다',
+        '결과는 심리적 진단이 아닌 성찰의 기회로 제공됩니다',
+        '모든 답변은 익명으로 처리되며 개인 정보는 수집하지 않습니다',
+        '결과는 브라우저를 닫으면 자동으로 삭제됩니다'
+      ],
       startButton: '테스트 시작',
       nameInput: '이름을 입력해주세요',
       namePlaceholder: '예: 홍길동'
     },
-    
-    // 테스트 진행
     test: {
       progress: '진행률',
       question: '질문',
@@ -36,19 +40,16 @@ export const translations = {
       submit: '제출',
       skip: '건너뛰기'
     },
-    
-    // 결과 화면
     result: {
       title: '테스트 결과',
       yourScore: '편견 지수',
-      yourScoreWithName: '{name}님의 편견 지수',
+      yourScoreWithName: '{name}님의 차별적 편견 지수',
       analysis: '분석 결과',
       solutions: '맞춤 솔루션',
       shareButton: '결과 공유하기',
       downloadButton: '결과 다운로드',
       retakeTest: '다시 테스트하기',
-      // 결과 상세 텍스트
-      biasRange: '편향성 범위',
+      biasRange: '편견적 범위',
       veryLow: '매우 낮음',
       low: '낮음',
       moderate: '보통',
@@ -68,16 +69,12 @@ export const translations = {
         '일상에서 편견적 행동을 자각하고 즉시 수정하세요'
       ]
     },
-    
-    // 공유 기능
     share: {
       title: '결과 공유',
       copyLink: '링크 복사',
       downloadImage: '이미지 다운로드',
       socialShare: 'SNS 공유'
     },
-    
-    // 에러 메시지
     error: {
       nameRequired: '이름을 입력해주세요.',
       answerRequired: '답변을 선택해주세요.',
@@ -91,16 +88,23 @@ export const translations = {
       title: 'My Unconscious Bias Test',
       subtitle: 'Discover and improve unconscious biases'
     },
-    
     welcome: {
       title: 'My Unconscious Bias Test',
       subtitle: 'Discover your hidden biases and develop more inclusive thinking',
-      description: 'This test measures unconscious biases you may have in daily life. Answer honestly and we\'ll provide personalized improvement recommendations.',
+      description: [
+        'This test is an educational tool to help you explore your discriminatory biases about race, raise your awareness of diversity, and get practical solutions for self-growth.',
+        'This test is not a psychological diagnosis and is provided for entertainment and educational purposes. The results are not a judgment of your character and are intended to be a tool for self-reflection and growth.'
+      ],
+      description_points: [
+        'This test does not label any individual as a \'racist\'',
+        'The results are provided as an opportunity for reflection, not a psychological diagnosis',
+        'All answers are treated anonymously and no personal information is collected',
+        'The results are automatically deleted when you close your browser'
+      ],
       startButton: 'Start Test',
       nameInput: 'Please enter your name',
       namePlaceholder: 'e.g., John Smith'
     },
-    
     test: {
       progress: 'Progress',
       question: 'Question',
@@ -110,7 +114,6 @@ export const translations = {
       submit: 'Submit',
       skip: 'Skip'
     },
-    
     result: {
       title: 'Test Results',
       yourScore: 'Bias Index',
@@ -120,7 +123,6 @@ export const translations = {
       shareButton: 'Share Results',
       downloadButton: 'Download Results',
       retakeTest: 'Retake Test',
-      // 결과 상세 텍스트
       biasRange: 'Bias Range',
       veryLow: 'Very Low',
       low: 'Low',
@@ -141,14 +143,12 @@ export const translations = {
         'Recognize biased behaviors in daily life and correct them immediately'
       ]
     },
-    
     share: {
       title: 'Share Results',
       copyLink: 'Copy Link',
       downloadImage: 'Download Image',
       socialShare: 'Share on Social Media'
     },
-    
     error: {
       nameRequired: 'Please enter your name.',
       answerRequired: 'Please select an answer.',
@@ -162,16 +162,23 @@ export const translations = {
       title: 'Mi Test de Sesgo Inconsciente',
       subtitle: 'Descubre y mejora los sesgos inconscientes'
     },
-    
     welcome: {
       title: 'Mi Test de Sesgo Inconsciente',
       subtitle: 'Descubre tus sesgos ocultos y desarrolla un pensamiento más inclusivo',
-      description: 'Este test mide los sesgos inconscientes que puedes tener en la vida diaria. Responde honestamente y te proporcionaremos recomendaciones de mejora personalizadas.',
+      description: [
+        'Esta prueba es una herramienta educativa para ayudarte a explorar tus sesgos discriminatorios sobre la raza, aumentar tu conciencia sobre la diversidad y obtener soluciones prácticas para el autodesarrollo.',
+        'Esta prueba no es un diagnóstico psicológico y se proporciona con fines de entretenimiento y educativos. Los resultados no son un juicio de tu carácter y pretenden ser una herramienta para la autorreflexión y el crecimiento.'
+      ],
+      description_points: [
+        'Esta prueba no etiqueta a ningún individuo como \'racista\'',
+        'Los resultados se proporcionan como una oportunidad para la reflexión, no como un diagnóstico psicológico',
+        'Todas las respuestas se tratan de forma anónima y no se recopila información personal',
+        'Los resultados se eliminan automáticamente al cerrar el navegador'
+      ],
       startButton: 'Iniciar Test',
       nameInput: 'Por favor ingresa tu nombre',
       namePlaceholder: 'ej: Juan Pérez'
     },
-    
     test: {
       progress: 'Progreso',
       question: 'Pregunta',
@@ -181,7 +188,6 @@ export const translations = {
       submit: 'Enviar',
       skip: 'Saltar'
     },
-    
     result: {
       title: 'Resultados del Test',
       yourScore: 'Tu Índice de Sesgo',
@@ -191,7 +197,6 @@ export const translations = {
       shareButton: 'Compartir Resultados',
       downloadButton: 'Descargar Resultados',
       retakeTest: 'Repetir Test',
-      // 결과 상세 텍스트
       biasRange: 'Rango de Sesgo',
       veryLow: 'Muy Bajo',
       low: 'Bajo',
@@ -212,14 +217,12 @@ export const translations = {
         'Reconoce comportamientos sesgados en la vida diaria y corrígelos inmediatamente'
       ]
     },
-    
     share: {
       title: 'Compartir Resultados',
       copyLink: 'Copiar Enlace',
       downloadImage: 'Descargar Imagen',
       socialShare: 'Compartir en Redes Sociales'
     },
-    
     error: {
       nameRequired: 'Por favor ingresa tu nombre.',
       answerRequired: 'Por favor selecciona una respuesta.',
@@ -233,16 +236,23 @@ export const translations = {
       title: '我的无意识偏见测试',
       subtitle: '发现并改善无意识偏见'
     },
-    
     welcome: {
       title: '我的无意识偏见测试',
       subtitle: '发现你隐藏的偏见，培养更包容的思维',
-      description: '此测试测量您在日常生活中可能存在的无意识偏见。请诚实回答，我们将提供个性化的改进建议。',
+      description: [
+        '此测试是一种教育工具，可帮助您探索有关种族的歧视性偏见，提高您对多样性的认识，并获得自我成长的实用解决方案。',
+        '此测试不是心理诊断，仅供娱乐和教育目的。结果不是对您性格的判断，旨在作为自我反思和成长的工具。'
+      ],
+      description_points: [
+        '此测试不会将任何个人标记为“种族主义者”',
+        '结果是作为反思的机会提供的，而不是心理诊断',
+        '所有答案均被匿名处理，不收集任何个人信息',
+        '关闭浏览器后，结果将自动删除'
+      ],
       startButton: '开始测试',
       nameInput: '请输入您的姓名',
       namePlaceholder: '例如：张三'
     },
-    
     test: {
       progress: '进度',
       question: '问题',
@@ -252,7 +262,6 @@ export const translations = {
       submit: '提交',
       skip: '跳过'
     },
-    
     result: {
       title: '测试结果',
       yourScore: '您的偏见指数',
@@ -262,7 +271,6 @@ export const translations = {
       shareButton: '分享结果',
       downloadButton: '下载结果',
       retakeTest: '重新测试',
-      // 결과 상세 텍스트
       biasRange: '偏见范围',
       veryLow: '非常低',
       low: '低',
@@ -283,14 +291,12 @@ export const translations = {
         '识别日常生活中的偏见行为并立即纠正'
       ]
     },
-    
     share: {
       title: '分享结果',
       copyLink: '复制链接',
       downloadImage: '下载图片',
       socialShare: '分享到社交媒体'
     },
-    
     error: {
       nameRequired: '请输入您的姓名。',
       answerRequired: '请选择一个答案。',
@@ -304,16 +310,23 @@ export const translations = {
       title: '私の無意識バイアステスト',
       subtitle: '無意識のバイアスを発見し改善しましょう'
     },
-    
     welcome: {
       title: '私の無意識バイアステスト',
       subtitle: '隠れたバイアスを発見し、より包括的な思考を育てましょう',
-      description: 'このテストは日常生活で無意識に持つ可能性のあるバイアスを測定します。正直に答えていただければ、個人に合った改善案を提供します。',
+      description: [
+        'このテストは、人種に関するあなたの差別的なバイアスを探求し、多様性への意識を高め、自己成長のための実践的な解決策を得るのに役立つ教育ツールです。',
+        'このテストは心理的な診断ではなく、娯楽および教育目的で提供されています。結果はあなたの性格を判断するものではなく、自己反省と成長のためのツールとして活用されることを願っています。'
+      ],
+      description_points: [
+        'このテストは個人を「人種差別主義者」と決めつけるものではありません',
+        '結果は心理的な診断ではなく、内省の機会として提供されます',
+        'すべての回答は匿名で処理され、個人情報は収集されません',
+        'ブラウザを閉じると結果は自動的に削除されます'
+      ],
       startButton: 'テスト開始',
       nameInput: 'お名前を入力してください',
       namePlaceholder: '例：田中太郎'
     },
-    
     test: {
       progress: '進捗',
       question: '質問',
@@ -323,7 +336,6 @@ export const translations = {
       submit: '送信',
       skip: 'スキップ'
     },
-    
     result: {
       title: 'テスト結果',
       yourScore: 'あなたのバイアス指数',
@@ -333,7 +345,6 @@ export const translations = {
       shareButton: '結果をシェア',
       downloadButton: '結果をダウンロード',
       retakeTest: 'テストを再受験',
-      // 결과 상세 텍스트
       biasRange: 'バイアス範囲',
       veryLow: '非常に低い',
       low: '低い',
@@ -354,14 +365,12 @@ export const translations = {
         '日常でバイアス的行動を自覚し、即座に修正してください'
       ]
     },
-    
     share: {
       title: '結果をシェア',
       copyLink: 'リンクをコピー',
       downloadImage: '画像をダウンロード',
       socialShare: 'SNSでシェア'
     },
-    
     error: {
       nameRequired: 'お名前を入力してください。',
       answerRequired: '答えを選択してください。',
