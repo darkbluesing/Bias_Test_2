@@ -45,8 +45,8 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // 이미지 버퍼를 Blob 객체로 변환하여 타입 문제를 해결합니다.
-    const imageBlob = new Blob([imageBuffer], { type: 'image/png' });
+    // imageBuffer의 기본 ArrayBuffer를 사용하여 Blob 객체를 생성합니다.
+    const imageBlob = new Blob([imageBuffer.buffer], { type: 'image/png' });
 
     return new NextResponse(imageBlob, {
       status: 200,
