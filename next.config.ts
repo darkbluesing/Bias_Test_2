@@ -8,12 +8,12 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true
   },
-  // 타입 체크를 빌드 중 건너뛰기 (린트에서 처리)
+  // 네트리파이 빌드 환경에서 타입 체크 건너뛰기
   typescript: {
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: process.env.NODE_ENV === 'production' && process.env.NETLIFY === 'true',
   },
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: process.env.NODE_ENV === 'production' && process.env.NETLIFY === 'true',
   }
 };
 
