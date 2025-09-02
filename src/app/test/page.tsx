@@ -39,15 +39,42 @@ export default function TestPage() {
     const isLastQuestion = currentQuestion === allQuestions.length - 1;
 
     if (isLastQuestion) {
-      // The answer for the last question is submitted, but the state update might not be complete yet.
-      // We need to include the latest answer in the calculation to avoid a race condition.
-      const finalAnswers = [...answers];
-      finalAnswers[currentQuestion] = answerIndex;
-      const finalResult = biasCalculator.calculateResult(finalAnswers, language);
-      setResult(finalResult);
-      router.push('/result');
+      // 마지막 질문 - 결과 계산 및 저장
+      setTimeout(() => {
+        try {
+          const finalAnswers = [...answers];
+          finalAnswers[currentQuestion] = answerIndex;
+          
+          console.log('Final answers for calculation:', finalAnswers);
+          console.log('All answers defined:', finalAnswers.every(a => a !== undefined));
+          
+          const finalResult = biasCalculator.calculateResult(finalAnswers, language);
+          console.log('Calculated result:', finalResult);
+          
+          setResult(finalResult);
+          
+          // localStorage에 백업 저장
+          if (typeof window !== 'undefined') {
+            const backupData = {
+              result: finalResult,
+              userProfile: store.userProfile
+            };
+            localStorage.setItem('bias-test-result-backup', JSON.stringify(backupData));
+            console.log('Result backup saved to localStorage');
+          }
+          
+          // 결과 페이지로 이동
+          setTimeout(() => {
+            router.push('/result');
+          }, 100);
+          
+        } catch (error) {
+          console.error('결과 계산 오류:', error);
+          alert('결과 계산 중 오류가 발생했습니다. 다시 시도해주세요.');
+        }
+      }, 100);
     } else {
-      // Add a small delay to allow the user to see their selection before moving to the next question.
+      // 다음 질문으로 이동
       setTimeout(() => {
         nextQuestion();
       }, 200);
@@ -99,20 +126,9 @@ export default function TestPage() {
           onAnswerSelect={handleAnswerSelect}
           onPrevious={previousQuestion}
           onNext={() => {
-            if (currentQuestion === allQuestions.length - 1) {
-              // 마지막 질문일 때는 결과 계산 및 이동
-              const finalAnswers = [...answers];
-              finalAnswers[currentQuestion] = answers[currentQuestion];
-              if (finalAnswers.every(a => a !== undefined)) {
-                const finalResult = biasCalculator.calculateResult(finalAnswers, language);
-                setResult(finalResult);
-                router.push('/result');
-              }
-            } else {
-              // 답변이 선택된 경우에만 다음으로
-              if (answers[currentQuestion] !== undefined) {
-                nextQuestion();
-              }
+            // 답변이 선택된 경우에만 다음으로 (마지막 질문은 handleAnswerSelect에서 처리)
+            if (currentQuestion < allQuestions.length - 1 && answers[currentQuestion] !== undefined) {
+              nextQuestion();
             }
           }}
           isFirstQuestion={currentQuestion === 0}

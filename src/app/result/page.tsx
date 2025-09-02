@@ -21,7 +21,22 @@ export default function ResultPage() {
     
     const initializePage = async () => {
       try {
+        console.log('Result page initialization - current result:', result);
+        
         if (result && result.percentage !== undefined) {
+          console.log('Result found in store:', result);
+          setIsLoading(false);
+          setHasInitialized(true);
+          return;
+        }
+        
+        // 약간의 지연으로 state 업데이트 시간 확보
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // 다시 한 번 확인
+        const currentState = useBiasTestStore.getState();
+        if (currentState.result && currentState.result.percentage !== undefined) {
+          console.log('Result found in store after delay:', currentState.result);
           setIsLoading(false);
           setHasInitialized(true);
           return;
@@ -29,10 +44,15 @@ export default function ResultPage() {
         
         if (typeof window !== 'undefined') {
           const backup = localStorage.getItem('bias-test-result-backup');
+          console.log('Checking localStorage backup:', backup ? 'found' : 'not found');
+          
           if (backup) {
             try {
               const backupData = JSON.parse(backup);
+              console.log('Parsed backup data:', backupData);
+              
               if (backupData.result && backupData.result.percentage !== undefined) {
+                console.log('Restoring from backup');
                 const { setResult: storeSetResult, setUserProfile } = useBiasTestStore.getState();
                 storeSetResult(backupData.result);
                 if (backupData.userProfile) {
@@ -49,10 +69,11 @@ export default function ResultPage() {
           }
         }
         
+        console.log('No result found, redirecting to home');
         setTimeout(() => {
           alert('테스트 결과를 찾을 수 없습니다.\n다시 테스트를 진행해주세요.');
           router.push('/');
-        }, 1000);
+        }, 1500);
         
       } catch (error) {
         console.error('페이지 초기화 오류:', error);
