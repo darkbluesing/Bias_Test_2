@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useBiasTestStore } from '@/lib/store';
+import { useBiasTestStore, type BiasTestStore } from '@/lib/store';
 import { getTranslation } from '@/lib/i18n';
 import { generateAllQuestions } from '@/data/questions';
 import { biasCalculator } from '@/lib/biasCalculator';
@@ -13,6 +13,7 @@ import { QuestionCard } from '@/components/ui/QuestionCard';
 export default function TestPage() {
   const router = useRouter();
   const isHydrated = useHydration();
+  const store: BiasTestStore = useBiasTestStore();
   const { 
     language, 
     answers, 
@@ -21,7 +22,7 @@ export default function TestPage() {
     previousQuestion, 
     submitAnswer,
     setResult
-  } = useBiasTestStore();
+  } = store;
   const t = getTranslation(language);
 
   const [allQuestions, setAllQuestions] = useState(() => generateAllQuestions());

@@ -1,4 +1,5 @@
-import { getBiasCategory, mapToMainCategory } from '@/data/solutions';
+import { getBiasCategory } from '@/data/solutions';
+import { mapToMainCategory } from '@/data/solutions';
 import { TestResult, SupportedLanguage } from '@/types';
 
 export class BiasCalculator {

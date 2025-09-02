@@ -1,10 +1,11 @@
 [build]
   publish = "out"
-  command = "npm ci && npm run build"
+  command = "npm ci --cache .npm --prefer-offline && rm -rf .next out && npm run build"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
   NPM_FLAGS = "--production=false"
+  NEXT_TELEMETRY_DISABLED = "1"
 
 [[redirects]]
   from = "/*"

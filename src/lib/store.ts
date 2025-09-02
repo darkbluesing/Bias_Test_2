@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { BiasTestState, UserProfile, TestResult, SupportedLanguage } from '@/types';
 
-interface BiasTestStore extends BiasTestState {
+export interface BiasTestStore extends BiasTestState {
   // Actions
   setLanguage: (language: SupportedLanguage) => void;
   setUserProfile: (profile: Partial<UserProfile>) => void;
