@@ -9,7 +9,6 @@ import { biasCalculator } from '@/lib/biasCalculator';
 import { useHydration } from '@/lib/useHydration';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { QuestionCard } from '@/components/ui/QuestionCard';
-import { Button } from '@/components/ui/Button';
 
 export default function TestPage() {
   const router = useRouter();

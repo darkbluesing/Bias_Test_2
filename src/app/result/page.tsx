@@ -157,12 +157,7 @@ export default function ResultPage() {
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-4" data-hide-in-export="true">
             <ShareButton 
-              resultData={{
-                percentage: result.percentage,
-                userName: userProfile.name || '',
-                category: result.category,
-                lang: language,
-              }}
+              percentage={result.percentage}
               className="px-6 py-2 text-base"
               buttonText={t.result.shareButton}
             />

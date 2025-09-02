@@ -3,28 +3,21 @@
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 interface ShareButtonProps {
-  resultData: {
-    percentage: number;
-    userName: string;
-    category: string;
-    lang: string;
-  };
+  resultElementId?: string;
+  percentage: number;
   className?: string;
   buttonText?: string;
 }
 
 export function ShareButton({ 
-  resultData,
+  percentage,
   className = '', 
   buttonText = '결과 다운로드' 
 }: ShareButtonProps) {
 
   // API URL을 생성합니다.
   const query = new URLSearchParams({
-    percentage: resultData.percentage.toString(),
-    userName: resultData.userName,
-    category: resultData.category,
-    lang: resultData.lang,
+    percentage: percentage.toString(),
   }).toString();
 
   const apiUrl = `/api/generate-image?${query}`;
