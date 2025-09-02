@@ -74,8 +74,8 @@ export function ResultChart({
               strokeDasharray={strokeDasharray}
               strokeLinecap="round"
               className={!disableAnimation ? `chart-animation-${chartId}` : ''}
-              // 애니메이션 비활성화 시, strokeDashoffset을 최종값으로 직접 설정
-              strokeDashoffset={disableAnimation ? finalOffset : undefined}
+              // 애니메이션 활성화 시 초기값 설정, 비활성화 시 최종값 설정
+              strokeDashoffset={disableAnimation ? finalOffset : circumference}
               style={{
                 filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
               }}

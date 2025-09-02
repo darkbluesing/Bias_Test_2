@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
   const baseUrl = process.env.NODE_ENV === 'production' 
     ? `https://${process.env.VERCEL_URL}` 
-    : 'http://localhost:3001';
+    : 'http://localhost:3002';
   const renderUrl = `${baseUrl}/render-result?${searchParams.toString()}`;
 
   let browser;

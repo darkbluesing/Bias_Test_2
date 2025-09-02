@@ -12,7 +12,9 @@ interface QuestionCardProps {
   selectedAnswer?: number;
   onAnswerSelect: (optionIndex: number) => void;
   onPrevious: () => void;
+  onNext: () => void;
   isFirstQuestion: boolean;
+  isLastQuestion: boolean;
   translations: { [key: string]: string };
   className?: string;
 }
@@ -23,7 +25,9 @@ export function QuestionCard({
   selectedAnswer, 
   onAnswerSelect,
   onPrevious,
+  onNext,
   isFirstQuestion,
+  isLastQuestion,
   translations,
   className = '' 
 }: QuestionCardProps) {
@@ -81,16 +85,27 @@ export function QuestionCard({
             ))}
           </div>
         </div>
-
-        <div className="mt-8 flex items-center justify-start">
+        
+        {/* Navigation Buttons - 답변 컨테이너 라인에 맞춰 정렬 */}
+        <div className="mt-8 flex justify-between items-center -mx-8 px-8">
           <Button 
             onClick={onPrevious} 
             disabled={isFirstQuestion}
             variant="secondary"
+            className="w-32"
           >
             {translations.previous}
           </Button>
+          
+          <Button 
+            onClick={onNext}
+            disabled={selected === undefined}
+            className="w-32"
+          >
+            {isLastQuestion ? translations.complete : translations.next}
+          </Button>
         </div>
+
       </div>
     </div>
   );

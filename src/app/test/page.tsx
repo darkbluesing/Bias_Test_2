@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useBiasTestStore } from '@/lib/store';
 import { getTranslation } from '@/lib/i18n';
 import { generateAllQuestions } from '@/data/questions';
-import { calculateBias } from '@/lib/biasCalculator';
+import { biasCalculator } from '@/lib/biasCalculator';
 import { useHydration } from '@/lib/useHydration';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { QuestionCard } from '@/components/ui/QuestionCard';
-import { LanguageSelector } from '@/components/ui/LanguageSelector';
+import { Button } from '@/components/ui/Button';
 
 export default function TestPage() {
   const router = useRouter();
@@ -42,7 +42,7 @@ export default function TestPage() {
       // We need to include the latest answer in the calculation to avoid a race condition.
       const finalAnswers = [...answers];
       finalAnswers[currentQuestion] = answerIndex;
-      const finalResult = calculateBias(finalAnswers);
+      const finalResult = biasCalculator.calculateResult(finalAnswers, language);
       setResult(finalResult);
       router.push('/result');
     } else {
@@ -69,8 +69,27 @@ export default function TestPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <main className="max-w-mobile mx-auto p-4 py-8">
-        <ProgressBar progress={progress} className="mb-8" />
+      <header className="py-4">
+        <div className="max-w-mobile mx-auto px-4">
+          <button 
+            onClick={() => router.push('/')}
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">B</span>
+            </div>
+            <span className="text-lg font-bold text-gray-900">www.areyoubiased.life</span>
+          </button>
+        </div>
+      </header>
+      
+      <main className="max-w-mobile mx-auto p-4 py-1">
+        <div className="mb-3">
+          <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm shadow-inner">광고 공간</div>
+        </div>
+        
+        <ProgressBar progress={progress} className="mb-4" />
+        
         <QuestionCard 
           question={question}
           questionNumber={currentQuestion + 1}
@@ -78,9 +97,31 @@ export default function TestPage() {
           selectedAnswer={answers[currentQuestion]}
           onAnswerSelect={handleAnswerSelect}
           onPrevious={previousQuestion}
+          onNext={() => {
+            if (currentQuestion === allQuestions.length - 1) {
+              // 마지막 질문일 때는 결과 계산 및 이동
+              const finalAnswers = [...answers];
+              finalAnswers[currentQuestion] = answers[currentQuestion];
+              if (finalAnswers.every(a => a !== undefined)) {
+                const finalResult = biasCalculator.calculateResult(finalAnswers, language);
+                setResult(finalResult);
+                router.push('/result');
+              }
+            } else {
+              // 답변이 선택된 경우에만 다음으로
+              if (answers[currentQuestion] !== undefined) {
+                nextQuestion();
+              }
+            }
+          }}
           isFirstQuestion={currentQuestion === 0}
+          isLastQuestion={currentQuestion === allQuestions.length - 1}
           translations={t.test}
         />
+        
+        <div className="mt-4">
+          <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm shadow-inner">광고 공간</div>
+        </div>
       </main>
     </div>
   );

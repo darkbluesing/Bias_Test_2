@@ -15,7 +15,7 @@ export const translations = {
       subtitle: '무의식적 편견을 발견하고 개선해보세요'
     },
     welcome: {
-      title: '나의 인종차별적 편견 테스트',
+      title: '나의 인종차별적\n편견 테스트',
       subtitle: '인간에 대한 당신의 숨겨진 편견을 발견하고 더 포용적인 사고를 기르세요',
       description: [
         '이 테스트는 당신의 인종에대한 차별적인 편견을 탐색하고, 다양성에 대한 인식을 높이며, 자기 성장을 위한 실질적인 솔루션을 얻을 수 있도록 돕는 교육적 도구입니다.',
@@ -38,7 +38,8 @@ export const translations = {
       next: '다음',
       previous: '이전',
       submit: '제출',
-      skip: '건너뛰기'
+      skip: '건너뛰기',
+      complete: '완료'
     },
     result: {
       title: '테스트 결과',

@@ -7,7 +7,7 @@ interface BiasTestStore extends BiasTestState {
   setLanguage: (language: SupportedLanguage) => void;
   setUserProfile: (profile: Partial<UserProfile>) => void;
   nextQuestion: () => void;
-  prevQuestion: () => void;
+  previousQuestion: () => void;
   setCurrentQuestion: (questionNumber: number) => void;
   submitAnswer: (answerScore: number) => void;
   setResult: (result: TestResult) => void;
@@ -46,7 +46,7 @@ export const useBiasTestStore = create<BiasTestStore>()(
         return {};
       }),
       
-      prevQuestion: () => set((state) => ({
+      previousQuestion: () => set((state) => ({
         currentQuestion: Math.max(state.currentQuestion - 1, 0)
       })),
       

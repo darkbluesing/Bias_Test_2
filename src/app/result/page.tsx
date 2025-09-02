@@ -87,18 +87,21 @@ export default function ResultPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm px-4 py-4">
-        <div className="max-w-mobile mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+      <header className="py-4">
+        <div className="max-w-mobile mx-auto px-4">
+          <button 
+            onClick={() => router.push('/')}
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+          >
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">B</span>
             </div>
             <span className="text-lg font-bold text-gray-900">www.areyoubiased.life</span>
-          </div>
+          </button>
         </div>
       </header>
 
-      <main className="px-4 py-4">
+      <main className="px-4 py-1">
         <div className="max-w-mobile mx-auto">
           <div className="mb-3" data-hide-in-export="true">
             <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm">광고 공간</div>
