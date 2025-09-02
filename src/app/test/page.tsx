@@ -16,11 +16,11 @@ export default function TestPage() {
   const { 
     language, 
     answers, 
-    currentQuestion, 
+    currentQuestion,
     nextQuestion, 
     previousQuestion, 
     submitAnswer,
-    setResult 
+    setResult
   } = useBiasTestStore();
   const t = getTranslation(language);
 
