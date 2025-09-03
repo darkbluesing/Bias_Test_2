@@ -19,151 +19,145 @@ export function ShareButton({
 }: ShareButtonProps) {
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // 색상 매핑 (RGB 하드코딩)
-  const getColorForPercentage = (percentage: number): string => {
-    if (percentage <= 15) return 'rgb(16, 185, 129)';
-    if (percentage <= 30) return 'rgb(34, 197, 94)';
-    if (percentage <= 50) return 'rgb(245, 158, 11)';
-    if (percentage <= 70) return 'rgb(249, 115, 22)';
-    return 'rgb(239, 68, 68)';
+  // OKLCH를 RGB로 변환하는 매핑 테이블
+  const oklchToRgbMap: { [key: string]: string } = {
+    // Tailwind CSS 기본 색상들의 OKLCH -> RGB 매핑
+    // Gray colors
+    'oklch(98.5% 0.000 0)': 'rgb(249, 250, 251)', // gray-50
+    'oklch(96.7% 0.000 0)': 'rgb(243, 244, 246)', // gray-100
+    'oklch(92.8% 0.000 0)': 'rgb(229, 231, 235)', // gray-200
+    'oklch(87.2% 0.000 0)': 'rgb(209, 213, 219)', // gray-300
+    'oklch(70.7% 0.000 0)': 'rgb(156, 163, 175)', // gray-400
+    'oklch(55.1% 0.000 0)': 'rgb(107, 114, 128)', // gray-500
+    'oklch(44.6% 0.000 0)': 'rgb(75, 85, 99)',   // gray-600
+    'oklch(37.3% 0.000 0)': 'rgb(55, 65, 81)',   // gray-700
+    'oklch(27.8% 0.000 0)': 'rgb(31, 41, 55)',   // gray-800
+    'oklch(21% 0.000 0)': 'rgb(17, 24, 39)',     // gray-900
+    
+    // Blue colors
+    'oklch(62.3% 0.229 264.1)': 'rgb(59, 130, 246)', // blue-500
+    'oklch(54.6% 0.227 263.1)': 'rgb(37, 99, 235)',  // blue-600
+    'oklch(48.8% 0.216 262.3)': 'rgb(29, 78, 216)',  // blue-700
+    
+    // Green colors
+    'oklch(70.7% 0.137 154.8)': 'rgb(16, 185, 129)', // emerald-500
+    'oklch(75.8% 0.131 152.7)': 'rgb(34, 197, 94)',  // green-500
+    
+    // Orange/Yellow colors
+    'oklch(78.8% 0.130 83.3)': 'rgb(245, 158, 11)',  // amber-500
+    'oklch(76.9% 0.156 66.2)': 'rgb(249, 115, 22)',  // orange-500
+    
+    // Red colors
+    'oklch(62.8% 0.257 29.0)': 'rgb(239, 68, 68)',   // red-500
   };
 
-  // Canvas 전용 간단 HTML 생성 (DOM 조작 없이)
-  const createCanvasOptimizedElement = () => {
-    const container = document.createElement('div');
-    const color = getColorForPercentage(percentage);
+  // 원본 DOM을 복제하면서 OKLCH 색상만 RGB로 변환
+  const createOklchSafeClone = (element: HTMLElement) => {
+    const clone = element.cloneNode(true) as HTMLElement;
     
-    // 완전히 인라인 스타일만 사용하는 간단한 구조
-    container.innerHTML = `
-      <div style="
-        width: 375px;
-        background: rgb(255, 255, 255);
-        padding: 16px;
-        box-sizing: border-box;
-        font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-      ">
-        <div style="
-          background: rgb(255, 255, 255);
-          border-radius: 12px;
-          padding: 24px;
-          text-align: center;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        ">
-          <h2 style="
-            font-size: 24px;
-            font-weight: bold;
-            color: rgb(17, 24, 39);
-            margin: 0 0 32px 0;
-          ">편향성 지수</h2>
-          
-          <div style="
-            width: 200px;
-            height: 120px;
-            background-color: ${color};
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 32px auto;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-          ">
-            <div style="
-              font-size: 56px;
-              font-weight: 900;
-              color: rgb(255, 255, 255);
-              text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            ">${percentage}%</div>
-          </div>
-          
-          <div style="margin-bottom: 24px;">
-            <h3 style="
-              font-size: 18px;
-              font-weight: 600;
-              color: rgb(55, 65, 81);
-              margin: 0 0 16px 0;
-            ">편향성 범위</h3>
-            <div style="
-              display: flex;
-              justify-content: space-between;
-              font-size: 11px;
-              color: rgb(107, 114, 128);
-              margin-bottom: 8px;
-            ">
-              <span>매우 낮음</span>
-              <span>낮음</span>
-              <span>보통</span>
-              <span>높음</span>
-              <span>매우 높음</span>
-            </div>
-            <div style="
-              position: relative;
-              height: 24px;
-              border-radius: 12px;
-              background: rgb(16, 185, 129);
-              border: 1px solid rgb(229, 231, 235);
-              overflow: hidden;
-            ">
-              <div style="width: 20%; height: 100%; background: rgb(16, 185, 129); float: left;"></div>
-              <div style="width: 20%; height: 100%; background: rgb(34, 197, 94); float: left;"></div>
-              <div style="width: 20%; height: 100%; background: rgb(245, 158, 11); float: left;"></div>
-              <div style="width: 20%; height: 100%; background: rgb(249, 115, 22); float: left;"></div>
-              <div style="width: 20%; height: 100%; background: rgb(239, 68, 68); float: left;"></div>
-              <div style="
-                position: absolute;
-                top: 0;
-                height: 100%;
-                width: 2px;
-                background-color: rgb(17, 24, 39);
-                left: ${percentage}%;
-                transform: translateX(-50%);
-                z-index: 10;
-              "></div>
-            </div>
-          </div>
-          
-          <div style="
-            text-align: left;
-            color: rgb(55, 65, 81);
-            font-size: 14px;
-            line-height: 1.6;
-          ">
-            <div style="margin-bottom: 16px;">
-              <h3 style="
-                font-size: 18px;
-                font-weight: bold;
-                color: rgb(17, 24, 39);
-                margin: 0 0 8px 0;
-              ">분석</h3>
-              <p style="margin: 0;">당신의 편향성 지수를 기반으로 한 분석 결과입니다.</p>
-            </div>
-            <div>
-              <h3 style="
-                font-size: 18px;
-                font-weight: bold;
-                color: rgb(17, 24, 39);
-                margin: 0 0 12px 0;
-              ">개선 방안</h3>
-              <div>
-                <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                  <span style="color: rgb(37, 99, 235); margin-right: 8px;">•</span>
-                  <span>다양한 관점으로 정보를 바라보기</span>
-                </div>
-                <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                  <span style="color: rgb(37, 99, 235); margin-right: 8px;">•</span>
-                  <span>반대 의견에도 귀 기울이기</span>
-                </div>
-                <div style="display: flex; align-items: flex-start;">
-                  <span style="color: rgb(37, 99, 235); margin-right: 8px;">•</span>
-                  <span>근거 기반으로 판단하기</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    // data-hide-in-export 요소 제거
+    const hideElements = clone.querySelectorAll('[data-hide-in-export="true"]');
+    hideElements.forEach(el => el.remove());
+    
+    // 모바일 최적화 컨테이너 스타일 적용
+    clone.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 375px !important;
+      max-width: 375px !important;
+      background: rgb(255, 255, 255) !important;
+      padding: 16px !important;
+      box-sizing: border-box !important;
+      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+      margin: 0 !important;
     `;
     
-    return container;
+    // 모든 하위 요소의 OKLCH 색상을 RGB로 변환
+    const walker = document.createTreeWalker(
+      clone,
+      NodeFilter.SHOW_ELEMENT,
+      null
+    );
+    
+    const elements: Element[] = [clone];
+    let node;
+    while ((node = walker.nextNode())) {
+      elements.push(node as Element);
+    }
+    
+    elements.forEach(el => {
+      if (!(el instanceof HTMLElement)) return;
+      
+      const style = el.style;
+      const computedStyle = window.getComputedStyle(el);
+      
+      // 모든 스타일 속성을 확인하고 OKLCH 색상 변환
+      ['color', 'background-color', 'border-color', 'background', 'background-image'].forEach(prop => {
+        // 인라인 스타일 처리
+        const inlineValue = style.getPropertyValue(prop);
+        if (inlineValue && inlineValue.includes('oklch')) {
+          const convertedValue = convertOklchValues(inlineValue);
+          style.setProperty(prop, convertedValue, 'important');
+        }
+        
+        // 계산된 스타일 처리
+        const computedValue = computedStyle.getPropertyValue(prop);
+        if (computedValue && computedValue.includes('oklch')) {
+          const convertedValue = convertOklchValues(computedValue);
+          style.setProperty(prop, convertedValue, 'important');
+        }
+      });
+      
+      // 추가로 그라데이션과 특수 배경 처리
+      if (computedStyle.backgroundImage && computedStyle.backgroundImage.includes('linear-gradient')) {
+        const bgImage = computedStyle.backgroundImage;
+        if (bgImage.includes('oklch')) {
+          const converted = convertOklchValues(bgImage);
+          style.setProperty('background-image', converted, 'important');
+        } else {
+          // 기존 그라데이션 유지
+          style.setProperty('background-image', bgImage, 'important');
+        }
+      }
+      
+      // SVG 요소 처리
+      if (el.tagName === 'svg') {
+        el.style.setProperty('display', 'block', 'important');
+        el.style.setProperty('visibility', 'visible', 'important');
+      }
+      
+      // 원형 차트의 stroke 색상 처리
+      if (el.tagName === 'circle' && el.hasAttribute('stroke')) {
+        const strokeColor = el.getAttribute('stroke');
+        if (strokeColor && strokeColor.includes('oklch')) {
+          const convertedColor = convertOklchValues(strokeColor);
+          el.setAttribute('stroke', convertedColor);
+        }
+      }
+    });
+    
+    return clone;
+  };
+  
+  // OKLCH 값들을 RGB로 변환하는 함수
+  const convertOklchValues = (cssValue: string): string => {
+    let converted = cssValue;
+    
+    // 매핑 테이블을 사용하여 변환
+    Object.entries(oklchToRgbMap).forEach(([oklch, rgb]) => {
+      converted = converted.replace(new RegExp(oklch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), rgb);
+    });
+    
+    // 남은 일반적인 OKLCH 패턴들을 기본값으로 변환
+    converted = converted.replace(/oklch\([^)]+\)/g, (match) => {
+      // 기본 변환 로직
+      if (match.includes('98.') || match.includes('96.')) return 'rgb(255, 255, 255)';
+      if (match.includes('21') || match.includes('27.')) return 'rgb(17, 24, 39)';
+      return 'rgb(107, 114, 128)'; // 기본 회색
+    });
+    
+    return converted;
   };
 
   const handleDownload = async () => {
@@ -173,72 +167,100 @@ export function ShareButton({
     let clonedElement: HTMLElement | null = null;
     
     try {
-      console.log('🚀 순수 HTML 이미지 생성 시작...');
+      console.log('🚀 실제 결과 페이지 기반 이미지 생성 시작...');
       
-      // 원본 요소는 무시하고 완전히 새로운 요소 생성
-      clonedElement = createCanvasOptimizedElement();
+      // 실제 결과 요소 찾기
+      const originalElement = document.getElementById(resultElementId);
+      if (!originalElement) {
+        throw new Error('결과 요소를 찾을 수 없습니다.');
+      }
+      
+      console.log('📋 원본 DOM 복제 및 OKLCH 변환 중...');
+      // 원본 DOM을 복제하면서 OKLCH 문제만 해결
+      clonedElement = createOklchSafeClone(originalElement);
       
       // DOM에 추가 (화면 밖에)
-      clonedElement.style.cssText = `
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-        visibility: visible;
-        opacity: 1;
-      `;
+      clonedElement.style.position = 'absolute';
+      clonedElement.style.top = '-9999px';
+      clonedElement.style.left = '-9999px';
+      clonedElement.style.visibility = 'visible';
+      clonedElement.style.opacity = '1';
       
       document.body.appendChild(clonedElement);
       
-      console.log('⏱️ 레이아웃 대기 중...');
-      // 레이아웃 계산 시간
-      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('⏱️ 레이아웃과 스타일 안정화 대기 중...');
+      // 충분한 렌더링 시간 확보
+      await new Promise(resolve => setTimeout(resolve, 800));
       
-      console.log('🖼️ HTML2Canvas 실행 중...');
-      // 최소한의 옵션으로 캔버스 생성
+      console.log('🖼️ 개인화된 결과로 HTML2Canvas 실행 중...');
+      // HTML2Canvas 실행
       const canvas = await html2canvas(clonedElement, {
-        backgroundColor: 'white',
+        backgroundColor: 'rgb(255, 255, 255)',
         scale: 2,
         useCORS: true,
         allowTaint: false,
         width: 375,
         height: clonedElement.scrollHeight,
-        logging: true
+        logging: false,
+        // SVG 렌더링 향상
+        foreignObjectRendering: true,
+        // 추가 안정성 옵션
+        removeContainer: false,
+        imageTimeout: 15000,
+        // OKLCH 변환된 스타일 인식을 위한 옵션
+        onclone: (clonedDoc, element) => {
+          // 복제된 문서에서도 애니메이션 비활성화
+          const style = clonedDoc.createElement('style');
+          style.textContent = `
+            *, *::before, *::after {
+              animation-duration: 0s !important;
+              animation-delay: 0s !important;
+              transition-duration: 0s !important;
+              transition-delay: 0s !important;
+            }
+          `;
+          clonedDoc.head.appendChild(style);
+        }
       });
       
-      console.log('✅ 캔버스 완성!', `${canvas.width}x${canvas.height}`);
+      console.log('✅ 개인화된 결과 캔버스 완성!', `${canvas.width}x${canvas.height}`);
 
-      // 빈 이미지 검증
+      // 빈 이미지 검증 (더 정교한 검사)
       const ctx = canvas.getContext('2d');
       if (!ctx) {
-        throw new Error('캔버스 컨텍스트 오류');
+        throw new Error('캔버스 컨텍스트를 가져올 수 없습니다.');
       }
       
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      // 샘플링으로 빈 이미지 검사
+      const sampleSize = Math.min(100, canvas.width);
+      const imageData = ctx.getImageData(0, 0, sampleSize, sampleSize);
       const hasContent = imageData.data.some((pixel, index) => {
-        // RGBA에서 알파가 아닌 채널 확인
-        return index % 4 !== 3 && pixel !== 255;
+        // 완전히 흰색이 아닌 픽셀이 있는지 확인
+        if (index % 4 === 3) return false; // 알파 채널 무시
+        return pixel < 250; // 거의 흰색이 아닌 픽셀
       });
       
       if (!hasContent) {
-        throw new Error('빈 이미지가 생성되었습니다.');
+        throw new Error('생성된 이미지가 비어있거나 내용을 찾을 수 없습니다.');
       }
 
-      console.log('💾 다운로드 링크 생성 중...');
+      console.log('💾 개인화된 결과 이미지 다운로드 시작...');
       // 다운로드 실행
-      const dataURL = canvas.toDataURL('image/png', 1.0);
+      const dataURL = canvas.toDataURL('image/png', 0.95);
       const link = document.createElement('a');
-      link.download = `편향성-테스트-결과-${percentage}%-${Date.now()}.png`;
+      const timestamp = new Date().toISOString().slice(0, 16).replace('T', '-').replace(':', '');
+      link.download = `편향성테스트결과-${percentage}%-${timestamp}.png`;
       link.href = dataURL;
       
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       
-      console.log('🎉 성공적으로 다운로드됨!');
+      console.log('🎉 개인화된 테스트 결과 다운로드 완료!');
       
     } catch (error) {
-      console.error('❌ 다운로드 실패:', error);
-      alert(`다운로드 실패\n원인: ${error.message}\n\n다시 시도해주세요.`);
+      console.error('💥 이미지 다운로드 실패:', error);
+      alert(`이미지 다운로드에 실패했습니다.\n\n오류 내용: ${error.message || '알 수 없는 오류'}\n\n다시 시도해주세요.`);
     } finally {
       if (clonedElement && document.body.contains(clonedElement)) {
         document.body.removeChild(clonedElement);
