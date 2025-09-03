@@ -1,6 +1,6 @@
 [build]
   publish = "out"
-  command = "npm ci --cache .npm --prefer-offline --retry=3 --timeout=300000 && rm -rf .next out && npm run build"
+  command = "npm ci --cache .npm --prefer-offline --retry=3 --timeout=300000 && npm run clean && npm run build:netlify"
 
 [build.environment]
   NODE_VERSION = "20"
