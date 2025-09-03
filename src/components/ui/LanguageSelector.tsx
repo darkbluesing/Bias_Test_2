@@ -17,15 +17,15 @@ export function LanguageSelector({ className = '' }: LanguageSelectorProps) {
   return (
     <Listbox value={language} onChange={setLanguage}>
       <div className={`relative ${className}`}>
-        <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-1.5 pl-1.5 pr-6 text-left shadow-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           <div className="flex items-center">
-            <LanguageIcon className="h-5 w-5 text-gray-400 mr-2" />
-            <span className="block truncate text-gray-900">
+            <LanguageIcon className="h-4 w-4 text-gray-400 mr-1 flex-shrink-0" />
+            <span className="block truncate text-gray-900 text-sm">
               {languages[language]}
             </span>
           </div>
-          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-1">
+            <ChevronDownIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
           </span>
         </Listbox.Button>
 

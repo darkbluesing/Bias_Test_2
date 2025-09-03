@@ -41,13 +41,13 @@ export default function HomePage() {
     <div className="min-h-screen bg-gray-50">
       <header className="px-4 py-4">
         <div className="max-w-mobile mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+          <div className="flex items-center space-x-2 flex-1 min-w-0">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-lg">B</span>
             </div>
-            <h1 className="text-xl font-bold text-gray-900">www.areyoubiased.life</h1>
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate">www.areyoubiased.life</h1>
           </div>
-          <LanguageSelector className="w-32" />
+          <LanguageSelector className="w-16 sm:w-20 ml-1 flex-shrink-0" />
         </div>
       </header>
 
