@@ -19,176 +19,395 @@ export function ShareButton({
 }: ShareButtonProps) {
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // 포괄적인 OKLCH -> RGB 변환 함수
-  const convertOklchToRgb = (value: string): string => {
-    if (!value.includes('oklch')) return value;
+  // 불필요한 요소들을 제거하고 모바일 비율로 최적화된 복제본 생성
+  const createMobileOptimizedClone = (element: HTMLElement) => {
+    const clone = element.cloneNode(true) as HTMLElement;
     
-    // 다양한 OKLCH 패턴 매칭
-    const oklchPatterns = [
-      // Tailwind CSS 기본 색상들
-      { pattern: /oklch\(62\.3%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#3b82f6' }, // blue-500
-      { pattern: /oklch\(54\.6%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#2563eb' }, // blue-600
-      { pattern: /oklch\(48\.8%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#1d4ed8' }, // blue-700
-      { pattern: /oklch\(42\.4%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#1e40af' }, // blue-800
-      { pattern: /oklch\(37\.9%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#1e3a8a' }, // blue-900
-      
-      // Gray 색상들
-      { pattern: /oklch\(98\.5%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#f9fafb' }, // gray-50
-      { pattern: /oklch\(96\.7%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#f3f4f6' }, // gray-100
-      { pattern: /oklch\(92\.8%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#e5e7eb' }, // gray-200
-      { pattern: /oklch\(87\.2%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#d1d5db' }, // gray-300
-      { pattern: /oklch\(70\.7%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#9ca3af' }, // gray-400
-      { pattern: /oklch\(55\.1%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#6b7280' }, // gray-500
-      { pattern: /oklch\(44\.6%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#4b5563' }, // gray-600
-      { pattern: /oklch\(37\.3%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#374151' }, // gray-700
-      { pattern: /oklch\(27\.8%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#1f2937' }, // gray-800
-      { pattern: /oklch\(21%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#111827' },   // gray-900
-      
-      // 기타 색상들 - 일반적인 폴백
-      { pattern: /oklch\([89]\d%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#ffffff' }, // 80-99% lightness -> white
-      { pattern: /oklch\([1-3]\d%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#000000' }  // 10-39% lightness -> black
-    ];
+    // data-hide-in-export="true" 요소들 제거
+    const hideElements = clone.querySelectorAll('[data-hide-in-export="true"]');
+    hideElements.forEach(el => el.remove());
     
-    for (const { pattern, rgb } of oklchPatterns) {
-      if (pattern.test(value)) {
-        return value.replace(pattern, rgb);
-      }
+    // 모바일 최적화 스타일 적용
+    clone.style.cssText = `
+      position: fixed;
+      top: -9999px;
+      left: -9999px;
+      width: 375px !important;
+      max-width: 375px !important;
+      margin: 0 !important;
+      padding: 16px !important;
+      background-color: #ffffff !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+    `;
+    
+    // 내부 요소들에 모바일 최적화 스타일 적용
+    const resultContainer = clone.querySelector('#result-container') || clone;
+    if (resultContainer instanceof HTMLElement) {
+      resultContainer.style.cssText = `
+        background-color: #ffffff !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        overflow: visible !important;
+        width: 100% !important;
+        max-width: 343px !important;
+        margin: 0 auto !important;
+      `;
     }
-    
-    // 매칭되지 않는 OKLCH는 기본값으로 대체
-    console.warn('Unmatched OKLCH color:', value);
-    return value.replace(/oklch\([^)]+\)/g, '#ffffff');
-  };
-
-  // CSS 스타일 문자열에서 모든 OKLCH 색상을 변환
-  const convertStyleString = (styleText: string): string => {
-    return styleText.replace(/oklch\([^)]+\)/g, (match) => {
-      return convertOklchToRgb(match);
-    });
-  };
-
-  // 요소의 모든 계산된 스타일을 HTML2Canvas 호환 색상으로 변환하여 적용
-  const applyCompatibleStyles = (source: Element, target: Element) => {
-    const computedStyle = window.getComputedStyle(source);
-    const targetElement = target as HTMLElement;
-    
-    // 중요한 스타일 속성들만 선택적으로 복사
-    const importantProperties = [
-      'background-color', 'color', 'border-color', 'border-top-color', 
-      'border-right-color', 'border-bottom-color', 'border-left-color',
-      'font-family', 'font-size', 'font-weight', 'font-style',
-      'width', 'height', 'padding', 'margin', 'border', 'border-radius',
-      'display', 'position', 'top', 'left', 'right', 'bottom',
-      'text-align', 'line-height', 'box-shadow', 'opacity',
-      'transform', 'z-index'
-    ];
-    
-    importantProperties.forEach(property => {
-      try {
-        const value = computedStyle.getPropertyValue(property);
-        if (value) {
-          const convertedValue = convertOklchToRgb(value);
-          targetElement.style.setProperty(property, convertedValue, 'important');
-        }
-      } catch (e) {
-        console.warn(`Failed to set ${property}:`, e);
-      }
-    });
-    
-    // 텍스트 내용도 복사
-    if (source.textContent && source.children.length === 0) {
-      targetElement.textContent = source.textContent;
-    }
-  };
-
-  // 요소와 모든 자식 요소를 HTML2Canvas 호환 형태로 복제
-  const createCompatibleClone = (element: HTMLElement): HTMLElement => {
-    const clone = element.cloneNode(false) as HTMLElement;
-    
-    // 소스 요소의 스타일 적용
-    applyCompatibleStyles(element, clone);
-    
-    // 자식 요소들을 재귀적으로 처리
-    Array.from(element.children).forEach(child => {
-      if (child instanceof HTMLElement) {
-        const clonedChild = createCompatibleClone(child);
-        clone.appendChild(clonedChild);
-      }
-    });
-    
-    // 직접 텍스트 노드들 복사
-    Array.from(element.childNodes).forEach(node => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        clone.appendChild(node.cloneNode(true));
-      }
-    });
     
     return clone;
+  };
+
+  // 모든 최신 CSS 색상 함수를 RGB로 강제 변환하는 스타일 생성
+  const createColorFixStyles = () => {
+    const style = document.createElement('style');
+    style.textContent = `
+      /* 모든 요소의 색상을 RGB로 강제 설정 */
+      * {
+        color: inherit !important;
+        background-color: inherit !important;
+        border-color: inherit !important;
+      }
+      
+      /* Tailwind 색상 클래스들을 RGB로 직접 매핑 */
+      .text-gray-900, [class*="text-gray-900"] { color: #111827 !important; }
+      .text-gray-800, [class*="text-gray-800"] { color: #1f2937 !important; }
+      .text-gray-700, [class*="text-gray-700"] { color: #374151 !important; }
+      .text-gray-600, [class*="text-gray-600"] { color: #4b5563 !important; }
+      .text-gray-500, [class*="text-gray-500"] { color: #6b7280 !important; }
+      .text-blue-600, [class*="text-blue-600"] { color: #2563eb !important; }
+      
+      .bg-white, [class*="bg-white"] { background-color: #ffffff !important; }
+      .bg-gray-50, [class*="bg-gray-50"] { background-color: #f9fafb !important; }
+      .bg-gray-100, [class*="bg-gray-100"] { background-color: #f3f4f6 !important; }
+      
+      .border-gray-200, [class*="border-gray-200"] { border-color: #e5e7eb !important; }
+      
+      /* 그라데이션 색상들 */
+      .from-blue-200 { --tw-gradient-from: #dbeafe !important; }
+      .to-cyan-200 { --tw-gradient-to: #a5f3fc !important; }
+      .from-pink-200 { --tw-gradient-from: #fce7f3 !important; }
+      .to-purple-200 { --tw-gradient-to: #e9d5ff !important; }
+      
+      /* 그림자 효과 */
+      .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; }
+      
+      /* 테두리 반경 */
+      .rounded-xl { border-radius: 12px !important; }
+      .rounded-lg { border-radius: 8px !important; }
+      .rounded-full { border-radius: 9999px !important; }
+      
+      /* SVG와 그라데이션 요소 강화 */
+      svg, svg * { 
+        display: block !important; 
+        visibility: visible !important; 
+        opacity: 1 !important;
+      }
+      
+      circle[stroke] { 
+        stroke: currentColor !important; 
+        fill: transparent !important;
+        stroke-width: 24px !important;
+      }
+      
+      /* 그라데이션 바 강화 */
+      [style*="linear-gradient"] {
+        background: linear-gradient(to right, #10b981, #22c55e, #f59e0b, #f97316, #ef4444) !important;
+        display: block !important;
+        visibility: visible !important;
+      }
+    `;
+    return style;
+  };
+
+  // 모든 최신 CSS 색상 함수를 완전히 제거하고 안전한 RGB로 변환
+  const fixInlineStyles = (element: HTMLElement) => {
+    const walker = document.createTreeWalker(
+      element,
+      NodeFilter.SHOW_ELEMENT,
+      null
+    );
+    
+    const nodes: HTMLElement[] = [element];
+    let node: Node | null;
+    
+    while ((node = walker.nextNode())) {
+      if (node instanceof HTMLElement) {
+        nodes.push(node);
+      }
+    }
+    
+    nodes.forEach(el => {
+      // 모든 CSS 속성을 확인하고 문제 색상 함수 제거
+      const style = el.style;
+      const computedStyle = window.getComputedStyle(el);
+      
+      // 모든 스타일 속성을 순회하며 색상 함수 확인
+      for (let i = 0; i < style.length; i++) {
+        const prop = style[i];
+        const value = style.getPropertyValue(prop);
+        
+        // 문제가 되는 색상 함수들을 감지하고 제거
+        if (value && (
+          value.includes('oklch') || 
+          value.includes('lab') || 
+          value.includes('lch') || 
+          value.includes('hwb') ||
+          value.includes('color(')
+        )) {
+          // 해당 속성을 완전히 제거
+          style.removeProperty(prop);
+          
+          // 가능한 경우 계산된 스타일로 대체
+          const computedValue = computedStyle.getPropertyValue(prop);
+          if (computedValue && !computedValue.includes('oklch') && !computedValue.includes('lab')) {
+            try {
+              style.setProperty(prop, computedValue, 'important');
+            } catch (e) {
+              console.warn(`Failed to set computed style for ${prop}:`, e);
+            }
+          }
+        }
+      }
+      
+      // 추가 안전 장치: 알려진 문제 속성들을 직접 처리
+      ['color', 'background-color', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'].forEach(prop => {
+        const value = style.getPropertyValue(prop);
+        if (value && (value.includes('oklch') || value.includes('lab'))) {
+          style.removeProperty(prop);
+          // 기본 안전 색상으로 설정
+          if (prop === 'color') {
+            style.setProperty(prop, '#000000', 'important');
+          } else if (prop.includes('background')) {
+            style.setProperty(prop, '#ffffff', 'important');
+          } else if (prop.includes('border')) {
+            style.setProperty(prop, '#e5e7eb', 'important');
+          }
+        }
+      });
+      
+      // 클래스명 기반으로도 안전한 색상 적용
+      if (el.className) {
+        if (el.className.includes('text-gray-900')) {
+          style.setProperty('color', '#111827', 'important');
+        } else if (el.className.includes('text-gray-800')) {
+          style.setProperty('color', '#1f2937', 'important');
+        } else if (el.className.includes('text-gray-700')) {
+          style.setProperty('color', '#374151', 'important');
+        } else if (el.className.includes('bg-white')) {
+          style.setProperty('background-color', '#ffffff', 'important');
+        }
+      }
+    });
   };
 
   const handleDownload = async () => {
     if (isDownloading) return;
     
     setIsDownloading(true);
+    let tempStyle: HTMLStyleElement | null = null;
+    let clonedElement: HTMLElement | null = null;
+    
     try {
-      console.log('이미지 다운로드 시작...');
+      console.log('🚀 이미지 다운로드 시작...');
       
-      // 결과 요소를 찾습니다
-      const element = document.getElementById(resultElementId);
-      if (!element) {
-        console.error('결과 요소를 찾을 수 없습니다:', resultElementId);
+      // 원본 결과 요소 찾기
+      const originalElement = document.getElementById(resultElementId);
+      if (!originalElement) {
+        console.error('❌ 결과 요소를 찾을 수 없습니다:', resultElementId);
         throw new Error('결과 요소를 찾을 수 없습니다.');
       }
       
-      console.log('HTML2Canvas 호환 형태로 요소 복제 중...');
-      const clonedElement = createCompatibleClone(element);
+      console.log('📱 모바일 최적화된 복제본 생성 중...');
+      // 모바일 최적화된 복제본 생성 (불필요한 요소 제거)
+      clonedElement = createMobileOptimizedClone(originalElement);
       
-      // 복제된 요소를 임시로 DOM에 추가 (보이지 않게)
-      clonedElement.style.position = 'fixed';
-      clonedElement.style.top = '-9999px';
-      clonedElement.style.left = '-9999px';
-      clonedElement.style.zIndex = '-9999';
-      clonedElement.style.visibility = 'hidden';
-      clonedElement.style.pointerEvents = 'none';
+      // 색상 문제 해결을 위한 스타일 추가
+      tempStyle = createColorFixStyles();
+      document.head.appendChild(tempStyle);
+      
+      // 복제본을 DOM에 임시 추가
       document.body.appendChild(clonedElement);
       
-      // DOM이 업데이트될 시간을 줌
-      await new Promise(resolve => setTimeout(resolve, 100));
+      console.log('🎨 인라인 스타일 색상 문제 해결 중...');
+      // 복제본의 모든 인라인 스타일에서 문제 색상 제거
+      fixInlineStyles(clonedElement);
       
-      console.log('html2canvas로 이미지 생성 중...');
+      console.log('⏱️ 스타일 적용 대기 중...');
+      // 스타일과 레이아웃이 적용될 시간을 충분히 줌
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // html2canvas를 사용하여 이미지 생성
+      console.log('🖼️ html2canvas로 이미지 생성 중...');
+      
+      // 모바일 최적화된 복제본으로 캔버스 생성
       const canvas = await html2canvas(clonedElement, {
         backgroundColor: '#ffffff',
-        scale: 2,
+        scale: 3, // 고해상도를 위해 스케일 증가
         useCORS: true,
-        allowTaint: false,
-        width: element.offsetWidth,
-        height: element.offsetHeight,
-        logging: false
+        allowTaint: true,
+        width: 375, // 모바일 너비 고정
+        height: clonedElement.scrollHeight,
+        logging: false,
+        // SVG와 그라데이션 렌더링 개선을 위한 옵션들
+        foreignObjectRendering: true,
+        removeContainer: true,
+        // LAB/OKLCH 색상 함수 처리를 위한 추가 설정
+        ignoreElements: (element) => {
+          // 문제가 되는 스타일을 가진 요소들을 무시하지 않고 처리
+          return false;
+        },
+        onclone: (clonedDoc, element) => {
+          // 복제된 문서에서도 색상 스타일 적용
+          const clonedStyle = clonedDoc.createElement('style');
+          clonedStyle.textContent = tempStyle?.textContent || '';
+          clonedDoc.head.appendChild(clonedStyle);
+          
+          // SVG 원형 차트를 깔끔한 카드형 디자인으로 대체
+          const svgElements = element.querySelectorAll('svg');
+          svgElements.forEach(svg => {
+            const svgParent = svg.parentElement;
+            if (svgParent) {
+              // 진행률에 따른 색상 계산
+              let color = '#10b981';
+              if (percentage > 15) color = '#22c55e';
+              if (percentage > 30) color = '#f59e0b';
+              if (percentage > 50) color = '#f97316';
+              if (percentage > 70) color = '#ef4444';
+              
+              // 깔끔한 카드형 디자인
+              const scoreCard = clonedDoc.createElement('div');
+              scoreCard.style.cssText = `
+                width: 200px !important;
+                height: 120px !important;
+                background-color: ${color} !important;
+                border-radius: 16px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                margin: 24px auto !important;
+                position: relative !important;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
+              `;
+              
+              // 퍼센트 텍스트
+              const percentText = clonedDoc.createElement('div');
+              percentText.textContent = `${percentage}%`;
+              percentText.style.cssText = `
+                font-size: 56px !important;
+                font-weight: 900 !important;
+                color: white !important;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+                letter-spacing: -2px !important;
+              `;
+              
+              scoreCard.appendChild(percentText);
+              
+              // SVG를 카드로 교체
+              svgParent.replaceChild(scoreCard, svg);
+            }
+          });
+          
+          // 그라데이션 바를 div로 대체
+          const gradientElements = element.querySelectorAll('[style*="gradient"]');
+          gradientElements.forEach(el => {
+            if (el instanceof HTMLElement) {
+              // CSS 그라데이션 대신 여러 개의 div로 구현
+              const gradientBar = clonedDoc.createElement('div');
+              gradientBar.style.cssText = `
+                display: flex !important;
+                height: 24px !important;
+                border-radius: 12px !important;
+                overflow: hidden !important;
+                border: 1px solid #e5e7eb !important;
+                position: relative !important;
+              `;
+              
+              // 색상 세그먼트 생성
+              const colors = ['#10b981', '#22c55e', '#f59e0b', '#f97316', '#ef4444'];
+              colors.forEach(color => {
+                const segment = clonedDoc.createElement('div');
+                segment.style.cssText = `
+                  flex: 1 !important;
+                  background-color: ${color} !important;
+                  height: 100% !important;
+                `;
+                gradientBar.appendChild(segment);
+              });
+              
+              // 위치 표시자 추가
+              const indicator = clonedDoc.createElement('div');
+              indicator.style.cssText = `
+                position: absolute !important;
+                top: 0 !important;
+                height: 100% !important;
+                width: 2px !important;
+                background-color: #111827 !important;
+                left: ${percentage}% !important;
+                transform: translateX(-50%) !important;
+              `;
+              gradientBar.appendChild(indicator);
+              
+              // 원본 요소를 새로운 그라데이션 바로 교체
+              el.parentNode?.replaceChild(gradientBar, el);
+            }
+          });
+        }
       });
       
-      // 임시 요소 제거
-      document.body.removeChild(clonedElement);
-      
-      console.log('캔버스 생성 완료, 다운로드 준비 중...');
+      console.log('✅ 캔버스 생성 완료!');
+      console.log('📏 캔버스 크기:', canvas.width, 'x', canvas.height);
 
-      // 다운로드 링크 생성
-      const dataURL = canvas.toDataURL('image/png', 0.9);
-      const link = document.createElement('a');
-      link.download = `bias-test-result-${percentage.toFixed(1)}%.png`;
-      link.href = dataURL;
+      // 캔버스가 비어있는지 확인
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        throw new Error('캔버스 컨텍스트를 가져올 수 없습니다.');
+      }
       
-      // 다운로드 실행
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const hasContent = imageData.data.some((pixel, index) => {
+        // 알파 채널이 아닌 RGB 채널에서 완전한 흰색이 아닌 픽셀 찾기
+        return index % 4 < 3 && pixel < 250;
+      });
       
-      console.log('이미지 다운로드 완료');
+      if (!hasContent) {
+        throw new Error('생성된 이미지가 비어있습니다. 다시 시도해주세요.');
+      }
+
+      console.log('💾 다운로드 파일 생성 중...');
+      // 다운로드 링크 생성 및 실행
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          throw new Error('이미지 Blob 생성에 실패했습니다.');
+        }
+        
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const timestamp = new Date().toISOString().slice(0, 10);
+        link.download = `bias-test-result-${percentage.toFixed(1)}%-${timestamp}.png`;
+        link.href = url;
+        link.style.display = 'none';
+        
+        // 다운로드 실행
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // 메모리 정리
+        URL.revokeObjectURL(url);
+        
+        console.log('🎉 이미지 다운로드 완료!');
+      }, 'image/png', 0.95);
+      
     } catch (error) {
-      console.error('이미지 다운로드 실패:', error);
-      alert(`이미지 다운로드에 실패했습니다: ${error.message || '알 수 없는 오류'}`);
+      console.error('💥 이미지 다운로드 실패:', error);
+      alert(`이미지 다운로드에 실패했습니다.\n오류: ${error.message || '알 수 없는 오류'}\n\n다시 시도해주세요.`);
     } finally {
+      // 정리 작업
+      if (tempStyle && document.head.contains(tempStyle)) {
+        document.head.removeChild(tempStyle);
+      }
+      if (clonedElement && document.body.contains(clonedElement)) {
+        document.body.removeChild(clonedElement);
+      }
       setIsDownloading(false);
     }
   };
