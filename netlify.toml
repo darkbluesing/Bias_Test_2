@@ -1,11 +1,16 @@
 [build]
   publish = "out"
-  command = "npm ci --cache .npm --prefer-offline && rm -rf .next out && npm run build"
+  command = "npm ci --cache .npm --prefer-offline --retry=3 --timeout=300000 && rm -rf .next out && npm run build"
 
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--production=false"
   NEXT_TELEMETRY_DISABLED = "1"
+  # 네트워크 안정성 향상
+  NPM_CONFIG_REGISTRY = "https://registry.npmjs.org/"
+  NPM_CONFIG_FETCH_RETRIES = "3"
+  NPM_CONFIG_FETCH_RETRY_MINTIMEOUT = "10000"
+  NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT = "60000"
 
 [[redirects]]
   from = "/*"

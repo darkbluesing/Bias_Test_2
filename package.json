@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "export": "next build",
+    "build": "next build && next export",
+    "build:netlify": "next build",
+    "export": "next export",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clean": "rm -rf .next out node_modules/.cache"
   },
   "dependencies": {
     "@eslint/eslintrc": "^3",
