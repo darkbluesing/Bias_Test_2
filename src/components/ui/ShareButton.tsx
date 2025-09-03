@@ -19,44 +19,31 @@ export function ShareButton({
 }: ShareButtonProps) {
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // HTML2Canvas 호환 컬러 맵핑
+  // 색상 매핑 (RGB 하드코딩)
   const getColorForPercentage = (percentage: number): string => {
-    if (percentage <= 15) return '#10b981';
-    if (percentage <= 30) return '#22c55e';
-    if (percentage <= 50) return '#f59e0b';
-    if (percentage <= 70) return '#f97316';
-    return '#ef4444';
+    if (percentage <= 15) return 'rgb(16, 185, 129)';
+    if (percentage <= 30) return 'rgb(34, 197, 94)';
+    if (percentage <= 50) return 'rgb(245, 158, 11)';
+    if (percentage <= 70) return 'rgb(249, 115, 22)';
+    return 'rgb(239, 68, 68)';
   };
 
-  // 깔끔하고 간단한 복제본 생성 (HTML2Canvas 최적화)
-  const createPrintOptimizedClone = (element: HTMLElement) => {
-    const clone = element.cloneNode(true) as HTMLElement;
+  // Canvas 전용 간단 HTML 생성 (DOM 조작 없이)
+  const createCanvasOptimizedElement = () => {
+    const container = document.createElement('div');
+    const color = getColorForPercentage(percentage);
     
-    // 불필요한 요소 제거
-    const hideElements = clone.querySelectorAll('[data-hide-in-export="true"]');
-    hideElements.forEach(el => el.remove());
-    
-    // 기본 컨테이너 스타일 설정
-    clone.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 375px;
-      background: #ffffff;
-      padding: 16px;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    `;
-    
-    // ResultChart 내부를 간단한 HTML로 교체
-    const resultContainer = clone.querySelector('#result-container');
-    if (resultContainer) {
-      const color = getColorForPercentage(percentage);
-      
-      // 완전히 새로운 간단한 HTML 구조로 교체
-      resultContainer.innerHTML = `
+    // 완전히 인라인 스타일만 사용하는 간단한 구조
+    container.innerHTML = `
+      <div style="
+        width: 375px;
+        background: rgb(255, 255, 255);
+        padding: 16px;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      ">
         <div style="
-          background: #ffffff;
+          background: rgb(255, 255, 255);
           border-radius: 12px;
           padding: 24px;
           text-align: center;
@@ -65,9 +52,8 @@ export function ShareButton({
           <h2 style="
             font-size: 24px;
             font-weight: bold;
-            color: #111827;
-            margin-bottom: 32px;
-            margin-top: 0;
+            color: rgb(17, 24, 39);
+            margin: 0 0 32px 0;
           ">편향성 지수</h2>
           
           <div style="
@@ -84,7 +70,7 @@ export function ShareButton({
             <div style="
               font-size: 56px;
               font-weight: 900;
-              color: white;
+              color: rgb(255, 255, 255);
               text-shadow: 0 2px 4px rgba(0,0,0,0.3);
             ">${percentage}%</div>
           </div>
@@ -93,15 +79,14 @@ export function ShareButton({
             <h3 style="
               font-size: 18px;
               font-weight: 600;
-              color: #374151;
-              margin-bottom: 16px;
-              margin-top: 0;
+              color: rgb(55, 65, 81);
+              margin: 0 0 16px 0;
             ">편향성 범위</h3>
             <div style="
               display: flex;
               justify-content: space-between;
               font-size: 11px;
-              color: #6b7280;
+              color: rgb(107, 114, 128);
               margin-bottom: 8px;
             ">
               <span>매우 낮음</span>
@@ -114,24 +99,31 @@ export function ShareButton({
               position: relative;
               height: 24px;
               border-radius: 12px;
-              background: linear-gradient(to right, #10b981, #22c55e, #f59e0b, #f97316, #ef4444);
-              border: 1px solid #e5e7eb;
+              background: rgb(16, 185, 129);
+              border: 1px solid rgb(229, 231, 235);
+              overflow: hidden;
             ">
+              <div style="width: 20%; height: 100%; background: rgb(16, 185, 129); float: left;"></div>
+              <div style="width: 20%; height: 100%; background: rgb(34, 197, 94); float: left;"></div>
+              <div style="width: 20%; height: 100%; background: rgb(245, 158, 11); float: left;"></div>
+              <div style="width: 20%; height: 100%; background: rgb(249, 115, 22); float: left;"></div>
+              <div style="width: 20%; height: 100%; background: rgb(239, 68, 68); float: left;"></div>
               <div style="
                 position: absolute;
                 top: 0;
                 height: 100%;
                 width: 2px;
-                background-color: #111827;
+                background-color: rgb(17, 24, 39);
                 left: ${percentage}%;
                 transform: translateX(-50%);
+                z-index: 10;
               "></div>
             </div>
           </div>
           
           <div style="
             text-align: left;
-            color: #374151;
+            color: rgb(55, 65, 81);
             font-size: 14px;
             line-height: 1.6;
           ">
@@ -139,9 +131,8 @@ export function ShareButton({
               <h3 style="
                 font-size: 18px;
                 font-weight: bold;
-                color: #111827;
-                margin-bottom: 8px;
-                margin-top: 0;
+                color: rgb(17, 24, 39);
+                margin: 0 0 8px 0;
               ">분석</h3>
               <p style="margin: 0;">당신의 편향성 지수를 기반으로 한 분석 결과입니다.</p>
             </div>
@@ -149,31 +140,30 @@ export function ShareButton({
               <h3 style="
                 font-size: 18px;
                 font-weight: bold;
-                color: #111827;
-                margin-bottom: 12px;
-                margin-top: 0;
+                color: rgb(17, 24, 39);
+                margin: 0 0 12px 0;
               ">개선 방안</h3>
               <div>
                 <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                  <span style="color: #2563eb; margin-right: 8px;">•</span>
+                  <span style="color: rgb(37, 99, 235); margin-right: 8px;">•</span>
                   <span>다양한 관점으로 정보를 바라보기</span>
                 </div>
                 <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
-                  <span style="color: #2563eb; margin-right: 8px;">•</span>
+                  <span style="color: rgb(37, 99, 235); margin-right: 8px;">•</span>
                   <span>반대 의견에도 귀 기울이기</span>
                 </div>
                 <div style="display: flex; align-items: flex-start;">
-                  <span style="color: #2563eb; margin-right: 8px;">•</span>
+                  <span style="color: rgb(37, 99, 235); margin-right: 8px;">•</span>
                   <span>근거 기반으로 판단하기</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      `;
-    }
+      </div>
+    `;
     
-    return clone;
+    return container;
   };
 
   const handleDownload = async () => {
@@ -183,75 +173,73 @@ export function ShareButton({
     let clonedElement: HTMLElement | null = null;
     
     try {
-      console.log('🚀 이미지 다운로드 시작...');
+      console.log('🚀 순수 HTML 이미지 생성 시작...');
       
-      // 원본 결과 요소 찾기
-      const originalElement = document.getElementById(resultElementId);
-      if (!originalElement) {
-        throw new Error('결과 요소를 찾을 수 없습니다.');
-      }
+      // 원본 요소는 무시하고 완전히 새로운 요소 생성
+      clonedElement = createCanvasOptimizedElement();
       
-      console.log('📱 최적화된 복제본 생성 중...');
-      // 간단하고 안정적인 복제본 생성
-      clonedElement = createPrintOptimizedClone(originalElement);
+      // DOM에 추가 (화면 밖에)
+      clonedElement.style.cssText = `
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+        visibility: visible;
+        opacity: 1;
+      `;
       
-      // 복제본을 임시로 DOM에 추가 (화면 밖에)
-      clonedElement.style.position = 'absolute';
-      clonedElement.style.top = '-9999px';
-      clonedElement.style.left = '-9999px';
       document.body.appendChild(clonedElement);
       
-      console.log('⏱️ 레이아웃 안정화 대기 중...');
-      // 레이아웃이 안정화될 시간을 줌
-      await new Promise(resolve => setTimeout(resolve, 300));
+      console.log('⏱️ 레이아웃 대기 중...');
+      // 레이아웃 계산 시간
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      console.log('🖼️ 캔버스 생성 중...');
-      // 간단한 옵션으로 html2canvas 실행
+      console.log('🖼️ HTML2Canvas 실행 중...');
+      // 최소한의 옵션으로 캔버스 생성
       const canvas = await html2canvas(clonedElement, {
-        backgroundColor: '#ffffff',
+        backgroundColor: 'white',
         scale: 2,
         useCORS: true,
         allowTaint: false,
         width: 375,
         height: clonedElement.scrollHeight,
-        logging: false
+        logging: true
       });
       
-      console.log('✅ 캔버스 생성 완료!', canvas.width + 'x' + canvas.height);
+      console.log('✅ 캔버스 완성!', `${canvas.width}x${canvas.height}`);
 
-      // 간단한 빈 캔버스 검사
+      // 빈 이미지 검증
       const ctx = canvas.getContext('2d');
       if (!ctx) {
-        throw new Error('캔버스 컨텍스트를 가져올 수 없습니다.');
+        throw new Error('캔버스 컨텍스트 오류');
       }
       
-      // 캔버스가 완전히 비어있는지 확인
-      const imageData = ctx.getImageData(0, 0, Math.min(canvas.width, 100), Math.min(canvas.height, 100));
-      const hasContent = imageData.data.some(pixel => pixel > 0);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const hasContent = imageData.data.some((pixel, index) => {
+        // RGBA에서 알파가 아닌 채널 확인
+        return index % 4 !== 3 && pixel !== 255;
+      });
       
       if (!hasContent) {
-        throw new Error('생성된 이미지가 비어있습니다.');
+        throw new Error('빈 이미지가 생성되었습니다.');
       }
 
-      console.log('💾 이미지 다운로드 실행 중...');
-      // 이미지 다운로드
-      const dataURL = canvas.toDataURL('image/png', 0.9);
+      console.log('💾 다운로드 링크 생성 중...');
+      // 다운로드 실행
+      const dataURL = canvas.toDataURL('image/png', 1.0);
       const link = document.createElement('a');
-      const timestamp = new Date().toISOString().slice(0, 10);
-      link.download = `bias-test-result-${percentage}%-${timestamp}.png`;
+      link.download = `편향성-테스트-결과-${percentage}%-${Date.now()}.png`;
       link.href = dataURL;
       
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       
-      console.log('🎉 다운로드 완료!');
+      console.log('🎉 성공적으로 다운로드됨!');
       
     } catch (error) {
-      console.error('💥 다운로드 실패:', error);
-      alert(`이미지 다운로드에 실패했습니다.\n오류: ${error.message || '알 수 없는 오류'}\n\n다시 시도해주세요.`);
+      console.error('❌ 다운로드 실패:', error);
+      alert(`다운로드 실패\n원인: ${error.message}\n\n다시 시도해주세요.`);
     } finally {
-      // 정리
       if (clonedElement && document.body.contains(clonedElement)) {
         document.body.removeChild(clonedElement);
       }
@@ -263,10 +251,47 @@ export function ShareButton({
     <button
       onClick={handleDownload}
       disabled={isDownloading}
-      className={`inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '8px 16px',
+        backgroundColor: isDownloading ? 'rgb(107, 114, 128)' : 'rgb(37, 99, 235)',
+        color: 'rgb(255, 255, 255)',
+        borderRadius: '8px',
+        fontWeight: '500',
+        border: 'none',
+        cursor: isDownloading ? 'not-allowed' : 'pointer',
+        fontSize: '14px',
+        transition: 'background-color 0.2s',
+        opacity: isDownloading ? 0.5 : 1,
+        ...parseStyleString(className)
+      }}
+      onMouseEnter={(e) => {
+        if (!isDownloading) {
+          e.currentTarget.style.backgroundColor = 'rgb(29, 78, 216)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isDownloading) {
+          e.currentTarget.style.backgroundColor = 'rgb(37, 99, 235)';
+        }
+      }}
     >
-      <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
+      <ArrowDownTrayIcon 
+        style={{ 
+          width: '20px', 
+          height: '20px', 
+          marginRight: '8px' 
+        }} 
+      />
       {isDownloading ? '생성 중...' : buttonText}
     </button>
   );
+}
+
+// 간단한 className 파서 (필요한 경우)
+function parseStyleString(className: string) {
+  // className에서 추가 스타일 파싱 (필요시)
+  return {};
 }

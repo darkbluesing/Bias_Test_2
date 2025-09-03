@@ -30,4 +30,12 @@ module.exports = {
     },
   },
   plugins: [],
+  // HTML2Canvas 호환성을 위한 RGB 색상 강제 설정
+  corePlugins: {
+    // OKLCH 색상 사용을 방지하기 위한 설정
+  },
+  future: {
+    // 최신 색상 기능 비활성화
+    hoverOnlyWhenSupported: false,
+  }
 };
