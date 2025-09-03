@@ -19,54 +19,65 @@ export function ShareButton({
 }: ShareButtonProps) {
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // OKLCH 색상을 RGB로 변환하는 함수
-  const convertOklchToRgb = (element: HTMLElement) => {
-    const clone = element.cloneNode(true) as HTMLElement;
-    const allElements = [clone, ...clone.querySelectorAll('*')] as HTMLElement[];
+  // 요소의 모든 계산된 스타일을 인라인으로 복사하는 함수
+  const copyComputedStyles = (source: Element, target: Element) => {
+    const computedStyle = window.getComputedStyle(source);
+    const targetElement = target as HTMLElement;
     
-    // OKLCH 색상 매핑 (예시 색상들)
-    const oklchToRgbMap: { [key: string]: string } = {
-      'oklch(62.3% .214 259.815)': '#3b82f6', // blue-500
-      'oklch(54.6% .245 262.881)': '#2563eb', // blue-600
-      'oklch(48.8% .243 264.376)': '#1d4ed8', // blue-700
-      'oklch(98.5% .002 247.839)': '#f9fafb', // gray-50
-      'oklch(96.7% .003 264.542)': '#f3f4f6', // gray-100
-      'oklch(92.8% .006 264.531)': '#e5e7eb', // gray-200
-      'oklch(87.2% .01 258.338)': '#d1d5db',  // gray-300
-      'oklch(70.7% .022 261.325)': '#9ca3af', // gray-400
-      'oklch(55.1% .027 264.364)': '#6b7280', // gray-500
-      'oklch(44.6% .03 256.802)': '#4b5563',  // gray-600
-      'oklch(37.3% .034 259.733)': '#374151', // gray-700
-      'oklch(27.8% .033 256.848)': '#1f2937', // gray-800
-      'oklch(21% .034 264.665)': '#111827',   // gray-900
-      '#fff': '#ffffff',
-      '#000': '#000000'
-    };
+    // 모든 CSS 속성 복사
+    for (let i = 0; i < computedStyle.length; i++) {
+      const property = computedStyle[i];
+      const value = computedStyle.getPropertyValue(property);
+      
+      // OKLCH 색상을 RGB로 변환
+      let convertedValue = value;
+      if (value.includes('oklch')) {
+        // OKLCH를 RGB로 변환하는 간단한 매핑
+        const oklchToRgbMap: { [key: string]: string } = {
+          'oklch(62.3% 0.214 259.815)': 'rgb(59, 130, 246)',
+          'oklch(54.6% 0.245 262.881)': 'rgb(37, 99, 235)',
+          'oklch(48.8% 0.243 264.376)': 'rgb(29, 78, 216)',
+          'oklch(98.5% 0.002 247.839)': 'rgb(249, 250, 251)',
+          'oklch(96.7% 0.003 264.542)': 'rgb(243, 244, 246)',
+          'oklch(92.8% 0.006 264.531)': 'rgb(229, 231, 235)',
+          'oklch(87.2% 0.01 258.338)': 'rgb(209, 213, 219)',
+          'oklch(70.7% 0.022 261.325)': 'rgb(156, 163, 175)',
+          'oklch(55.1% 0.027 264.364)': 'rgb(107, 114, 128)',
+          'oklch(44.6% 0.03 256.802)': 'rgb(75, 85, 99)',
+          'oklch(37.3% 0.034 259.733)': 'rgb(55, 65, 81)',
+          'oklch(27.8% 0.033 256.848)': 'rgb(31, 41, 55)',
+          'oklch(21% 0.034 264.665)': 'rgb(17, 24, 39)'
+        };
+        convertedValue = oklchToRgbMap[value] || value;
+      }
+      
+      try {
+        targetElement.style.setProperty(property, convertedValue, computedStyle.getPropertyPriority(property));
+      } catch (e) {
+        // 일부 속성은 설정할 수 없을 수 있음
+      }
+    }
+  };
+
+  // 요소와 모든 자식 요소의 스타일을 복사하는 함수
+  const cloneElementWithStyles = (element: HTMLElement) => {
+    const clone = element.cloneNode(false) as HTMLElement;
+    copyComputedStyles(element, clone);
     
-    allElements.forEach(el => {
-      const computedStyle = window.getComputedStyle(el);
-      const bgColor = computedStyle.backgroundColor;
-      const color = computedStyle.color;
-      const borderColor = computedStyle.borderColor;
-      
-      // 배경색 변환
-      if (bgColor && bgColor.includes('oklch')) {
-        const rgbColor = oklchToRgbMap[bgColor] || '#ffffff';
-        el.style.backgroundColor = rgbColor;
+    // 자식 요소들도 재귀적으로 복사
+    for (let i = 0; i < element.children.length; i++) {
+      const childElement = element.children[i] as HTMLElement;
+      const clonedChild = cloneElementWithStyles(childElement);
+      clone.appendChild(clonedChild);
+    }
+    
+    // 텍스트 노드 복사
+    for (let i = 0; i < element.childNodes.length; i++) {
+      const node = element.childNodes[i];
+      if (node.nodeType === Node.TEXT_NODE) {
+        clone.appendChild(node.cloneNode(true));
       }
-      
-      // 텍스트 색상 변환
-      if (color && color.includes('oklch')) {
-        const rgbColor = oklchToRgbMap[color] || '#000000';
-        el.style.color = rgbColor;
-      }
-      
-      // 테두리 색상 변환
-      if (borderColor && borderColor.includes('oklch')) {
-        const rgbColor = oklchToRgbMap[borderColor] || '#e5e7eb';
-        el.style.borderColor = rgbColor;
-      }
-    });
+    }
     
     return clone;
   };
@@ -85,14 +96,20 @@ export function ShareButton({
         throw new Error('결과 요소를 찾을 수 없습니다.');
       }
       
-      console.log('OKLCH 색상을 RGB로 변환 중...');
-      const clonedElement = convertOklchToRgb(element);
+      console.log('모든 스타일과 함께 요소 복제 중...');
+      const clonedElement = cloneElementWithStyles(element);
       
       // 복제된 요소를 임시로 DOM에 추가 (보이지 않게)
-      clonedElement.style.position = 'absolute';
+      clonedElement.style.position = 'fixed';
+      clonedElement.style.top = '-9999px';
       clonedElement.style.left = '-9999px';
+      clonedElement.style.zIndex = '-9999';
       clonedElement.style.visibility = 'hidden';
+      clonedElement.style.pointerEvents = 'none';
       document.body.appendChild(clonedElement);
+      
+      // DOM이 업데이트될 시간을 줌
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       console.log('html2canvas로 이미지 생성 중...');
       
@@ -136,7 +153,7 @@ export function ShareButton({
     <button
       onClick={handleDownload}
       disabled={isDownloading}
-      className={`inline-flex items-center justify-center bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      className={`inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
       <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
       {isDownloading ? '생성 중...' : buttonText}

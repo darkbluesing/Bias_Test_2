@@ -176,16 +176,16 @@ export default function ResultPage() {
             <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm">광고 공간</div>
           </div>
 
-          <div className="flex flex-row gap-2 sm:gap-3 justify-center items-center mt-4 px-2" data-hide-in-export="true">
+          <div className="flex flex-row gap-2 sm:gap-4 justify-center items-center mt-4 px-2" data-hide-in-export="true">
             <ShareButton 
               percentage={result.percentage}
-              className="flex-1 max-w-[140px] sm:max-w-[160px] px-3 sm:px-6 py-2 text-sm sm:text-base"
+              className="flex-1 max-w-[140px] sm:max-w-[180px] md:max-w-[200px] text-sm sm:text-base md:px-8 md:py-3"
               buttonText={t.result.shareButton}
             />
             
             <button
               onClick={handleRetakeTest}
-              className="flex-1 max-w-[140px] sm:max-w-[160px] inline-flex items-center justify-center px-3 sm:px-6 py-2 bg-gray-500 text-white rounded-lg font-medium text-sm sm:text-base hover:bg-gray-600 transition-colors"
+              className="flex-1 max-w-[140px] sm:max-w-[180px] md:max-w-[200px] inline-flex items-center justify-center px-3 sm:px-6 md:px-8 py-2 md:py-3 bg-gray-500 text-white rounded-lg font-medium text-sm sm:text-base hover:bg-gray-600 transition-colors"
             >
               {t.result.retakeTest}
             </button>
