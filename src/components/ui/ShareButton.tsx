@@ -19,65 +19,109 @@ export function ShareButton({
 }: ShareButtonProps) {
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // 요소의 모든 계산된 스타일을 인라인으로 복사하는 함수
-  const copyComputedStyles = (source: Element, target: Element) => {
+  // 포괄적인 OKLCH -> RGB 변환 함수
+  const convertOklchToRgb = (value: string): string => {
+    if (!value.includes('oklch')) return value;
+    
+    // 다양한 OKLCH 패턴 매칭
+    const oklchPatterns = [
+      // Tailwind CSS 기본 색상들
+      { pattern: /oklch\(62\.3%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#3b82f6' }, // blue-500
+      { pattern: /oklch\(54\.6%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#2563eb' }, // blue-600
+      { pattern: /oklch\(48\.8%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#1d4ed8' }, // blue-700
+      { pattern: /oklch\(42\.4%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#1e40af' }, // blue-800
+      { pattern: /oklch\(37\.9%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#1e3a8a' }, // blue-900
+      
+      // Gray 색상들
+      { pattern: /oklch\(98\.5%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#f9fafb' }, // gray-50
+      { pattern: /oklch\(96\.7%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#f3f4f6' }, // gray-100
+      { pattern: /oklch\(92\.8%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#e5e7eb' }, // gray-200
+      { pattern: /oklch\(87\.2%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#d1d5db' }, // gray-300
+      { pattern: /oklch\(70\.7%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#9ca3af' }, // gray-400
+      { pattern: /oklch\(55\.1%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#6b7280' }, // gray-500
+      { pattern: /oklch\(44\.6%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#4b5563' }, // gray-600
+      { pattern: /oklch\(37\.3%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#374151' }, // gray-700
+      { pattern: /oklch\(27\.8%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#1f2937' }, // gray-800
+      { pattern: /oklch\(21%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#111827' },   // gray-900
+      
+      // 기타 색상들 - 일반적인 폴백
+      { pattern: /oklch\([89]\d%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#ffffff' }, // 80-99% lightness -> white
+      { pattern: /oklch\([1-3]\d%\s+[\.\d]*\s+[\d\.]*\)/, rgb: '#000000' }  // 10-39% lightness -> black
+    ];
+    
+    for (const { pattern, rgb } of oklchPatterns) {
+      if (pattern.test(value)) {
+        return value.replace(pattern, rgb);
+      }
+    }
+    
+    // 매칭되지 않는 OKLCH는 기본값으로 대체
+    console.warn('Unmatched OKLCH color:', value);
+    return value.replace(/oklch\([^)]+\)/g, '#ffffff');
+  };
+
+  // CSS 스타일 문자열에서 모든 OKLCH 색상을 변환
+  const convertStyleString = (styleText: string): string => {
+    return styleText.replace(/oklch\([^)]+\)/g, (match) => {
+      return convertOklchToRgb(match);
+    });
+  };
+
+  // 요소의 모든 계산된 스타일을 HTML2Canvas 호환 색상으로 변환하여 적용
+  const applyCompatibleStyles = (source: Element, target: Element) => {
     const computedStyle = window.getComputedStyle(source);
     const targetElement = target as HTMLElement;
     
-    // 모든 CSS 속성 복사
-    for (let i = 0; i < computedStyle.length; i++) {
-      const property = computedStyle[i];
-      const value = computedStyle.getPropertyValue(property);
-      
-      // OKLCH 색상을 RGB로 변환
-      let convertedValue = value;
-      if (value.includes('oklch')) {
-        // OKLCH를 RGB로 변환하는 간단한 매핑
-        const oklchToRgbMap: { [key: string]: string } = {
-          'oklch(62.3% 0.214 259.815)': 'rgb(59, 130, 246)',
-          'oklch(54.6% 0.245 262.881)': 'rgb(37, 99, 235)',
-          'oklch(48.8% 0.243 264.376)': 'rgb(29, 78, 216)',
-          'oklch(98.5% 0.002 247.839)': 'rgb(249, 250, 251)',
-          'oklch(96.7% 0.003 264.542)': 'rgb(243, 244, 246)',
-          'oklch(92.8% 0.006 264.531)': 'rgb(229, 231, 235)',
-          'oklch(87.2% 0.01 258.338)': 'rgb(209, 213, 219)',
-          'oklch(70.7% 0.022 261.325)': 'rgb(156, 163, 175)',
-          'oklch(55.1% 0.027 264.364)': 'rgb(107, 114, 128)',
-          'oklch(44.6% 0.03 256.802)': 'rgb(75, 85, 99)',
-          'oklch(37.3% 0.034 259.733)': 'rgb(55, 65, 81)',
-          'oklch(27.8% 0.033 256.848)': 'rgb(31, 41, 55)',
-          'oklch(21% 0.034 264.665)': 'rgb(17, 24, 39)'
-        };
-        convertedValue = oklchToRgbMap[value] || value;
-      }
-      
+    // 중요한 스타일 속성들만 선택적으로 복사
+    const importantProperties = [
+      'background-color', 'color', 'border-color', 'border-top-color', 
+      'border-right-color', 'border-bottom-color', 'border-left-color',
+      'font-family', 'font-size', 'font-weight', 'font-style',
+      'width', 'height', 'padding', 'margin', 'border', 'border-radius',
+      'display', 'position', 'top', 'left', 'right', 'bottom',
+      'text-align', 'line-height', 'box-shadow', 'opacity',
+      'transform', 'z-index'
+    ];
+    
+    importantProperties.forEach(property => {
       try {
-        targetElement.style.setProperty(property, convertedValue, computedStyle.getPropertyPriority(property));
+        const value = computedStyle.getPropertyValue(property);
+        if (value) {
+          const convertedValue = convertOklchToRgb(value);
+          targetElement.style.setProperty(property, convertedValue, 'important');
+        }
       } catch (e) {
-        // 일부 속성은 설정할 수 없을 수 있음
+        console.warn(`Failed to set ${property}:`, e);
       }
+    });
+    
+    // 텍스트 내용도 복사
+    if (source.textContent && source.children.length === 0) {
+      targetElement.textContent = source.textContent;
     }
   };
 
-  // 요소와 모든 자식 요소의 스타일을 복사하는 함수
-  const cloneElementWithStyles = (element: HTMLElement) => {
+  // 요소와 모든 자식 요소를 HTML2Canvas 호환 형태로 복제
+  const createCompatibleClone = (element: HTMLElement): HTMLElement => {
     const clone = element.cloneNode(false) as HTMLElement;
-    copyComputedStyles(element, clone);
     
-    // 자식 요소들도 재귀적으로 복사
-    for (let i = 0; i < element.children.length; i++) {
-      const childElement = element.children[i] as HTMLElement;
-      const clonedChild = cloneElementWithStyles(childElement);
-      clone.appendChild(clonedChild);
-    }
+    // 소스 요소의 스타일 적용
+    applyCompatibleStyles(element, clone);
     
-    // 텍스트 노드 복사
-    for (let i = 0; i < element.childNodes.length; i++) {
-      const node = element.childNodes[i];
+    // 자식 요소들을 재귀적으로 처리
+    Array.from(element.children).forEach(child => {
+      if (child instanceof HTMLElement) {
+        const clonedChild = createCompatibleClone(child);
+        clone.appendChild(clonedChild);
+      }
+    });
+    
+    // 직접 텍스트 노드들 복사
+    Array.from(element.childNodes).forEach(node => {
       if (node.nodeType === Node.TEXT_NODE) {
         clone.appendChild(node.cloneNode(true));
       }
-    }
+    });
     
     return clone;
   };
@@ -96,8 +140,8 @@ export function ShareButton({
         throw new Error('결과 요소를 찾을 수 없습니다.');
       }
       
-      console.log('모든 스타일과 함께 요소 복제 중...');
-      const clonedElement = cloneElementWithStyles(element);
+      console.log('HTML2Canvas 호환 형태로 요소 복제 중...');
+      const clonedElement = createCompatibleClone(element);
       
       // 복제된 요소를 임시로 DOM에 추가 (보이지 않게)
       clonedElement.style.position = 'fixed';
