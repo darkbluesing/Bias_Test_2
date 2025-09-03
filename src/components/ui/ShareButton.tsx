@@ -168,16 +168,25 @@ export function ShareButton({
     
     try {
       console.log('🚀 실제 결과 페이지 기반 이미지 생성 시작...');
+      console.log('🔍 찾는 요소 ID:', resultElementId);
       
       // 실제 결과 요소 찾기
       const originalElement = document.getElementById(resultElementId);
       if (!originalElement) {
-        throw new Error('결과 요소를 찾을 수 없습니다.');
+        console.error('❌ 결과 요소를 찾을 수 없습니다. ID:', resultElementId);
+        console.log('📋 페이지의 모든 ID 요소:', Array.from(document.querySelectorAll('[id]')).map(el => el.id));
+        throw new Error(`결과 요소를 찾을 수 없습니다. (ID: ${resultElementId})`);
       }
+      
+      console.log('✅ 원본 요소 발견:', originalElement.tagName, originalElement.className);
+      console.log('📏 원본 요소 크기:', originalElement.offsetWidth, 'x', originalElement.offsetHeight);
       
       console.log('📋 원본 DOM 복제 및 OKLCH 변환 중...');
       // 원본 DOM을 복제하면서 OKLCH 문제만 해결
       clonedElement = createOklchSafeClone(originalElement);
+      
+      console.log('📋 복제된 요소 내용 길이:', clonedElement.innerHTML.length);
+      console.log('📋 복제된 요소 자식 수:', clonedElement.children.length);
       
       // DOM에 추가 (화면 밖에)
       clonedElement.style.position = 'absolute';
@@ -193,22 +202,24 @@ export function ShareButton({
       await new Promise(resolve => setTimeout(resolve, 800));
       
       console.log('🖼️ 개인화된 결과로 HTML2Canvas 실행 중...');
+      console.log('📐 캔버스 대상 크기:', clonedElement.offsetWidth, 'x', clonedElement.scrollHeight);
+      
       // HTML2Canvas 실행
       const canvas = await html2canvas(clonedElement, {
         backgroundColor: 'rgb(255, 255, 255)',
         scale: 2,
         useCORS: true,
         allowTaint: false,
-        width: 375,
-        height: clonedElement.scrollHeight,
-        logging: false,
+        width: Math.max(375, clonedElement.offsetWidth),
+        height: Math.max(400, clonedElement.scrollHeight),
+        logging: true, // 디버깅을 위해 일시적으로 켜기
         // SVG 렌더링 향상
         foreignObjectRendering: true,
         // 추가 안정성 옵션
         removeContainer: false,
         imageTimeout: 15000,
         // OKLCH 변환된 스타일 인식을 위한 옵션
-        onclone: (clonedDoc, element) => {
+        onclone: (clonedDoc) => {
           // 복제된 문서에서도 애니메이션 비활성화
           const style = clonedDoc.createElement('style');
           style.textContent = `
@@ -220,6 +231,7 @@ export function ShareButton({
             }
           `;
           clonedDoc.head.appendChild(style);
+          console.log('🎨 HTML2Canvas 복제 문서 처리 완료');
         }
       });
       
@@ -260,7 +272,8 @@ export function ShareButton({
       
     } catch (error) {
       console.error('💥 이미지 다운로드 실패:', error);
-      alert(`이미지 다운로드에 실패했습니다.\n\n오류 내용: ${error.message || '알 수 없는 오류'}\n\n다시 시도해주세요.`);
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
+      alert(`이미지 다운로드에 실패했습니다.\n\n오류 내용: ${errorMessage}\n\n다시 시도해주세요.`);
     } finally {
       if (clonedElement && document.body.contains(clonedElement)) {
         document.body.removeChild(clonedElement);
@@ -313,7 +326,7 @@ export function ShareButton({
 }
 
 // 간단한 className 파서 (필요한 경우)
-function parseStyleString(className: string) {
+function parseStyleString(_className: string) {
   // className에서 추가 스타일 파싱 (필요시)
   return {};
 }
