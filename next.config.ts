@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true
   },
+  // 정적 사이트 최적화
+  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
+  basePath: '',
   // 안전한 빌드 최적화 설정 (실험적 기능 제거)
   swcMinify: true,
   compiler: {

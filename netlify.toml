@@ -13,6 +13,16 @@
   NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT = "60000"
 
 [[redirects]]
+  from = "/result/*"
+  to = "/result/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/test/*"
+  to = "/test/index.html"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

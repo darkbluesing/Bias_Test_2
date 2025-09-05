@@ -24,7 +24,10 @@ export function ShareButton({
     setIsDownloading(true);
     
     try {
-      console.log('🎨 Canvas API를 사용한 직접 이미지 생성 시작...');
+      // 프로덕션 환경에서 콘솔 로그가 제거되어도 작동하도록 안전한 로깅
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('🎨 Canvas API를 사용한 직접 이미지 생성 시작...');
+      }
       
       // 결과 요소 찾기
       const originalElement = document.getElementById(resultElementId);
