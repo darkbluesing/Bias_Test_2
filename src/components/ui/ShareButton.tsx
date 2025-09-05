@@ -103,12 +103,13 @@ export function ShareButton({
       ctx.lineWidth = lineWidth;
       ctx.stroke();
       
-      // 진행 원 (percentage만큼) - ResultChart와 동일한 방식
-      const startAngle = -Math.PI / 2; // 12시 방향부터 시작
-      const endAngle = startAngle + (2 * Math.PI * percent / 100);
+      // 진행 원 (percentage만큼) - SVG stroke-dasharray와 동일한 시각적 결과
+      const startAngle = -Math.PI / 2; // 12시 방향부터 시작 (SVG와 동일)
+      const progressAngle = (2 * Math.PI * percent) / 100; // 진행률만큼의 각도
+      const endAngle = startAngle + progressAngle;
       
       ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle, false); // false = 시계방향
       
       // 색상 결정 - ResultChart의 getColorForPercentage와 동일한 로직
       let color = '#10b981'; // 기본 녹색
