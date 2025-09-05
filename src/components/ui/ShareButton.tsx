@@ -42,11 +42,15 @@ export function ShareButton({
       const descriptionElement = originalElement.querySelector('p');
       
       const name = nameElement?.textContent || '사용자';
-      const percent = percentage;
+      // DOM에서 실제 표시된 퍼센트 값을 추출하여 정확성 보장
+      const percentText = percentageElement?.textContent || `${percentage}%`;
+      const percent = parseInt(percentText.replace('%', '')) || percentage;
       const category = categoryElement?.textContent || '';
       const description = descriptionElement?.textContent || '';
       
-      console.log('📋 추출된 데이터:', { name, percent, category });
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('📋 추출된 데이터:', { name, percent, category, 'props.percentage': percentage, 'dom.percent': percentText });
+      }
       
       // Canvas 생성
       const canvas = document.createElement('canvas');
@@ -99,19 +103,20 @@ export function ShareButton({
       ctx.lineWidth = lineWidth;
       ctx.stroke();
       
-      // 진행 원 (percentage만큼)
+      // 진행 원 (percentage만큼) - ResultChart와 동일한 방식
       const startAngle = -Math.PI / 2; // 12시 방향부터 시작
       const endAngle = startAngle + (2 * Math.PI * percent / 100);
       
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, startAngle, endAngle);
       
-      // 색상 결정
+      // 색상 결정 - ResultChart의 getColorForPercentage와 동일한 로직
       let color = '#10b981'; // 기본 녹색
-      if (percent > 70) color = '#ef4444'; // 빨간색
-      else if (percent > 50) color = '#f97316'; // 주황색
-      else if (percent > 30) color = '#f59e0b'; // 노란색
-      else if (percent > 15) color = '#22c55e'; // 연녹색
+      if (percent <= 15) color = '#10b981';
+      else if (percent <= 30) color = '#22c55e';
+      else if (percent <= 50) color = '#f59e0b';
+      else if (percent <= 70) color = '#f97316';
+      else color = '#ef4444';
       
       ctx.strokeStyle = color;
       ctx.lineWidth = lineWidth;
