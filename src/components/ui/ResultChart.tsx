@@ -63,21 +63,35 @@ export function ResultChart({
       
       <div className="flex justify-center mb-6">
         <div className="relative flex items-center justify-center" style={{ width: chartSize.width, height: chartSize.height }}>
-          <svg className="transform -rotate-90 w-full h-full" viewBox={`0 0 ${chartSize.width} ${chartSize.height}`}>
+          <svg 
+            className="transform -rotate-90 w-full h-full" 
+            viewBox={`0 0 ${chartSize.width} ${chartSize.height}`}
+            style={{ 
+              overflow: 'visible',
+              border: 'none',
+              outline: 'none'
+            }}
+          >
             <circle
               cx={chartSize.width / 2} cy={chartSize.height / 2} r={chartSize.innerRadius}
-              stroke="#e5e7eb" strokeWidth={chartSize.strokeWidth} fill="transparent" className="opacity-30"
+              stroke="#e5e7eb" strokeWidth={chartSize.strokeWidth} fill="none" 
+              className="opacity-30"
+              style={{
+                border: 'none',
+                outline: 'none'
+              }}
             />
             <circle
               cx={chartSize.width / 2} cy={chartSize.height / 2} r={chartSize.innerRadius}
-              stroke={color} strokeWidth={chartSize.strokeWidth} fill="transparent"
+              stroke={color} strokeWidth={chartSize.strokeWidth} fill="none"
               strokeDasharray={strokeDasharray}
               strokeLinecap="round"
               className={!disableAnimation ? `chart-animation-${chartId}` : ''}
-              // 애니메이션 활성화 시 초기값 설정, 비활성화 시 최종값 설정
               strokeDashoffset={disableAnimation ? finalOffset : circumference}
               style={{
-                filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
+                filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
+                border: 'none',
+                outline: 'none'
               }}
             />
           </svg>
