@@ -128,7 +128,7 @@ export default function ResultPage() {
             <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm">광고 공간</div>
           </div>
 
-          <div id="result-container" className="bg-white rounded-xl shadow-lg overflow-visible">
+          <div id="result-container" className="bg-white rounded-xl shadow-lg overflow-visible relative">
             <ResultChart
               percentage={result.percentage}
               category={result.category}

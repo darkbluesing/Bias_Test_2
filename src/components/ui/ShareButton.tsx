@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toPng } from 'html-to-image';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 interface ShareButtonProps {
@@ -13,7 +14,7 @@ interface ShareButtonProps {
 export function ShareButton({ 
   percentage,
   className = '', 
-  buttonText = '결과 다운로드',
+  buttonText = '결과 공유하기',
   resultElementId = 'result-container'
 }: ShareButtonProps) {
   const [isDownloading, setIsDownloading] = useState(false);
@@ -23,169 +24,109 @@ export function ShareButton({
     
     setIsDownloading(true);
     
+    const element = document.getElementById(resultElementId) as HTMLElement;
+    if (!element) {
+      alert('이미지를 생성할 요소를 찾을 수 없습니다.');
+      setIsDownloading(false);
+      return;
+    }
+
+    const animatedCircle = element.querySelector('[class*="chart-animation-"]') as SVGCircleElement | null;
+
     try {
-      // 프로덕션 환경에서 콘솔 로그가 제거되어도 작동하도록 안전한 로깅
-      if (typeof console !== 'undefined' && console.log) {
-        console.log('🎨 Canvas API를 사용한 직접 이미지 생성 시작...');
-      }
-      
-      // 결과 요소 찾기
-      const originalElement = document.getElementById(resultElementId);
-      if (!originalElement) {
-        throw new Error('결과 요소를 찾을 수 없습니다.');
-      }
-      
-      // 결과 데이터 추출
-      const nameElement = originalElement.querySelector('h2');
-      const percentageElement = originalElement.querySelector('[class*="text-4xl"]');
-      const categoryElement = originalElement.querySelector('h3');
-      const descriptionElement = originalElement.querySelector('p');
-      
-      const name = nameElement?.textContent || '사용자';
-      // DOM에서 실제 표시된 퍼센트 값을 추출하여 정확성 보장
-      const percentText = percentageElement?.textContent || `${percentage}%`;
-      const percent = parseInt(percentText.replace('%', '')) || percentage;
-      const category = categoryElement?.textContent || '';
-      const description = descriptionElement?.textContent || '';
-      
-      if (typeof console !== 'undefined' && console.log) {
-        console.log('📋 추출된 데이터:', { name, percent, category, 'props.percentage': percentage, 'dom.percent': percentText });
-      }
-      
-      // Canvas 생성
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Canvas context를 생성할 수 없습니다.');
-      
-      // Canvas 크기 설정
-      canvas.width = 400;
-      canvas.height = 600;
-      
-      // 배경 그리기
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      // 제목 그리기
-      ctx.fillStyle = '#111827';
-      ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, sans-serif';
-      ctx.textAlign = 'center';
-      
-      // 텍스트 줄바꿈 처리
-      const maxWidth = 360;
-      const words = name.split(' ');
-      let line = '';
-      let y = 60;
-      
-      for (let n = 0; n < words.length; n++) {
-        const testLine = line + words[n] + ' ';
-        const metrics = ctx.measureText(testLine);
-        const testWidth = metrics.width;
-        if (testWidth > maxWidth && n > 0) {
-          ctx.fillText(line, canvas.width / 2, y);
-          line = words[n] + ' ';
-          y += 30;
-        } else {
-          line = testLine;
+      // 1단계: DOM을 이미지 데이터로 캡처
+      if (animatedCircle) {
+        const finalOffset = animatedCircle.dataset.finalOffset;
+        if (finalOffset) {
+          animatedCircle.style.animation = 'none';
+          animatedCircle.setAttribute('stroke-dashoffset', finalOffset);
         }
       }
-      ctx.fillText(line, canvas.width / 2, y);
-      
-      // 원형 차트 그리기
-      const centerX = canvas.width / 2;
-      const centerY = 200;
-      const radius = 80;
-      const lineWidth = 24;
-      
-      // 배경 원
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-      ctx.strokeStyle = '#e5e7eb';
-      ctx.lineWidth = lineWidth;
-      ctx.stroke();
-      
-      // 진행 원 (percentage만큼) - SVG stroke-dasharray와 동일한 시각적 결과
-      const startAngle = -Math.PI / 2; // 12시 방향부터 시작 (SVG와 동일)
-      const progressAngle = (2 * Math.PI * percent) / 100; // 진행률만큼의 각도
-      const endAngle = startAngle + progressAngle;
-      
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, startAngle, endAngle, false); // false = 시계방향
-      
-      // 색상 결정 - ResultChart의 getColorForPercentage와 동일한 로직
-      let color = '#10b981'; // 기본 녹색
-      if (percent <= 15) color = '#10b981';
-      else if (percent <= 30) color = '#22c55e';
-      else if (percent <= 50) color = '#f59e0b';
-      else if (percent <= 70) color = '#f97316';
-      else color = '#ef4444';
-      
-      ctx.strokeStyle = color;
-      ctx.lineWidth = lineWidth;
-      ctx.lineCap = 'round';
-      ctx.stroke();
-      
-      // 퍼센트 텍스트
-      ctx.fillStyle = color;
-      ctx.font = 'bold 48px -apple-system, BlinkMacSystemFont, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(`${percent}%`, centerX, centerY + 15);
-      
-      // 카테고리
-      ctx.fillStyle = '#374151';
-      ctx.font = 'bold 18px -apple-system, BlinkMacSystemFont, sans-serif';
-      ctx.fillText(category, centerX, 350);
-      
-      // 설명 (줄바꿈 처리)
-      ctx.fillStyle = '#6b7280';
-      ctx.font = '14px -apple-system, BlinkMacSystemFont, sans-serif';
-      ctx.textAlign = 'center';
-      
-      const descWords = description.split(' ');
-      let descLine = '';
-      let descY = 380;
-      
-      for (let n = 0; n < descWords.length; n++) {
-        const testLine = descLine + descWords[n] + ' ';
-        const metrics = ctx.measureText(testLine);
-        if (metrics.width > maxWidth && n > 0) {
-          ctx.fillText(descLine, centerX, descY);
-          descLine = descWords[n] + ' ';
-          descY += 20;
-        } else {
-          descLine = testLine;
-        }
-      }
-      ctx.fillText(descLine, centerX, descY);
-      
-      // 하단 브랜딩
-      ctx.fillStyle = '#9ca3af';
-      ctx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
-      ctx.fillText('www.areyoubiased.life', centerX, canvas.height - 30);
-      
-      console.log('✅ Canvas 이미지 생성 완료');
-      
-      // 다운로드 실행
-      const dataURL = canvas.toDataURL('image/png', 0.95);
+
+      const dataUrl = await toPng(element, {
+        quality: 1.0,
+        pixelRatio: 2,
+        filter: (node: HTMLElement) => node.dataset?.hideInExport !== 'true',
+      });
+
+      // 2단계: 캡처된 이미지에 푸터(로고 및 주소)를 추가하여 새 Canvas 생성
+      const finalImage = await addFooterToImage(dataUrl);
+
+      // 다운로드 링크 생성 및 클릭
       const link = document.createElement('a');
       const timestamp = new Date().toISOString().slice(0, 16).replace('T', '_').replaceAll(':', '-');
-      const fileName = `bias_test_result_${percent}%_${timestamp}.png`;
-      
-      link.download = fileName;
-      link.href = dataURL;
-      link.style.display = 'none';
-      
-      document.body.appendChild(link);
+      link.download = `bias_test_result_${percentage}%_${timestamp}.png`;
+      link.href = finalImage;
       link.click();
-      document.body.removeChild(link);
-      
-      console.log('🎉 Canvas 기반 다운로드 완료!', fileName);
-      
+
     } catch (error) {
-      console.error('💥 Canvas 다운로드 실패:', error);
-      alert('이미지 다운로드에 실패했습니다.\n\n' + (error instanceof Error ? error.message : '알 수 없는 오류'));
+      console.error('이미지 생성 중 오류가 발생했습니다:', error);
+      alert('이미지 다운로드에 실패했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
+      if (animatedCircle) {
+        animatedCircle.style.animation = '';
+      }
       setIsDownloading(false);
     }
+  };
+
+  // 이미지에 푸터를 추가하는 함수
+  const addFooterToImage = (imageDataUrl: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const footerHeight = 60;
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height + footerHeight * 2; // pixelRatio 2 감안
+
+        const ctx = canvas.getContext('2d')!;
+
+        // 배경을 흰색으로 채움
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 원본 이미지 그리기
+        ctx.drawImage(img, 0, 0);
+
+        // --- 푸터 그리기 시작 ---
+        const scale = 2; // pixelRatio
+        const logoSize = 20 * scale;
+        const fontSize = 14 * scale;
+        const text = 'www.areyoubiased.life';
+        
+        ctx.font = `bold ${fontSize}px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
+        const textWidth = ctx.measureText(text).width;
+        const gap = 8 * scale;
+        const totalFooterWidth = logoSize + gap + textWidth;
+        
+        const startX = (canvas.width - totalFooterWidth) / 2;
+        const startY = img.height + (footerHeight * scale - logoSize) / 2;
+
+        // 로고 배경
+        ctx.fillStyle = '#2563eb'; // blue-600
+        ctx.roundRect(startX, startY, logoSize, logoSize, 4 * scale);
+        ctx.fill();
+
+        // 로고 텍스트 'B'
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `bold ${16 * scale}px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('B', startX + logoSize / 2, startY + logoSize / 2 + 1 * scale);
+
+        // 페이지 주소 텍스트
+        ctx.fillStyle = '#4b5563'; // gray-600
+        ctx.font = `${fontSize}px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, startX + logoSize + gap, startY + logoSize / 2);
+
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = imageDataUrl;
+    });
   };
 
   return (

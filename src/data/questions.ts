@@ -473,11 +473,11 @@ export const biasQuestions: Question[] = [
   {
     id: 'bias_21',
     text: {
-      ko: '외국인 유튜버가 한국어 욕설을 사용한다면?',
-      en: 'If a foreign YouTuber uses Korean profanity?',
-      es: '¿Si un YouTuber extranjero usa palabrotas en coreano?',
-      zh: '如果外国YouTube用户使用韩语脏话？',
-      ja: '外国人YouTuberが韓国語の悪口を使うなら？'
+            ko: '외국인 유튜버가 내 모국어로 욕설을 사용한다면?',
+      en: 'If a foreign YouTuber uses profanity in my native language?',
+      es: '¿Si un YouTuber extranjero usa groserías en mi idioma nativo?',
+      zh: '如果外国YouTuber用我的母语说脏话？',
+      ja: '外国人YouTuberが私の母国語で悪口を言ったら？'
     },
     options: [
       { ko: '재미있다', en: 'It\'s funny', es: 'Es divertido', zh: '很有趣', ja: '面白い' },

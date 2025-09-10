@@ -11,17 +11,24 @@ const nextConfig: NextConfig = {
   // 정적 사이트 최적화
   assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
   basePath: '',
-  // 안전한 빌드 최적화 설정 (실험적 기능 제거)
-  swcMinify: true,
+  // html2canvas 호환성을 위한 webpack 설정
+  webpack: (config) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      canvas: false,
+    };
+    return config;
+  },
+  // Turbopack 호환성을 위해 experimental.esmExternals 제거
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production'
   },
   // 네트리파이 빌드 환경에서 타입 체크 건너뛰기
   typescript: {
-    ignoreBuildErrors: process.env.NODE_ENV === 'production' && process.env.NETLIFY === 'true',
+    ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: process.env.NODE_ENV === 'production' && process.env.NETLIFY === 'true',
+    ignoreDuringBuilds: false,
   },
   // 정적 파일 최적화
   generateEtags: false,

@@ -44,19 +44,17 @@ export function ResultChart({
 
   return (
     <div className={`text-center ${className}`}>
-      {/* 애니메이션이 활성화된 경우에만 스타일 렌더링 */}
+      {/* html2canvas 호환성을 위해 인라인 스타일로 변경 */}
       {!disableAnimation && (
-        <style dangerouslySetInnerHTML={{
-          __html: `
-            @keyframes drawChart-${chartId} {
-              from { stroke-dashoffset: ${circumference}; }
-              to { stroke-dashoffset: ${finalOffset}; }
-            }
-            .chart-animation-${chartId} {
-              animation: drawChart-${chartId} 2s ease-out 0.5s forwards;
-            }
-          `
-        }} />
+        <style>{`
+          @keyframes drawChart-${chartId} {
+            from { stroke-dashoffset: ${circumference}; }
+            to { stroke-dashoffset: ${finalOffset}; }
+          }
+          .chart-animation-${chartId} {
+            animation: drawChart-${chartId} 2s ease-out 0.5s forwards;
+          }
+        `}</style>
       )}
       
       <h2 className="text-2xl font-bold text-gray-900 mb-6">{displayTitle}</h2>
@@ -88,6 +86,7 @@ export function ResultChart({
               strokeLinecap="round"
               className={!disableAnimation ? `chart-animation-${chartId}` : ''}
               strokeDashoffset={disableAnimation ? finalOffset : circumference}
+              data-final-offset={finalOffset} // 캡처 시 참조할 최종 오프셋
               style={{
                 filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
                 border: 'none',

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useBiasTestStore } from '@/lib/store';
 import { getTranslation, detectLanguageFromBrowser } from '@/lib/i18n';
 import { useHydration } from '@/lib/useHydration';
@@ -8,6 +9,7 @@ import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import { Button } from '@/components/ui/Button';
 
 export default function HomePage() {
+  const router = useRouter();
   const isHydrated = useHydration();
   const [name, setName] = useState('');
   const [isStarting, setIsStarting] = useState(false);
@@ -34,7 +36,7 @@ export default function HomePage() {
     
     await new Promise(resolve => setTimeout(resolve, 100));
     
-    window.location.href = '/test';
+    router.push('/test');
   };
 
   return (
