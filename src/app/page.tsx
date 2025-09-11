@@ -7,6 +7,7 @@ import { getTranslation, detectLanguageFromBrowser } from '@/lib/i18n';
 import { useHydration } from '@/lib/useHydration';
 import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import { Button } from '@/components/ui/Button';
+import { AdSense } from '@/components/ui/AdSense';
 
 export default function HomePage() {
   const router = useRouter();
@@ -56,7 +57,7 @@ export default function HomePage() {
       <main className="px-4 py-1">
         <div className="max-w-mobile mx-auto">
           <div className="mb-2">
-            <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm shadow-inner">광고 공간</div>
+            <AdSense className="bg-gray-100 rounded-lg min-h-[64px] flex items-center justify-center shadow-inner" />
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-3">
@@ -124,7 +125,7 @@ export default function HomePage() {
           </div>
 
           <div className="mb-8">
-            <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm shadow-inner">광고 공간</div>
+            <AdSense className="bg-gray-100 rounded-lg min-h-[64px] flex items-center justify-center shadow-inner" />
           </div>
         </div>
       </main>
