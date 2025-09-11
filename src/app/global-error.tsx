@@ -1,7 +1,7 @@
 'use client';
 
 export default function GlobalError({
-  error: _error,
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -18,7 +18,7 @@ export default function GlobalError({
                   오류 발생
                 </h2>
                 <p className="mt-2 text-sm text-gray-600">
-                  문제가 발생했습니다.
+                  문제가 발생했습니다: {error.message}
                 </p>
                 <div className="mt-6">
                   <button

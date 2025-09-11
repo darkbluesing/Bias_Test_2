@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 declare global {
   interface Window {
-    adsbygoogle: any[];
+    adsbygoogle: unknown[];
   }
 }
 
@@ -16,7 +16,8 @@ interface AdSenseProps {
 export function AdSense({ className = "", style = {} }: AdSenseProps) {
   useEffect(() => {
     try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      const adsbygoogle = (window.adsbygoogle = window.adsbygoogle || []);
+      adsbygoogle.push({});
     } catch (err) {
       console.error('AdSense error:', err);
     }
