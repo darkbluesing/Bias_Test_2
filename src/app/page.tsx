@@ -131,8 +131,8 @@ export default function HomePage() {
 
       <footer className="bg-gray-900 text-white py-8">
         <div className="max-w-mobile mx-auto px-4 text-center">
-          <p className="text-gray-400">© 2024 Are You Biased. All rights reserved.</p>
-          <p className="text-gray-500 text-sm mt-2">https://areyoubiased.life</p>
+          <p className="text-gray-400">© 2025 Are You Biased. All rights reserved.</p>
+          <p className="text-gray-500 text-sm mt-2">www.areyoubiased.life</p>
         </div>
       </footer>
     </div>
