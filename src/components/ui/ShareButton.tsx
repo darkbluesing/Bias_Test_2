@@ -110,10 +110,10 @@ export function ShareButton({
 
         // 로고 텍스트 'B'
         ctx.fillStyle = '#ffffff';
-        ctx.font = `bold ${16 * scale}px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
+        ctx.font = `bold ${12 * scale}px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('B', startX + logoSize / 2, startY + logoSize / 2 + 1 * scale);
+        ctx.fillText('B', startX + logoSize / 2, startY + logoSize / 2);
 
         // 페이지 주소 텍스트
         ctx.fillStyle = '#4b5563'; // gray-600
