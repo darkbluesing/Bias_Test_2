@@ -15,6 +15,9 @@ export const metadata: Metadata = {
     siteName: "Are You Biased",
     type: "website",
   },
+  other: {
+    "google-adsense-account": "ca-pub-9411264810928915",
+  },
 };
 
 export default function RootLayout({
@@ -25,7 +28,6 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <meta name="google-adsense-account" content="ca-pub-9411264810928915" />
         <script 
           async 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9411264810928915"
