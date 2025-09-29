@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "편견 테스트 - Are You Biased?",
     description: "무의식적 편견을 발견하고 개선하는 테스트",
-    url: "https://areyoubiased.life",
+    url: "https://www.areyoubiased.life",
     siteName: "Are You Biased",
     type: "website",
   },
@@ -28,11 +28,6 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <script 
-          async 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9411264810928915"
-          crossOrigin="anonymous"
-        />
       </head>
       <body className="antialiased bg-gray-50">
         {children}
