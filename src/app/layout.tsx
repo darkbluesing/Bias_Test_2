@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   verification: {
     google: "OLdpMroBqngbmU3ZM7XG6ZO9OIFECKuT-aiqtrp-JYY",
   },
+  alternates: {
+    canonical: 'https://www.areyoubiased.life',
+  },
   openGraph: {
     title: "편견 테스트 - Are You Biased?",
     description: "무의식적 편견을 발견하고 개선하는 테스트",
