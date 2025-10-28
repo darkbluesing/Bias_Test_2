@@ -8,7 +8,7 @@ interface AdsterraBannerProps {
   scriptSrc?: string;
 }
 
-const DEFAULT_ADSTERRA_SRC = '//pl27945413.effectivegatecpm.com/27/23/be/2723be74bc8a913990e841a924f21e3b.js';
+const DEFAULT_ADSTERRA_SRC = 'https://www.effectivegatecpm.com/fzwtmptfc?key=13f6594e7b900f176ed45fdc04278361';
 
 export function AdsterraBanner({ className = '', style, scriptSrc }: AdsterraBannerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
