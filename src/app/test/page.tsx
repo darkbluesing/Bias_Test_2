@@ -9,6 +9,7 @@ import { biasCalculator } from '@/lib/biasCalculator';
 import { useHydration } from '@/lib/useHydration';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { QuestionCard } from '@/components/ui/QuestionCard';
+import { AdsterraBanner } from '@/components/ui/AdsterraBanner';
 
 export default function TestPage() {
   const router = useRouter();
@@ -113,7 +114,7 @@ export default function TestPage() {
       
       <main className="max-w-mobile mx-auto p-4 py-1">
         <div className="mb-3">
-          <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm shadow-inner">광고 공간</div>
+          <AdsterraBanner className="bg-gray-100 rounded-lg min-h-[64px] w-full overflow-hidden" />
         </div>
         
         <ProgressBar progress={progress} className="mb-4" />
@@ -137,7 +138,7 @@ export default function TestPage() {
         />
         
         <div className="mt-4">
-          <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm shadow-inner">광고 공간</div>
+          <AdsterraBanner className="bg-gray-100 rounded-lg min-h-[64px] w-full overflow-hidden" />
         </div>
       </main>
     </div>

@@ -7,6 +7,7 @@ import { getTranslation } from '@/lib/i18n';
 import { getBiasCategory } from '@/data/solutions';
 import { ShareButton } from '@/components/ui/ShareButton';
 import { ResultChart } from '@/components/ui/ResultChart';
+import { AdsterraBanner } from '@/components/ui/AdsterraBanner';
 
 export default function ResultPage() {
   const router = useRouter();
@@ -125,7 +126,7 @@ export default function ResultPage() {
       <main className="px-4 py-1">
         <div className="max-w-mobile mx-auto">
           <div className="mb-3" data-hide-in-export="true">
-            <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm">광고 공간</div>
+            <AdsterraBanner className="bg-gray-100 rounded-lg min-h-[64px] w-full overflow-hidden" />
           </div>
 
           <div id="result-container" className="bg-white rounded-xl shadow-lg overflow-visible relative">
@@ -173,7 +174,7 @@ export default function ResultPage() {
           </div>
 
           <div className="mt-3" data-hide-in-export="true">
-            <div className="bg-gray-100 rounded-lg h-16 flex items-center justify-center text-gray-500 text-sm">광고 공간</div>
+            <AdsterraBanner className="bg-gray-100 rounded-lg min-h-[64px] w-full overflow-hidden" />
           </div>
 
           <div className="flex flex-row gap-2 sm:gap-4 justify-center items-center mt-4 px-2" data-hide-in-export="true">

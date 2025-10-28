@@ -18,9 +18,6 @@ export const metadata: Metadata = {
     siteName: "Are You Biased",
     type: "website",
   },
-  other: {
-    "google-adsense-account": "ca-pub-9411264810928915",
-  },
 };
 
 export default function RootLayout({
