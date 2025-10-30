@@ -181,7 +181,7 @@ export function ShareButton({
 
       {showAd && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-4 shadow-xl">
+          <div className="relative w-full max-w-[340px] rounded-2xl bg-white px-3 py-4 shadow-xl sm:w-auto">
             <button
               type="button"
               onClick={handleAdClose}
@@ -189,13 +189,12 @@ export function ShareButton({
             >
               광고 닫기
             </button>
-            <div className="pr-6">
-              <p className="mb-2 text-sm font-semibold text-gray-800">광고를 닫으면 이미지가 다운로드됩니다.</p>
-              <div
-                ref={adContainerRef}
-                className="min-h-[120px] w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
-              />
-            </div>
+            <p className="mb-3 text-sm font-semibold text-gray-800">광고를 닫으면 이미지가 다운로드됩니다.</p>
+            <div
+              ref={adContainerRef}
+              className="mx-auto flex items-center justify-center overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+              style={{ minHeight: 250, width: 300 }}
+            />
           </div>
         </div>
       )}
