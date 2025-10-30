@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { toPng } from 'html-to-image';
+import { useEffect, useRef, useState } from 'react';
+import { toPng } from '@/lib/htmlToImage';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 interface ShareButtonProps {
@@ -18,10 +18,34 @@ export function ShareButton({
   resultElementId = 'result-container'
 }: ShareButtonProps) {
   const [isDownloading, setIsDownloading] = useState(false);
+  const [showAd, setShowAd] = useState(false);
+  const [pendingDownload, setPendingDownload] = useState(false);
+  const adContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleDownload = async () => {
+  useEffect(() => {
+    if (!showAd || !adContainerRef.current) {
+      return;
+    }
+    adContainerRef.current.innerHTML = '';
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://www.effectivegatecpm.com/mpxmx7ri?key=9a9fd73316309e4a945fac814b056168';
+    iframe.width = '100%';
+    iframe.height = '320';
+    iframe.style.border = '0';
+    iframe.setAttribute('referrerpolicy', 'no-referrer');
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox');
+    adContainerRef.current.appendChild(iframe);
+
+    return () => {
+      if (adContainerRef.current) {
+        adContainerRef.current.innerHTML = '';
+      }
+    };
+  }, [showAd]);
+
+  const performDownload = async () => {
     if (isDownloading) return;
-    
+
     setIsDownloading(true);
     
     const element = document.getElementById(resultElementId) as HTMLElement;
@@ -67,6 +91,20 @@ export function ShareButton({
         animatedCircle.style.animation = '';
       }
       setIsDownloading(false);
+    }
+  };
+
+  const handleDownloadRequest = () => {
+    if (isDownloading) return;
+    setPendingDownload(true);
+    setShowAd(true);
+  };
+
+  const handleAdClose = async () => {
+    setShowAd(false);
+    if (pendingDownload) {
+      await performDownload();
+      setPendingDownload(false);
     }
   };
 
@@ -130,13 +168,36 @@ export function ShareButton({
   };
 
   return (
-    <button
-      onClick={handleDownload}
-      disabled={isDownloading}
-      className={`inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
-    >
-      <ArrowDownTrayIcon className="w-5 h-5 mr-2" />
-      {isDownloading ? '생성 중...' : buttonText}
-    </button>
+    <>
+      <button
+        onClick={handleDownloadRequest}
+        disabled={isDownloading}
+        className={`inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      >
+        <ArrowDownTrayIcon className="w-5 h-5 mr-2" />
+        {isDownloading ? '생성 중...' : buttonText}
+      </button>
+
+      {showAd && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-4 shadow-xl">
+            <button
+              type="button"
+              onClick={handleAdClose}
+              className="absolute right-3 top-3 text-sm font-medium text-gray-500 hover:text-gray-800"
+            >
+              광고 닫기
+            </button>
+            <div className="pr-6">
+              <p className="mb-2 text-sm font-semibold text-gray-800">광고를 닫으면 이미지가 다운로드됩니다.</p>
+              <div
+                ref={adContainerRef}
+                className="min-h-[120px] w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

@@ -9,7 +9,7 @@ import { biasCalculator } from '@/lib/biasCalculator';
 import { useHydration } from '@/lib/useHydration';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { QuestionCard } from '@/components/ui/QuestionCard';
-import { AdsterraBanner } from '@/components/ui/AdsterraBanner';
+import { AmazonBanner } from '@/components/ui/AmazonBanner';
 
 export default function TestPage() {
   const router = useRouter();
@@ -100,21 +100,29 @@ export default function TestPage() {
     <div className="min-h-screen bg-gray-100">
       <header className="py-4">
         <div className="max-w-mobile mx-auto px-4">
-          <button 
-            onClick={() => router.push('/')}
+          <a
+            href="/"
             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
           >
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">B</span>
             </div>
             <span className="text-lg font-bold text-gray-900">www.areyoubiased.life</span>
-          </button>
+          </a>
         </div>
       </header>
       
       <main className="max-w-mobile mx-auto p-4 py-1">
-        <div className="mb-3">
-          <AdsterraBanner className="bg-gray-100 rounded-lg min-h-[64px] w-full overflow-hidden" />
+        <div className="mb-3 flex justify-center">
+          <AmazonBanner
+            className="w-full max-w-[468px]"
+            href="https://www.amazon.com/dp/B09B2SBHQK?th=1&linkCode=ll1&tag=kpdhworld-20&linkId=ef89ac7312052ccde8bcc9e2127963b1&language=en_US&ref_=as_li_ss_tl"
+            title="Amazon Alexa Smart Display"
+            description="Stay connected with Alexa routines, video calls, and smart home control in a compact bedside hub."
+            imageSrc="/images/amazon-monitor.svg"
+            imageAlt="Amazon Alexa smart display"
+            dense
+          />
         </div>
         
         <ProgressBar progress={progress} className="mb-4" />
@@ -137,8 +145,16 @@ export default function TestPage() {
           translations={t.test}
         />
         
-        <div className="mt-4">
-          <AdsterraBanner className="bg-gray-100 rounded-lg min-h-[64px] w-full overflow-hidden" />
+        <div className="mt-4 flex justify-center">
+          <AmazonBanner
+            className="w-full max-w-[468px]"
+            href="https://www.amazon.com/seenlast-Adjustable-Electric-Vintage-Scented/dp/B0CDRDK6MR?_encoding=UTF8&dib=eyJ2IjoiMSJ9.Nw9VAx1lX9kXhbMfkIemOSG5djkJxGmtdFXuD_dRJjkDZWQvFo9BhOw_kHFTlzg6bI_1z9DjWSG2ujXAa9rV1WRJTMQt4Vo2BNSk8yhppsOrF1i5RugymqOdW2A2XCvjTjJq5FKXLcDIxCWa1mPyOQT-w8QpC3hXbM-KdDuhJzBSVM_kDFYkbp4RXPk8zDoNeF2rAMSoX3BKuwfaiCk-z6wxld9wfGq3URHoxaMxMMMFSMQ4l1i_Ow9jUOm00PWAWQPj_CwRESK5muQALTINVnpoY9ve52xrTY-R5xFIBys.mI4MotbuNamruDUsjcoPqUhkMRY9D0UlW3sXInhxmJQ&dib_tag=se&keywords=Home%2BDecor%2Bgifts&qid=1761806642&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&smid=A2899BZAJ32AE4&th=1&linkCode=ll1&tag=kpdhworld-20&linkId=0f631666e3ee28b31dc502c7b896c92d&language=en_US&ref_=as_li_ss_tl"
+            title="Vintage-Inspired Home Decor"
+            description="Create a calming vibe with this adjustable electric aroma diffuser. Perfect for gifting."
+            imageSrc="/images/amazon-diffuser.svg"
+            imageAlt="Vintage electric aroma diffuser"
+            dense
+          />
         </div>
       </main>
     </div>
