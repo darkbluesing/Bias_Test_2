@@ -180,6 +180,17 @@ export default function ResultPage() {
                 </div>
               </div>
 
+              <div className="mt-3" data-hide-in-export="true">
+                <a
+                  href="https://www.effectivegatecpm.com/mpxmx7ri?key=9a9fd73316309e4a945fac814b056168"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-center text-[11px] font-semibold text-amber-700 transition hover:bg-amber-100"
+                >
+                  <span className="whitespace-pre-line leading-snug">{t.result.supportButton}</span>
+                </a>
+              </div>
+
             </div>
           </div>
 
@@ -195,16 +206,6 @@ export default function ResultPage() {
             />
           </div>
 
-          <div className="mt-4 px-2" data-hide-in-export="true">
-            <a
-              href="https://www.effectivegatecpm.com/mpxmx7ri?key=9a9fd73316309e4a945fac814b056168"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block rounded-lg bg-amber-400 px-4 py-3 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-amber-500"
-            >
-              <span className="block whitespace-pre-line leading-snug">{t.result.supportButton}</span>
-            </a>
-          </div>
 
           <div className="flex flex-row gap-2 sm:gap-4 justify-center items-center mt-4 px-2" data-hide-in-export="true">
             <ShareButton 
