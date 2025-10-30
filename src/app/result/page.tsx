@@ -185,7 +185,7 @@ export default function ResultPage() {
                   href="https://www.effectivegatecpm.com/mpxmx7ri?key=9a9fd73316309e4a945fac814b056168"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-center text-[11px] font-semibold text-amber-700 transition hover:bg-amber-100"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-amber-400 px-3 py-2 text-center text-[11px] font-semibold text-white transition hover:bg-amber-500"
                 >
                   <span className="whitespace-pre-line leading-snug">{t.result.supportButton}</span>
                 </a>
