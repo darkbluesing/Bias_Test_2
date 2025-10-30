@@ -26,15 +26,13 @@ export function ShareButton({
     if (!showAd || !adContainerRef.current) {
       return;
     }
-    adContainerRef.current.innerHTML = '';
-    const iframe = document.createElement('iframe');
-    iframe.src = 'https://www.effectivegatecpm.com/mpxmx7ri?key=9a9fd73316309e4a945fac814b056168';
-    iframe.width = '100%';
-    iframe.height = '320';
-    iframe.style.border = '0';
-    iframe.setAttribute('referrerpolicy', 'no-referrer');
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox');
-    adContainerRef.current.appendChild(iframe);
+    const containerId = 'container-34e92faafd38ca541c1e12a4fa8d4cbb';
+    adContainerRef.current.innerHTML = `<div id="${containerId}"></div>`;
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = '//pl27952315.effectivegatecpm.com/34e92faafd38ca541c1e12a4fa8d4cbb/invoke.js';
+    script.setAttribute('data-cfasync', 'false');
+    adContainerRef.current.appendChild(script);
 
     return () => {
       if (adContainerRef.current) {

@@ -179,6 +179,19 @@ export default function ResultPage() {
                   ))}
                 </div>
               </div>
+
+              <div className="mt-5 rounded-lg border border-amber-200 bg-amber-50/70 px-3 py-3 text-center">
+                <p className="text-sm font-semibold text-amber-700 whitespace-pre-line">{t.result.supportTitle}</p>
+                <p className="mt-1 text-xs text-gray-600 whitespace-pre-line">{t.result.supportBody}</p>
+                <a
+                  href="https://www.effectivegatecpm.com/mpxmx7ri?key=9a9fd73316309e4a945fac814b056168"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center justify-center rounded-full bg-amber-400 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-500"
+                >
+                  {t.result.supportCta}
+                </a>
+              </div>
             </div>
           </div>
 
