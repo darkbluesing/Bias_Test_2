@@ -26,13 +26,16 @@ export function ShareButton({
     if (!showAd || !adContainerRef.current) {
       return;
     }
-    const containerId = 'container-34e92faafd38ca541c1e12a4fa8d4cbb';
+    const containerId = 'container-1e4f541ec5421554343c96068cff9c9f';
     adContainerRef.current.innerHTML = `<div id="${containerId}"></div>`;
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = '//pl27952315.effectivegatecpm.com/34e92faafd38ca541c1e12a4fa8d4cbb/invoke.js';
-    script.setAttribute('data-cfasync', 'false');
-    adContainerRef.current.appendChild(script);
+    const optionsScript = document.createElement('script');
+    optionsScript.type = 'text/javascript';
+    optionsScript.text = `atOptions = { key: '1e4f541ec5421554343c96068cff9c9f', format: 'iframe', height: 250, width: 300, params: {} };`;
+    const invokeScript = document.createElement('script');
+    invokeScript.async = true;
+    invokeScript.src = '//www.highperformanceformat.com/1e4f541ec5421554343c96068cff9c9f/invoke.js';
+    adContainerRef.current.appendChild(optionsScript);
+    adContainerRef.current.appendChild(invokeScript);
 
     return () => {
       if (adContainerRef.current) {
