@@ -186,7 +186,7 @@ export default function ResultPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex w-full items-center justify-center gap-2 rounded-md px-3 py-2 text-center text-[11px] font-semibold text-white transition"
-                  style={{ backgroundColor: '#f64c10' }}
+                  style={{ backgroundColor: '#f26522' }}
                 >
                   <span className="whitespace-pre-line leading-snug">{t.result.supportButton}</span>
                 </a>
