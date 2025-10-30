@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useBiasTestStore } from '@/lib/store';
 import { getTranslation } from '@/lib/i18n';
@@ -100,7 +101,7 @@ export default function TestPage() {
     <div className="min-h-screen bg-gray-100">
       <header className="py-4">
         <div className="max-w-mobile mx-auto px-4">
-          <a
+          <Link
             href="/"
             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
           >
@@ -108,7 +109,7 @@ export default function TestPage() {
               <span className="text-white font-bold text-lg">B</span>
             </div>
             <span className="text-lg font-bold text-gray-900">www.areyoubiased.life</span>
-          </a>
+          </Link>
         </div>
       </header>
       

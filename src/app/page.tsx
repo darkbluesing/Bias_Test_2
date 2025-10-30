@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useBiasTestStore } from '@/lib/store';
 import { getTranslation, detectLanguageFromBrowser } from '@/lib/i18n';
@@ -48,7 +49,7 @@ export default function HomePage() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-lg">B</span>
             </div>
-            <a href="/" className="text-lg sm:text-xl font-bold text-gray-900 truncate hover:opacity-80 transition-opacity">www.areyoubiased.life</a>
+            <Link href="/" className="text-lg sm:text-xl font-bold text-gray-900 truncate hover:opacity-80 transition-opacity">www.areyoubiased.life</Link>
           </div>
           <LanguageSelector className="w-24 sm:w-28 ml-1 flex-shrink-0" />
         </div>
