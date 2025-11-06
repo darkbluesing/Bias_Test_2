@@ -10,7 +10,7 @@ import { biasCalculator } from '@/lib/biasCalculator';
 import { useHydration } from '@/lib/useHydration';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { QuestionCard } from '@/components/ui/QuestionCard';
-import { AmazonBanner } from '@/components/ui/AmazonBanner';
+import { AdsterraBanner } from '@/components/ui/AdsterraBanner';
 
 export default function TestPage() {
   const router = useRouter();
@@ -115,18 +115,13 @@ export default function TestPage() {
       
       <main className="max-w-mobile mx-auto p-4 py-1">
         <div className="mb-3 flex justify-center">
-          <AmazonBanner
-            className="w-full max-w-[468px]"
-            href="https://www.amazon.com/dp/B09B2SBHQK?th=1&linkCode=ll1&tag=kpdhworld-20&linkId=ef89ac7312052ccde8bcc9e2127963b1&language=en_US&ref_=as_li_ss_tl"
-            title="Amazon Alexa Smart Display"
-            description="Stay connected with Alexa routines, video calls, and smart home control in a compact bedside hub."
-            imageSrc="/images/amazon-monitor.svg"
-            imageAlt="Amazon Alexa smart display"
-            dense
+          <AdsterraBanner
+            className="w-full"
+            options={{ key: '5aec263b46cce11388d8da8c1ee59913', height: 60, width: 468 }}
           />
         </div>
         
-        <ProgressBar progress={progress} className="mb-4" />
+        <ProgressBar progress={progress} className="mb-4" label={t.test.progress} />
         
         <QuestionCard 
           question={question}
@@ -147,17 +142,13 @@ export default function TestPage() {
         />
         
         <div className="mt-4 flex justify-center">
-          <AmazonBanner
-            className="w-full max-w-[468px]"
-            href="https://www.amazon.com/seenlast-Adjustable-Electric-Vintage-Scented/dp/B0CDRDK6MR?_encoding=UTF8&dib=eyJ2IjoiMSJ9.Nw9VAx1lX9kXhbMfkIemOSG5djkJxGmtdFXuD_dRJjkDZWQvFo9BhOw_kHFTlzg6bI_1z9DjWSG2ujXAa9rV1WRJTMQt4Vo2BNSk8yhppsOrF1i5RugymqOdW2A2XCvjTjJq5FKXLcDIxCWa1mPyOQT-w8QpC3hXbM-KdDuhJzBSVM_kDFYkbp4RXPk8zDoNeF2rAMSoX3BKuwfaiCk-z6wxld9wfGq3URHoxaMxMMMFSMQ4l1i_Ow9jUOm00PWAWQPj_CwRESK5muQALTINVnpoY9ve52xrTY-R5xFIBys.mI4MotbuNamruDUsjcoPqUhkMRY9D0UlW3sXInhxmJQ&dib_tag=se&keywords=Home%2BDecor%2Bgifts&qid=1761806642&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&smid=A2899BZAJ32AE4&th=1&linkCode=ll1&tag=kpdhworld-20&linkId=0f631666e3ee28b31dc502c7b896c92d&language=en_US&ref_=as_li_ss_tl"
-            title="Vintage-Inspired Home Decor"
-            description="Create a calming vibe with this adjustable electric aroma diffuser. Perfect for gifting."
-            imageSrc="/images/amazon-diffuser.svg"
-            imageAlt="Vintage electric aroma diffuser"
-            dense
+          <AdsterraBanner
+            className="w-full"
+            options={{ key: '5aec263b46cce11388d8da8c1ee59913', height: 60, width: 468 }}
           />
         </div>
       </main>
     </div>
   );
 }
+

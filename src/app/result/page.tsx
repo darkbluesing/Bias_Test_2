@@ -8,7 +8,7 @@ import { getTranslation } from '@/lib/i18n';
 import { getBiasCategory } from '@/data/solutions';
 import { ShareButton } from '@/components/ui/ShareButton';
 import { ResultChart } from '@/components/ui/ResultChart';
-import { AmazonBanner } from '@/components/ui/AmazonBanner';
+import { AdsterraBanner } from '@/components/ui/AdsterraBanner';
 
 export default function ResultPage() {
   const router = useRouter();
@@ -127,24 +127,19 @@ export default function ResultPage() {
       <main className="px-4 py-1">
         <div className="max-w-mobile mx-auto">
           <div className="mb-3 flex justify-center" data-hide-in-export="true">
-            <AmazonBanner
-              className="w-full max-w-[468px]"
-              href="https://www.amazon.com/dp/B09B2SBHQK?th=1&linkCode=ll1&tag=kpdhworld-20&linkId=ef89ac7312052ccde8bcc9e2127963b1&language=en_US&ref_=as_li_ss_tl"
-              title="Amazon Alexa Smart Display"
-              description="Stay connected with Alexa routines, video calls, and smart home control in a compact bedside hub."
-              imageSrc="/images/amazon-monitor.svg"
-              imageAlt="Amazon Alexa smart display"
-              dense
+            <AdsterraBanner
+              className="w-full"
+              options={{ key: '5aec263b46cce11388d8da8c1ee59913', height: 60, width: 468 }}
             />
           </div>
 
-          <div id="result-container" className="bg-white rounded-xl shadow-lg overflow-visible relative">
+          <div id="result-container" className="bg-white rounded-xl shadow-lg overflow-visible relative pt-4">
             <ResultChart
               percentage={result.percentage}
               category={result.category}
               userName={userProfile.name}
               size="md"
-              className="p-4 pb-2"
+              className=""
               showGradientBar={true}
               translations={{
                 biasRange: t.result.biasRange,
@@ -162,19 +157,19 @@ export default function ResultPage() {
             
             <div className="px-4 pb-4">
               <div className="text-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">{biasCategory.title[language]}</h3>
+                <h3 className="text-lg font-semibold text-gray-800 leading-tight">{biasCategory.title[language]}</h3>
               </div>
               <div className="mb-4">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{t.result.analysis}</h3>
-                <p className="text-sm text-gray-700 leading-relaxed">{biasCategory.description[language]}</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight">{t.result.analysis}</h3>
+                <p className="text-sm text-gray-700 leading-tight">{biasCategory.description[language]}</p>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-3">{t.result.solutions}</h3>
-                <div className="text-gray-700 leading-relaxed space-y-2">
+                <h3 className="text-lg font-bold text-gray-900 mb-3 leading-tight">{t.result.solutions}</h3>
+                <div className="text-gray-700 leading-tight space-y-2">
                   {solutionItems.map((solution, index) => (
                     <div key={index} className="flex items-start">
                       <span className="text-blue-600 mr-2 mt-0.5 text-sm">•</span>
-                      <span className="text-sm leading-relaxed">{solution}</span>
+                      <span className="text-sm leading-tight">{solution}</span>
                     </div>
                   ))}
                 </div>
@@ -196,14 +191,9 @@ export default function ResultPage() {
           </div>
 
           <div className="mt-3 flex justify-center" data-hide-in-export="true">
-            <AmazonBanner
-              className="w-full max-w-[468px]"
-              href="https://www.amazon.com/seenlast-Adjustable-Electric-Vintage-Scented/dp/B0CDRDK6MR?_encoding=UTF8&dib=eyJ2IjoiMSJ9.Nw9VAx1lX9kXhbMfkIemOSG5djkJxGmtdFXuD_dRJjkDZWQvFo9BhOw_kHFTlzg6bI_1z9DjWSG2ujXAa9rV1WRJTMQt4Vo2BNSk8yhppsOrF1i5RugymqOdW2A2XCvjTjJq5FKXLcDIxCWa1mPyOQT-w8QpC3hXbM-KdDuhJzBSVM_kDFYkbp4RXPk8zDoNeF2rAMSoX3BKuwfaiCk-z6wxld9wfGq3URHoxaMxMMMFSMQ4l1i_Ow9jUOm00PWAWQPj_CwRESK5muQALTINVnpoY9ve52xrTY-R5xFIBys.mI4MotbuNamruDUsjcoPqUhkMRY9D0UlW3sXInhxmJQ&dib_tag=se&keywords=Home%2BDecor%2Bgifts&qid=1761806642&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&smid=A2899BZAJ32AE4&th=1&linkCode=ll1&tag=kpdhworld-20&linkId=0f631666e3ee28b31dc502c7b896c92d&language=en_US&ref_=as_li_ss_tl"
-              title="Vintage-Inspired Home Decor"
-              description="Create a calming vibe with this adjustable electric aroma diffuser. Perfect for gifting."
-              imageSrc="/images/amazon-diffuser.svg"
-              imageAlt="Vintage electric aroma diffuser"
-              dense
+            <AdsterraBanner
+              className="w-full"
+              options={{ key: '5aec263b46cce11388d8da8c1ee59913', height: 60, width: 468 }}
             />
           </div>
 
@@ -234,3 +224,4 @@ export default function ResultPage() {
     </div>
   );
 }
+

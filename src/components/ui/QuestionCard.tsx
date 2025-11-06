@@ -87,12 +87,12 @@ export function QuestionCard({
         </div>
         
         {/* Navigation Buttons - 답변 컨테이너 라인에 맞춰 정렬 */}
-        <div className="mt-8 flex justify-between items-center -mx-8 px-8">
+        <div className="mt-8 flex justify-between">
           <Button 
             onClick={onPrevious} 
             disabled={isFirstQuestion}
             variant="secondary"
-            className="w-32"
+            className="w-[40%]"
           >
             {translations.previous}
           </Button>
@@ -100,7 +100,7 @@ export function QuestionCard({
           <Button 
             onClick={onNext}
             disabled={selected === undefined}
-            className="w-32"
+            className="w-[40%]"
           >
             {isLastQuestion ? translations.complete : translations.next}
           </Button>

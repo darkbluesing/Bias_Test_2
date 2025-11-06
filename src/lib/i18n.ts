@@ -264,7 +264,8 @@ export const translations = {
       next: '下一个',
       previous: '上一个',
       submit: '提交',
-      skip: '跳过'
+      skip: '跳过',
+      complete: '完成'
     },
     result: {
       title: '测试结果',
