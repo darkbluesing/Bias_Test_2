@@ -358,7 +358,7 @@ export function AdsterraBanner({
       cancelled = true;
       mutationObserver.disconnect();
       cleanupRef.current?.();
-      cleanupRef.current = undefined;
+      cleanupRef.current = null;
       slot.innerHTML = '';
       slot.style.height = '';
       slot.style.maxWidth = '';
