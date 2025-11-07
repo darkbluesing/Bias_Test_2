@@ -42,3 +42,7 @@ next-env.d.ts
 
 # initial project state
 initial_project_state/
+
+# test reports
+/playwright-report/
+/test-results/

@@ -3,16 +3,17 @@
 interface ProgressBarProps {
   progress: number;
   className?: string;
+  label?: string;
 }
 
-export function ProgressBar({ progress, className = '' }: ProgressBarProps) {
+export function ProgressBar({ progress, className = '', label = '진행률' }: ProgressBarProps) {
   const percentage = Math.round(progress);
   
   return (
     <div className={`w-full bg-white border border-gray-200 rounded-xl p-4 shadow-sm ${className}`}>
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm font-medium text-gray-600">
-          진행률
+          {label}
         </span>
         <span className="text-sm font-bold text-pink-600">
           {percentage}%

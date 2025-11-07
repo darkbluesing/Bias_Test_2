@@ -57,9 +57,9 @@ export function ResultChart({
         `}</style>
       )}
       
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">{displayTitle}</h2>
+      <h2 className="text-2xl font-bold text-gray-900 mb-1 leading-tight">{displayTitle}</h2>
       
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-1">
         <div className="relative flex items-center justify-center" style={{ width: chartSize.width, height: chartSize.height }}>
           <svg 
             className="transform -rotate-90 w-full h-full" 
@@ -104,9 +104,9 @@ export function ResultChart({
       </div>
 
       {showGradientBar && (
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">{translations.biasRange || '편향성 범위'}</h3>
-          <div className="flex justify-between text-xs text-gray-600 mb-2">
+        <div className="mb-1">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2 leading-tight">{translations.biasRange || '편향성 범위'}</h3>
+          <div className="flex justify-between text-xs text-gray-600 mb-2 leading-tight">
             <span>{translations.veryLow || '매우 낮음'}</span>
             <span>{translations.low || '낮음'}</span>
             <span>{translations.moderate || '보통'}</span>
