@@ -60,7 +60,7 @@ export function AdsterraBanner({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const fallbackRef = useRef<HTMLDivElement | null>(null);
   const slotRef = useRef<HTMLDivElement | null>(null);
-  const cleanupRef = useRef<() => void>();
+  const cleanupRef = useRef<(() => void) | null>(null);
   const generatedContainerIdRef = useRef(`adsterra-slot-${Math.random().toString(36).slice(2, 10)}`);
 
   const baseOptions = useMemo(() => {
